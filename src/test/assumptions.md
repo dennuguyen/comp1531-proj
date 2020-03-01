@@ -36,9 +36,8 @@
 - listall() will show all channels; except private channels excluding the user
 
 ### create()
-- returns unique channel_id
 - channel name cannot be empty
-- channel name is unique
+- channel name and channel_id are unique
 - channel name cannot consist of only whitespace
 - incorrect channel names will throw InputError
 
