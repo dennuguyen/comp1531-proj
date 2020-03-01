@@ -92,7 +92,7 @@ def listall_test():
     assert list('321') == None
 
 
-def create_test():
+def create_channel_test():
     # creating a channel should return a unique channel id
     assert create('123', 'My Channel', True) == 1
 
