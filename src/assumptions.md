@@ -33,7 +33,7 @@
 
 ### listall()
 - returns a list of channels
-- listall() will show all channels; except private channels excluding the user
+- shows all channels regardless of membership
 
 ### create()
 - channel name cannot be empty
