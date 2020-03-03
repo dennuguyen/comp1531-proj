@@ -15,7 +15,7 @@ def test_send_by_authorised_user():
     name_first = 'James'
     name_last = 'Bond'
     register_retval = auth.auth_register(email, password, name_first, name_last)
-    user_id = register_retval['u_id']
+    user_id = register_retval'[u_id]
     token = register_retval['token']
         #Create test channel 1
     channel_name = 'Test Channel1'    
@@ -31,6 +31,7 @@ def test_send_by_authorised_user():
     assert channel_messages_retval['messages'][0]['message'] == message
 
     #Clean up (if necessary)
+    
 
 def test_send_non_member():
     #Setup
@@ -41,7 +42,7 @@ def test_send_non_member():
     name_first = 'James'
     name_last = 'Bond'
     register_retval = auth.auth_register(email, password, name_first, name_last)
-    user_id = register_retval['u_id']
+    user_id = register_retval'[u_id]
     token = register_retval['token']
 
         #Create test channel 1
@@ -105,7 +106,7 @@ def test_remove_existing_message():
     name_first = 'James'
     name_last = 'Bond'
     register_retval = auth.auth_register(email, password, name_first, name_last)
-    user_id = register_retval['u_id']
+    user_id = register_retval'[u_id]
     token = register_retval['token']
 
         #Create test channel 1
