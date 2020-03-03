@@ -4,11 +4,12 @@
 #   e.g. { channel_id, name }
 
 import pytest, channels, error
+from channel import channel_join
+from auth import auth_register
 
-# test successful channel creation
-def list_test():
-
-    example_dict = {
+# create an example list for use in test_list() and test_listall()
+def create_example_list():
+    example_list = {
         'channels': [
         	{
         		'channel_id': 1,
@@ -24,12 +25,12 @@ def list_test():
         	},
             {
         		'channel_id': 4,
-        		'name': '',
+        		'name': '4th Channel',
         	},
         ],
     }
 
-    auth_dict = {
+    auth_list = {
         'channels': [
         	{
         		'channel_id': 1,
@@ -41,88 +42,89 @@ def list_test():
         	},
             {
         		'channel_id': 4,
-        		'name': '',
+        		'name': '4th Channel',
         	},
         ],
     }
 
+    return example_list, auth_list
+
+
+# test successful channel creation
+def test_channels_list():
+
+    example_list, auth_list = create_example_list()
+
+    # create a user and give user some channel memberships
+    u_id, token = auth_register('example@unsw.com', 'password', 'John', 'Doe')
+    channel_join(token, 1)
+    channel_join(token, 2)
+    channel_join(token, 4)
+
     # valid token
-    assert listall('123') == auth_dict
-    assert listall('123') != example_dict
+    assert channels_list(token) == auth_list
+    assert channels_list(token) != example_list
 
     # no given token
-    assert list('') == None
+    assert channels_list('') == {}
 
     # invalid token
-    assert list('321') == None
+    invalid_token = token + 1
+    assert channels_list(invalid_token) == {}
 
 
 # calling listall() should return all channels with their details
-def listall_test():
+def test_channels_listall():
 
-    # where is the data structure for the channel held?
-    example_dict = {
-        'channels': [
-        	{
-        		'channel_id': 1,
-        		'name': 'My Channel',
-        	},
-            {
-        		'channel_id': 2,
-        		'name': 'Hello',
-        	},
-            {
-        		'channel_id': 3,
-        		'name': 'Welcome',
-        	},
-            {
-        		'channel_id': 4,
-        		'name': '',
-        	},
-        ],
-    }
+    example_list, auth_list = create_example_list()
+
+    # create a user and give user some channel memberships
+    u_id, token = auth_register('example@unsw.com', 'password', 'John', 'Doe')
+    channel_join(token, 1)
+    channel_join(token, 2)
+    channel_join(token, 4)
 
     # valid token
-    assert listall('123') == example_dict
+    assert channels_listall(token) == example_list
+    assert channels_listall(token) != auth_list
 
     # no given token
-    assert list('') == None
+    assert list('') == {}
 
     # invalid token
-    assert list('321') == None
+    invalid_token = token + 1
+    assert list(invalid_token) == {}
 
 
-def create_channel_test():
+def test_channels_create():
     # creating a channel should return a unique channel id
-    assert create('123', 'My Channel', True) == 1
+    assert channels_create('123', 'My Channel', True) == 1
 
     # making new channel
-    assert create('123', 'My Second Channel', False) == 2
+    assert channels_create('123', 'My Second Channel', False) == 2
 
     # making channel with same name
     with pytest.raises(InputError):
-        create('123', 'My Channel', True)
+        channels_create('123', 'My Channel', True)
 
     # making channel with same name but with different token
     with pytest.raises(InputError):
-        create('1', 'My Channel', True)
+        channels_create('1', 'My Channel', True)
 
     # making channel with same name but with different permissions
     with pytest.raises(InputError):
-        create('123', 'My Channel', False)
+        channels_create('123', 'My Channel', False)
 
     # making a channel with empty name
     with pytest.raises(InputError):
-        create('123', '', False)
+        channels_create('123', '', False)
 
     # making a channel with only whitespace name
     with pytest.raises(InputError):
-        create('123', ' ', True)
+        channels_create('123', ' ', True)
 
     # channel name limited to 20 characters long
-    assert create('123', '01234567890123456789', True)
+    assert channels_create('123', '01234567890123456789', True)
 
     with pytest.raises(InputError):
-        create('123', '0123456789 0123456789', True)
-
-    # delete a channel (if possible) and making channel with same name
+        channels_create('123', '0123456789 0123456789', True)
