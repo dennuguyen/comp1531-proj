@@ -89,11 +89,11 @@ def test_channels_listall():
     assert channels_listall(token) != auth_list
 
     # no given token
-    assert list('') == {}
+    assert channel_list('') == {}
 
     # invalid token
     invalid_token = token + 1
-    assert list(invalid_token) == {}
+    assert channel_list(invalid_token) == {}
 
 
 def test_channels_create():
