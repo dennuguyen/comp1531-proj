@@ -6,7 +6,7 @@
 import pytest, channels, error
 
 # test successful channel creation
-def list_test():
+def test_list():
 
     example_dict = {
         'channels': [
@@ -58,7 +58,7 @@ def list_test():
 
 
 # calling listall() should return all channels with their details
-def listall_test():
+def test_listall():
 
     # where is the data structure for the channel held?
     example_dict = {
@@ -92,7 +92,7 @@ def listall_test():
     assert list('321') == None
 
 
-def create_channel_test():
+def test_create_channel():
     # creating a channel should return a unique channel id
     assert create('123', 'My Channel', True) == 1
 
@@ -125,4 +125,3 @@ def create_channel_test():
     with pytest.raises(InputError):
         create('123', '0123456789 0123456789', True)
 
-    # delete a channel (if possible) and making channel with same name
