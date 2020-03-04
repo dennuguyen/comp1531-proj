@@ -2,18 +2,16 @@ import pytest, channel, error
 from channels import channels_create
 from auth import auth_register
 
-
-def create_user_channel():
+def test_environment():
     u_id, token = auth_register('example@unsw.com', 'password', 'John', 'Doe')
     ch_id = channels_create(token, 'New Channel', True)
 
     return u_id, token, ch_id
 
-
 def test_channel_invite():
 
     # create a user and channel
-    u_id, token, ch_id = create_user_channel()
+    u_id, token, ch_id = test_environment()
 
     # invite user to new channel
     with pytest.raises(AccessError):
