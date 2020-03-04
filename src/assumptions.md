@@ -37,12 +37,12 @@
 ## channels.py
 
 ### channels_list()
-- returns a list of channels
+- returns a list of channels and their details
 - shows channels user is part of
 - invalid or no given token returns an empty list
 
 ### channels_listall()
-- returns a list of channels
+- returns a list of channels and their details
 - shows all channels regardless of membership
 - invalid or no given token returns an empty list
 
