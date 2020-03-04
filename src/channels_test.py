@@ -9,53 +9,16 @@ from auth import auth_register
 
 # create an example list for use in test_list() and test_listall()
 def create_example_list():
-    example_list = {
-        'channels': [
-        	{
-        		'channel_id': 1,
-        		'name': 'My Channel',
-        	},
-            {
-        		'channel_id': 2,
-        		'name': 'Hello',
-        	},
-            {
-        		'channel_id': 3,
-        		'name': 'Welcome',
-        	},
-            {
-        		'channel_id': 4,
-        		'name': '4th Channel',
-        	},
-        ],
-    }
-
-    auth_list = {
-        'channels': [
-        	{
-        		'channel_id': 1,
-        		'name': 'My Channel',
-        	},
-            {
-        		'channel_id': 2,
-        		'name': 'Hello',
-        	},
-            {
-        		'channel_id': 4,
-        		'name': '4th Channel',
-        	},
-        ],
-    }
-
-    channel_create()
-
-    return example_list, auth_list
+    channel_create(token, 'Channel1', True)
+    channel_create(token, 'Channel2', True)
+    channel_create(token, 'Channel3', True)
+    channel_create(token, 'Channel4', True)
 
 
 # test successful channel creation
 def test_channels_list():
 
-    example_list, auth_list = create_example_list()
+    create_example_list()
 
     # create a user and give user some channel memberships
     u_id, token = auth_register('example@unsw.com', 'password', 'John', 'Doe')
@@ -112,14 +75,19 @@ def test_channels_create():
     with pytest.raises(InputError):
         channels_create('1', 'My Channel', True)
 
-    # making a channel with empty name
-    assert channels_create('123', '', False) == 4
-
-    # making a channel with only whitespace name
-    assert channels_create('123', ' ', True) == 5
+    
 
     # channel name limited to 20 characters long
     assert channels_create('123', '01234567890123456789', True)
 
     with pytest.raises(InputError):
         channels_create('123', '0123456789 0123456789', True)
+
+def test_channels_invalid_token():
+
+def test_channels_other():
+    # making a channel with empty name
+    assert channels_create('123', '', False) == 4
+
+    # making a channel with only whitespace name
+    assert channels_create('123', ' ', True) == 5
