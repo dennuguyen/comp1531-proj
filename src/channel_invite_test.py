@@ -1,4 +1,5 @@
-import pytest, channel, error
+import pytest, channel
+from error import *
 from channels import channels_create
 from auth import auth_register
 
