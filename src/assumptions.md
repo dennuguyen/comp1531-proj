@@ -5,10 +5,11 @@
 ## channel.py
 
 ### channel_invite()
-- if user is not a member of channel then raise AccessError
-- user immediately becomes channel member after invite
-- returns empty list if user is member and has been reinvited
+- user immmediately becomes channel member after being invited
+- invite() returns empty list on success
+- if inviter is not a member of channel then raise AccessError
 - if user or channel does not exist then raise InputError
+- token belongs to the inviter, user id belongs to the invitee
 
 ### channel_details()
 - returns tuple of channel name, list of owners, list of members
