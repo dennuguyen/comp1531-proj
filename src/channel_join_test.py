@@ -1,0 +1,1 @@
+def test_channel_join():
