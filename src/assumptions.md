@@ -12,19 +12,25 @@
 - token belongs to the inviter, user id belongs to the invitee
 
 ### channel_details()
-- returns tuple of channel name, list of owners, list of members
+- returns list of channel name, list of owners, list of members
 - only channel members may call details()
-- if channel does not exist then raise InputError
+- if channel id is not valid then raise InputError
 - if user is not member of channel then raise AccessError
 
 ### channel_messages()
+- returns a list of messages, start, end
 - return at most 50 messages from a given "start"
 - index 0 message is most recent
 - "end" 
 - return -1 if no new messages
 
 ### channel_leave()
+- takes in token of user wanting to leave and the channel being left
+- returns empty list on success
+- if channel id is not valid then raise InputError
+- if user id is not valid then raise AccessError
 
+- if the sole owner wants to leave the channel?
 
 ### channel_join()
 - returns empty list on success
