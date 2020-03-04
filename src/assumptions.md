@@ -34,7 +34,9 @@
 
 ### channel_join()
 - returns empty list on success
-
+- if user tries to join private channel then raise AccessError
+- if channel id is not valid then raise InputError
+- if member of channel tries to rejoin channel then join() succeeds
 
 ### channel_addowner()
 
