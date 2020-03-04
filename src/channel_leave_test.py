@@ -22,34 +22,25 @@ def test_channel_leave_1():
     # user leaves
     assert channel_leave(token1, ch_id) == {}
 
-# case where channel is only populated by owner and owner leaves
+# case where channel is owner leaves and user is promoted for channel populated by two
 def test_channel_leave_2():
 
     # set up environment
     u_id1, token1, u_id2, token2, u_id3, token3, ch_id, correct_detail = test_environment()
+    channel_invite(token2, ch_id, u_id1) # owner invites u_id1
 
     # owner leaves
     assert channel_leave(token2, ch_id) == {}
 
-# # case where channel is populated by an owner and a user and owner leaves
-# def test_channel_leave_2():
+# case where channel is populated by a sole owner
+def test_channel_leave_3():
 
-#     # set up environment
-#     u_id1, token1, u_id2, token2, u_id3, token3, ch_id, correct_detail = test_environment()
-#     channel_invite(token2, ch_id, u_id1) # owner invites u_id1
+    # set up environment
+    u_id1, token1, u_id2, token2, u_id3, token3, ch_id, correct_detail = test_environment()
 
-#     # owner leaves
-#     assert channel_leave(token2, ch_id) == {}
-
-# # case where channel is populated by two owners and an owner leaves
-# def test_channel_leave_2():
-
-#     # set up environment
-#     u_id1, token1, u_id2, token2, u_id3, token3, ch_id, correct_detail = test_environment()
-#     channel_invite(token2, ch_id, u_id1) # owner invites u_id1
-
-#     # owner leaves
-#     assert channel_leave(token2, ch_id) == {}
+    # owner cannot leave
+    with pytest.raises(InputError):
+        channel_leave(token2, ch_id)
 
 # invalid id and token cases
 def test_channel_leave_validity():

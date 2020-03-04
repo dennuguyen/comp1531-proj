@@ -30,7 +30,7 @@
 - if channel id is not valid then raise InputError
 - if user id is not valid then raise AccessError
 
-- if the sole owner wants to leave the channel?
+- **if user is last member of channel then user is owner and cannot leave the channel. Trying to do so will raise InputError**
 
 ### channel_join()
 - returns empty list on success
@@ -61,6 +61,8 @@
     - unique channel id allows identification of channel for back-end
 - incorrect channel names will throw InputError
     - channel name with char > 20 is over the limit and throws InputError
+
+- **user who creates the channel becomes the owner of the channel**
 
 ## echo.py
 
