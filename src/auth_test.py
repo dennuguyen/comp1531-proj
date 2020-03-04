@@ -8,6 +8,7 @@ Notes:
 6. Go for minimum number of tests maximum coverage
 
 '''
+from error import InputError
 import pytest
 import auth
 import re   #Regular Expression Module
@@ -22,6 +23,7 @@ def get_new_user():
     data = auth.auth_register(email, password, name_first, name_last)  
     return data['u_id'], data['token'], email, password
 
+# 
 def check_email_form(email):  
     regex = '^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$'
     # pass the regualar expression 
@@ -67,13 +69,13 @@ def test_login_already_logged_in(get_new_user):
 #ensure that the input email is valid
 def test_invalid_email_form():
     ############## SET UP STATE ##############################
-    email = "z1234567.unsw.edu.au"
+    invalid_email = "z1234567.unsw.edu.au"
     password = "qwetyu"
 
     ############## ACTUAL TEST ###############################
-    if(check_email_form(email) != True):
-        with pytest.raises(InputError):
-            auth.auth_login(invalid_email, password)
+    if(check_email_form(invalid_email) != True):
+        with pytest.raises(InputError) as e:
+            auth.auth_login(invalid_email, password)        
 
     ############## CLEAN UP (if necessary) ###################
     pass 
@@ -92,7 +94,7 @@ def test_non_registered_email():
     pass
 
 #ensure that the input password is correct
-def test_non_registered_email_form(get_new_user):
+def test_wrong_password(get_new_user):
     ############## SET UP STATE ##############################
     # valid u_id and token *we don't care about token*
     u_id, token, email, password = get_new_user
@@ -100,7 +102,7 @@ def test_non_registered_email_form(get_new_user):
     # log user we just created out
     auth.auth_logout(token)
 
-    wrongly_inputed_password = "wetyul"
+    wrongly_inputed_password = "wetyulcd"
 
     ############## ACTUAL TEST ###############################
     with pytest.raises(InputError):
