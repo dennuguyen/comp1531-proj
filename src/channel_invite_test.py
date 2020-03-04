@@ -1,5 +1,5 @@
 import pytest
-from channel import channel_invite, channel_addowner
+from channel import channel_invite
 from error import *
 from channels import channels_create
 from auth import auth_register
@@ -7,7 +7,7 @@ from auth import auth_register
 def test_environment():
     u_id1, token1 = auth_register('example@unsw.com', 'password', 'The', 'User')
     u_id2, token2 = auth_register('owner@unsw.com', 'password', 'The', 'Owner')
-    ch_id = channels_create(token, 'New Channel', True)
+    ch_id = channels_create(token2, 'New Channel', True) # u_id2 is owner
 
     return u_id1, token1, u_id2, token2, ch_id
 
@@ -15,7 +15,6 @@ def test_channel_invite():
 
     # set up environment
     u_id1, token1, u_id2, token2, ch_id = test_environment()
-    channel_addowner(token2, ch_id)
 
     # The owner invites the user to new channel
     assert channel_invite(token2, ch_id, u_id1) == {}
