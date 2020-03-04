@@ -47,6 +47,8 @@ def create_example_list():
         ],
     }
 
+    channel_create()
+
     return example_list, auth_list
 
 
@@ -104,24 +106,17 @@ def test_channels_create():
     assert channels_create('123', 'My Second Channel', False) == 2
 
     # making channel with same name
-    with pytest.raises(InputError):
-        channels_create('123', 'My Channel', True)
+    assert channels_create('123', 'My Channel', True) == 3
 
-    # making channel with same name but with different token
+    # making channel with same name but with invalid token
     with pytest.raises(InputError):
         channels_create('1', 'My Channel', True)
 
-    # making channel with same name but with different permissions
-    with pytest.raises(InputError):
-        channels_create('123', 'My Channel', False)
-
     # making a channel with empty name
-    with pytest.raises(InputError):
-        channels_create('123', '', False)
+    assert channels_create('123', '', False) == 4
 
     # making a channel with only whitespace name
-    with pytest.raises(InputError):
-        channels_create('123', ' ', True)
+    assert channels_create('123', ' ', True) == 5
 
     # channel name limited to 20 characters long
     assert channels_create('123', '01234567890123456789', True)
