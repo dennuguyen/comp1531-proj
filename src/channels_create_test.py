@@ -12,25 +12,25 @@ def test_channels_create():
     u_id, token = test_environment()
 
     # creating a channel should return a unique channel id
-    assert channels_create(token, 'My Channel', True) == 1
+    assert channels_create(token, 'My Channel', True) == {'channel_id': 1}
 
 def test_channels_create_more():
     u_id, token = test_environment()
 
     # making new channel
-    assert channels_create(token, 'My Second Channel', False) == 2
+    assert channels_create(token, 'My Second Channel', False) == {'channel_id': 2}
 
     # making channel with same name
-    assert channels_create(token, 'My Second Channel', True) == 3
+    assert channels_create(token, 'My Second Channel', True) == {'channel_id': 3}
 
 def test_channels_create_other():
     u_id, token = test_environment()
 
     # making a channel with empty name
-    assert channels_create(token, '', False) == 4
+    assert channels_create(token, '', False) == {'channel_id': 4}
 
     # making a channel with only whitespace name
-    assert channels_create(token, ' ', True) == 5
+    assert channels_create(token, ' ', True) == {'channel_id': 5}
 
 def test_channels_create_invalid_token():
     u_id, token = test_environment()
