@@ -56,7 +56,7 @@ def test_message_edit_by_non_authorised_user():
 
     newmsg = 'The quick brown dog jumps over the lazy fox.'
     with pytest.raises(error.AccessError):
-       message.message_edit(token2, message_id, newmsg)    
+        message.message_edit(token2, message_id, newmsg)    
   
     #Clean up (if necessary)
 
