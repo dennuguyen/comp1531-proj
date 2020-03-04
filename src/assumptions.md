@@ -39,11 +39,16 @@
 - if member of channel tries to rejoin channel then join() succeeds
 
 ### channel_addowner()
+- return empty list on success
 - if channel id is not valid then raise InputError
 - if user is owner and is being promoted to owner than raise InputError
 - **only members of the channel can be promoted by existing owners else raise AccessError**
 
 ### channel_removeowner()
+- return empty list on success
+- if user to be removed is not an owner then raise InputError
+- if channel id is not valid then raise InputError
+- when the user who is removing is not authorised then raise AccessError
 
 ## channels.py
 
