@@ -49,7 +49,7 @@ def test_message_edit_by_non_authorised_user():
         #Log out test user 1
     auth.auth_logout(token)
 
-    #Register test user 1
+    #Register test user 2
     token2 = message_test_helper.get_new_user2()[1]
 
     #Actual test
