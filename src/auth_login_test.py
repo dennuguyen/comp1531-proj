@@ -13,7 +13,7 @@ import pytest
 import auth
 import re   #Regular Expression Module
 
-@pytest.fixture
+@pytest.fixture(scope="module")
 def get_new_user():  
     # dummy data
     email = "z1234567@unsw.edu.au"
@@ -51,7 +51,7 @@ def test_login(get_new_user):
     ############## CLEAN UP (if necessary) ###################
     pass
 
-# ensure that valid user can login more than once simultaneously
+# ensure that valid user cannot login more than once simultaneously
 def test_login_already_logged_in(get_new_user):
     ############## SET UP STATE ##############################
     # valid u_id and token *we don't care about token*
