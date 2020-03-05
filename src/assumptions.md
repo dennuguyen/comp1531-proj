@@ -5,34 +5,50 @@
 ## channel.py
 
 ### channel_invite()
-- if user is not a member of channel then raise AccessError
-- user immediately becomes channel member after invite
-- returns empty list if user is member and has been reinvited
+- user immmediately becomes channel member after being invited
+- invite() returns empty list on success
+- if inviter is not a member of channel then raise AccessError
 - if user or channel does not exist then raise InputError
+- token belongs to the inviter, user id belongs to the invitee
 
 ### channel_details()
-- returns tuple of channel name, list of owners, list of members
+- returns list of channel name, list of owners, list of members
 - only channel members may call details()
-- if channel does not exist then raise InputError
+- if channel id is not valid then raise InputError
 - if user is not member of channel then raise AccessError
 
 ### channel_messages()
+- returns a list of messages, start, end
 - return at most 50 messages from a given "start"
 - index 0 message is most recent
 - "end" 
 - return -1 if no new messages
 
 ### channel_leave()
+- takes in token of user wanting to leave and the channel being left
+- returns empty list on success
+- if channel id is not valid then raise InputError
+- if user id is not valid then raise AccessError
 
+- **if user is last member of channel then user is owner and cannot leave the channel. Trying to do so will raise InputError**
 
 ### channel_join()
 - returns empty list on success
-
+- if user tries to join private channel then raise AccessError
+- if channel id is not valid then raise InputError
+- if member of channel tries to rejoin channel then join() succeeds
 
 ### channel_addowner()
-
+- return empty list on success
+- if channel id is not valid then raise InputError
+- if user is owner and is being promoted to owner than raise InputError
+- **only members of the channel can be promoted by existing owners else raise AccessError**
 
 ### channel_removeowner()
+- return empty list on success
+- if user to be removed is not an owner then raise InputError
+- if channel id is not valid then raise InputError
+- when the user who is removing is not authorised then raise AccessError
 
 ## channels.py
 
@@ -53,11 +69,16 @@
 - incorrect channel names will throw InputError
     - channel name with char > 20 is over the limit and throws InputError
 
+- **user who creates the channel becomes the owner of the channel**
+
 ## echo.py
 
 ## error.py
 
 ## message.py
+
+### message_remove()
+- if message no longer exists and is to be removed then throw InputError
 
 ## other.py
 
