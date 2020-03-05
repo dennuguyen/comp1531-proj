@@ -1,15 +1,16 @@
 import auth
 import pytest
+import other
 from error import InputError
 from auth_login_test import get_new_user, check_email_form
 
 @pytest.fixture(scope="module")
 def gen_person_info():
     # dummy data
-    email = "z1234567@unsw.edu.au"
+    email = "cs1531@cse.unsw.edu.au"
     password = "qwetyu"
-    name_first = "Zhihan"
-    name_last = "Qin"
+    name_first = "Hayden"
+    name_last = "Jacobs"
 
     return email, password, name_first, name_last
 
@@ -24,7 +25,17 @@ def test_register(gen_person_info):
     test_u_id = register_retval['u_id']
     test_token = register_retval['token']
 
-    assert(test_u_id == 1 and test_token == '12345')
+    #assert(test_u_id == 1 and test_token == '12345')
+    users_all_retval = other.users_all(test_token)
+    users = users_all_retval['users']
+    
+    flag = False
+    for user in users:
+        if(user['u_id'] == test_u_id):
+            flag = True
+            break
+    
+    assert(flag == True)
     ############## CLEAN UP (if necessary) ###################
     pass
 
@@ -43,7 +54,6 @@ def test_invalid_email_form():
 
     ############## CLEAN UP (if necessary) ###################
     pass
-
 
 #ensure that an email address cannot be registered twice
 def test_repeated_email_form(get_new_user):
