@@ -68,6 +68,9 @@ def test_remove_non_authorised_user():
 
         #Register test user 2
     token2 = message_test_helper.get_new_user2()[1]
+
+        #Invite test user 2 to test channel 1
+    channel.channel_join(token2, channel_id)
     
     #Actual test
     with pytest.raises(error.AccessError):
