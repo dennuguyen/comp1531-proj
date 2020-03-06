@@ -2,6 +2,26 @@
 
 ## auth.py
 
+### auth_login()
+- valid token is generated when receiving a registered user's email and password
+- invalid email, password or unregistered email raises InputError
+- user id and token is returned from login
+- **multiple logins are allowed and return the same u_id but different token**
+
+### auth_logout()
+- valid token allows successful logout
+- **logout without valid token returns False**
+
+### auth_register()
+- takes email, password, first name and last name
+- returns list of token and user id on success
+- invalid email raises InputError
+- email already registered raises InputError
+- password less than 6 char
+- name_first between 1 and 50 char
+- name_last between 1 and 50 char
+- **when user registers, automatically login**
+
 ## channel.py
 
 ### channel_invite()
@@ -39,10 +59,7 @@
 - if member of channel tries to rejoin channel then join() succeeds
 
 ### channel_addowner()
-- return empty list on success
-- if channel id is not valid then raise InputError
-- if user is owner and is being promoted to owner than raise InputError
-- **only members of the channel can be promoted by existing owners else raise AccessError**
+- **return empty list on success**
 
 ### channel_removeowner()
 - return empty list on success
@@ -63,17 +80,16 @@
 - invalid or no given token returns an empty list
 
 ### channels_create()
-- channel name can be empty, consist of only whitespace and be repeated
-- channel_id is unique
+- **channel name can be repeated**
+    - so users who want to make channels with the same name can be happy
+- **channel_id is unique**
     - unique channel id allows identification of channel for back-end
-- incorrect channel names will throw InputError
-    - channel name with char > 20 is over the limit and throws InputError
-
+- **channel name cannot be empty or consist of only whitespace**
+    - because names cannot be empty
 - **user who creates the channel becomes the owner of the channel**
+    - because otherwise there will be no user with permissions to add other users to the channel or edit the channel
 
 ## echo.py
-
-## error.py
 
 ## message.py
 

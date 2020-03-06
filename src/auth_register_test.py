@@ -4,105 +4,81 @@ import other
 from error import InputError
 from auth_login_test import get_new_user, check_email_form
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope = 'module')
 def gen_person_info():
     # dummy data
-    email = "cs1531@cse.unsw.edu.au"
-    password = "qwetyu"
-    name_first = "Hayden"
-    name_last = "Jacobs"
+    email1 = 'z1234567@unsw.edu.au'
+    email2 = 'z1234567@gmail.com'
+    password = 'qwetyu231'
+    name_first = 'Zhihan'
+    name_last = 'Qin'
+    invalid_name_first = 'zaqwertyuioplmnbvcxsdfghjklpoiuytrewqazxsdcvfgbnhjmk'
+    invalid_name_last = ''
 
-    return email, password, name_first, name_last
+    return email1, email2, password, name_first, name_last, invalid_name_first, invalid_name_last
 
-#ensure that a person with valid infomation can register
-def test_register(gen_person_info):
-    ############## SET UP STATE ##############################
-    email, password, name_first, name_last = gen_person_info
-    
-    ############## ACTUAL TEST ###############################
-    #register
-    register_retval = auth.auth_register(email, password, name_first, name_last)
-    test_u_id = register_retval['u_id']
-    test_token = register_retval['token']
+# basic case
+def test_auth_register(gen_person_info):
+    email1, _, password, name_first, name_last, _, _ = gen_person_info
 
-    #assert(test_u_id == 1 and test_token == '12345')
-    users_all_retval = other.users_all(test_token)
-    users = users_all_retval['users']
-    
-    flag = False
-    for user in users:
-        if(user['u_id'] == test_u_id):
-            flag = True
-            break
-    
-    assert(flag == True)
-    ############## CLEAN UP (if necessary) ###################
-    pass
+    # register and unpack u_id and token
+    auth_dict = auth.auth_register(email1, password, name_first, name_last)
+    u_id = dictionary['u_id']
+    token = dictionary['token']
 
-#ensure that the input email is valid
-def test_invalid_email_form():
-    ############## SET UP STATE ##############################
-    invalid_email = "z1234567.unsw.edu.au"
-    password = "qwetyu"
-    name_first = "Zhihan"
-    name_last = "Qin"
+    # create user_dict
+    user_dict = {
+        'user': {
+        	'u_id': u_id,
+        	'email': email1,
+        	'name_first': name_first,
+        	'name_last': name_last,
+        	'handle_str': (name_first + name_last).lower(), # makes string all lower case
+        },
+    }
 
-    ############## ACTUAL TEST ###############################
-    if(check_email_form(invalid_email) != True):
-        with pytest.raises(InputError):
-            auth.auth_register(invalid_email, password, name_first, name_last)        
+    # check if user exists after register
+    assert user_profile(token, u_id) == user_dict
 
-    ############## CLEAN UP (if necessary) ###################
-    pass
+# check email validity
+def test_auth_register_invalid_email(gen_person_info):
+    email1, _, password, name_first, name_last, _, _ = gen_person_info
 
-#ensure that an email address cannot be registered twice
-def test_repeated_email_form(get_new_user):
-    ############## SET UP STATE ##############################
-    _, _, email, _ = get_new_user
+    email1.replace('@', '.') # string is now "z1234567.unsw.edu.au"
 
-    another_email = "z1234567@unsw.edu.au"
-    another_password = 'asdfghj'
-    another_name_first = 'Taylor'
-    another_name_last = 'Swift'
+    with pytest.raises(InputError):
+        auth.auth_register(email1, password, name_first, name_last)
 
-    ############## ACTUAL TEST ###############################  
-    if(another_email == email):
-        with pytest.raises(InputError):
-            auth.auth_register(email, another_password, another_name_first, another_name_last)
+# email address cannot be registered twice
+def test_auth_register_repeated_email(gen_person_info):
+    email1, _, password, name_first, name_last, _, _ = gen_person_info
 
-    ############## CLEAN UP (if necessary) ###################
-    pass
+    auth.auth_register(email1, password, name_first, name_last)
 
-#ensure that Password entered is less than 6 characters long
-def test_valid_Password():
-    ############## SET UP STATE ##############################
-    email = "z1234567@unsw.edu.au"
-    invalid_password = "qwety"
-    name_first = "Zhihan"
-    name_last = "Qin"
+    # try registering again
+    with pytest.raises(InputError):
+        auth.auth_register(email1, password, name_first, name_last)
 
-    ############## ACTUAL TEST ###############################  
-    if(len(invalid_password) < 6):
-        with pytest.raises(InputError):
-            auth.auth_register(email, invalid_password, name_first, name_last)
+# test case for password less than 6 char
+def test_auth_register_invalid_password(gen_person_info):
+    email1, _, password, name_first, name_last, _, _ = gen_person_info
+    password = password[:5]
 
-    ############## CLEAN UP (if necessary) ###################
-    pass
+    # password less than 6 char raises InputError
+    with pytest.raises(InputError):
+        auth.auth_register(email1, password, name_first, name_last)
 
-#ensure that name_first and name_last are both between 1 and 50 characters in length
-def test_valid_name():
-    ############## SET UP STATE ##############################
-    email = "z1234567@unsw.edu.au"
-    password = "qwetyz"
-    invalid_name_first = "zaqwertyuioplmnbvcxsdfghjklpoiuytrewqazxsdcvfgbnhjmk"
-    invalid_name_last = ""
+# ensure that name_first and name_last are both between 1 and 50 characters in length
+def test_auth_register_invalid_name(gen_person_info):
+    email1, email2, password, name_first, name_last, invalid_name_first, invalid_name_last = gen_person_info
 
-    ############## ACTUAL TEST ###############################  
-    if((len(invalid_name_first) > 50 or len(invalid_name_first)<1) \
-        and 
-        len(invalid_name_last) > 50 or len(invalid_name_last)<1):
-        with pytest.raises(InputError):
-            auth.auth_register(email, password, invalid_name_first, invalid_name_last)
+    assert len(invalid_name_first) >= 50
+    assert len(invalid_name_last)  == 0
 
-    ############## CLEAN UP (if necessary) ###################
-    pass
+    # test invalid first name only
+    with pytest.raises(InputError):
+        auth.auth_register(email1, password, invalid_name_first, name_last)
+
+    # test invalid last name only
+    with pytest.raises(InputError):
+        auth.auth_register(email2, password, name_first, invalid_name_last)

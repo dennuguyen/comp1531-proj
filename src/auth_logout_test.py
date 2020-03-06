@@ -1,18 +1,28 @@
 from auth_login_test import get_new_user
 import pytest
 import auth
+from error import *
 
-#ensure that valid users can log out sucessfully
+
+# test case valid token
 def test_logout(get_new_user):
-############## SET UP STATE ##############################
-    # valid u_id and token *we don't care about token*
-    _, token, _, _ = get_new_user
+    # register a user
+    email, password, name_first, name_last = get_new_user
+    register_retval = auth.auth_register(email, password, name_first,
+                                         name_last)
+    u_id, token = register_retval['u_id'], register_retval['token']
 
-    ############## ACTUAL TEST ###############################
-    logout_retval  = auth.auth_logout(token)
-    test_is_success = logout_retval['is_success']
-    
-    assert(test_is_success == True)
+    # log out user
+    assert auth.auth_logout(token)['is_success'] == True
 
-    ############## CLEAN UP (if necessary) ###################
-    pass
+
+# test case for invalid token
+def test_logout_invalid_token(get_new_user):
+    # register a user
+    email, password, name_first, name_last = get_new_user
+    register_retval = auth.auth_register(email, password, name_first,
+                                         name_last)
+    u_id, token = register_retval['u_id'], register_retval['token']
+
+    # log out user
+    assert auth.auth_logout(token + 'a')['is_success'] == False
