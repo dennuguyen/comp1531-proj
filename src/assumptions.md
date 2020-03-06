@@ -2,6 +2,22 @@
 
 ## auth.py
 
+### auth_login()
+- valid token is generated when receiving a registered user's email and password
+- invalid email, password or unregistered email raises InputError
+- user id and token is returned from login
+
+### auth_logout()
+
+### auth_register()
+- takes email, password, first name and last name
+- returns list of token and user id on success
+- invalid email raises InputError
+- email already registered raises InputError
+- password less than 6 char
+- name_first between 1 and 50 char
+- name_last between 1 and 50 char
+
 ## channel.py
 
 ### channel_invite()
