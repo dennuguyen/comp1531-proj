@@ -9,6 +9,8 @@
 - **multiple logins are allowed and return the same u_id but different token**
 
 ### auth_logout()
+- valid token allows successful logout
+- **logout without valid token returns False**
 
 ### auth_register()
 - takes email, password, first name and last name
@@ -18,6 +20,7 @@
 - password less than 6 char
 - name_first between 1 and 50 char
 - name_last between 1 and 50 char
+- **when user registers, automatically login**
 
 ## channel.py
 
@@ -80,7 +83,7 @@
 - invalid or no given token returns an empty list
 
 ### channels_create()
-- channel name can be empty, consist of only whitespace and be repeated
+- **channel name can be empty, consist of only whitespace and be repeated**
 - channel_id is unique
     - unique channel id allows identification of channel for back-end
 - incorrect channel names will throw InputError
