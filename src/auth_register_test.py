@@ -1,5 +1,6 @@
 import auth
 import pytest
+import other
 from error import InputError
 from auth_login_test import get_new_user, check_email_form
 

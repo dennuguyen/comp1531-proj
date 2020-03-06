@@ -4,8 +4,8 @@ import auth
 import re  # Regular Expression Module
 
 
-@pytest.fixture
-def get_new_user():
+@pytest.fixture(scope="module")
+def get_new_user():  
     # dummy data
     email = "z1234567@unsw.edu.au"
     password = "qwetyu"
