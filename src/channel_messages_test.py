@@ -1,60 +1,88 @@
 import pytest
-from channel import channel_details, channel_invite
-from error import *
-from channels import channels_create
-from auth import auth_register
+import channel
+import error
+import channels
+import auth
 
 def test_environment():
-    u_id1, token1 = auth_register('example@unsw.com', 'password', 'The', 'User')
-    u_id2, token2 = auth_register('owner@unsw.com', 'password', 'The', 'Owner')
-    u_id3, token3 = auth_register('stranger@unsw.com', 'password', 'A', 'Stranger')
-    ch_id = channels_create(token2, 'New Channel', True) # u_id2 is owner
+    u_id1, token1 = auth.auth_register('example@unsw.com', 'password', 'The', 'User')
+    u_id2, token2 = auth.auth_register('owner@unsw.com', 'password', 'The', 'Owner')
+    u_id3, token3 = auth.auth_register('stranger@unsw.com', 'password', 'A', 'Stranger')
 
-    correct_detail = {
-        'name': 'New Channel',
-        'owner_members': [
-            {
-                'u_id': u_id2,
-                'name_first': 'The',
-                'name_last': 'Owner',
-            }
-        ],
-        'all_members': [
-            {
-                'u_id': u_id1,
-                'name_first': 'The',
-                'name_last': 'User',
-            }
-        ],
-    }
-
-    return u_id1, token1, u_id2, token2, u_id3, token3, ch_id, correct_detail
+    return u_id1, token1, u_id2, token2, u_id3, token3, ch_id
 
 
 ############## COMPLETE TEST FUNCTIONS BELOW ##################
-def test_channel_messages():
+def test_channel_messages_less_than_50():
 
     # set up environment
-    u_id1, token1, u_id2, token2, u_id3, token3, ch_id, correct_detail = test_environment()
-    channel_invite(token2, ch_id, u_id1) # owner invites u_id1
+    u_id1, token1, u_id2, token2, u_id3, token3, ch_id = test_environment()
+    ch_id = channels.channels_create(token1, 'New Channel', True)
 
     # add some messages to the channel
-
     # if message length <= 50
 
+    for integer in range(1,6):
+        message = 'test message ' + f'{integer}'
+        message_send(token1, ch_id, message)
+        integer += 1
+
+    retval = channel.channel.messages(token1, ch_id, 0)
+    for msg in retval['messages']:
+        no_msg += 1
+
+    assert no_msg = 5
+    assert retval['start'] = 0
+    assert retval['end'] = -1 
+
+
+def test_channel_messages_greater_than_50():
+
+    # set up environment
+    u_id1, token1, u_id2, token2, u_id3, token3, ch_id = test_environment()
+    ch_id = channels.channels_create(token1, 'New Channel', True)
 
     # if messages length > 50
 
-    # no new messages
-    assert channel_details(token, ch_id) == -1
+    for integer in range(1,56):
+        message = 'test message ' + f'{integer}'
+        message_send(token1, ch_id, message)
+        integer += 1
 
-    # start is greater than total number of msgs
-    with pytest.raises
+    retval = channel.channel.messages(token1, ch_id, 0)
+    for msg in retval['messages']:
+        no_msg += 1
 
-    # invalid channel id
-    with pytest.raises(InputError):
-        channel_details(token1, ch_id + 1)
+    assert no_msg = 50
+    assert retval['start'] = 0
+    assert retval['end'] = 50 
 
-    # invalid user id
-    with pytest.raises(AccessError):
-        channel_details(token1 + token2, ch_id)
+def test_channel_messages_invalid_channel_id():
+
+    # set up environment
+    u_id1, token1, u_id2, token2, u_id3, token3, ch_id = test_environment()
+    ch_id = channels.channels_create(token1, 'New Channel', True)
+
+    with pytest.raises(error.InputError):
+        channel_messages(token1, ch_id+1, 0)
+
+def test_channel_messages_start_is_greater():
+
+    u_id1, token1, u_id2, token2, u_id3, token3, ch_id = test_environment()
+    ch_id = channels.channels_create(token1, 'New Channel', True)
+
+    for integer in range(1,6):
+        message = 'test message ' + f'{integer}'
+        message_send(token1, ch_id, message)
+        integer += 1
+
+    with pytest.raises(error.InputError):
+        channel.channel_messages(token1, ch_id, 10)
+
+def test_channel_messages_unauthorised_user():
+    
+    u_id1, token1, u_id2, token2, u_id3, token3, ch_id = test_environment()
+    ch_id = channels.channels_create(token1, 'New Channel', True)   
+
+    with pytest.raises(error.AccessError):
+        channel.channel_messages(token2, ch_id, 10)
