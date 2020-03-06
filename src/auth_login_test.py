@@ -3,18 +3,6 @@ import pytest
 import auth
 import re  # Regular Expression Module
 
-
-@pytest.fixture(scope="module")
-def get_new_user():  
-    # dummy data
-    email = "z1234567@unsw.edu.au"
-    password = "qwetyu"
-    name_first = "Zhihan"
-    name_last = "Qin"
-
-    return email, password, name_first, name_last
-
-
 # check if the email form is correct or not
 # def check_email_form(email):
 #     regex = '^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$'
