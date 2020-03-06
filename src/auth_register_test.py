@@ -2,9 +2,9 @@ import auth
 import pytest
 import other
 from error import InputError
-from auth_login_test import get_new_user
+from user import user_profile
 
-
+'''
 @pytest.fixture(scope='module')
 def gen_person_info():
     # dummy data
@@ -17,16 +17,16 @@ def gen_person_info():
     invalid_name_last = ''
 
     return email1, email2, password, name_first, name_last, invalid_name_first, invalid_name_last
-
+'''
 
 # basic case
 def test_auth_register(gen_person_info):
-    email1, _, password, name_first, name_last, _, _ = gen_person_info
+    email1, password, name_first, name_last, _, _ = gen_person_info
 
     # register and unpack u_id and token
     auth_dict = auth.auth_register(email1, password, name_first, name_last)
-    u_id = dictionary['u_id']
-    token = dictionary['token']
+    u_id = auth_dict['u_id']
+    token = auth_dict['token']
 
     # create user_dict
     user_dict = {
