@@ -76,7 +76,7 @@ def test_wrong_password(get_new_user):
     email, password, name_first, name_last = get_new_user
     register_retval = auth.auth_register(email, password, name_first,
                                          name_last)
-    u_id, token = register_retval['u_id'], register_retval['token']
+    token =  register_retval['token']
 
     # log user we just created out
     auth.auth_logout(token)
