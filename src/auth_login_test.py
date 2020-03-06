@@ -1,7 +1,7 @@
 from error import InputError
 import pytest
 import auth
-import re  #Regular Expression Module
+import re  # Regular Expression Module
 
 
 @pytest.fixture
@@ -48,14 +48,14 @@ def test_login_already_logged_in(get_new_user):
     email, password, name_first, name_last = get_new_user
     register_retval = auth.auth_register(email, password, name_first,
                                          name_last)
-    u_id, token = register_retval['u_id'], register_retval['token']
+    u_id1, token1 = register_retval['u_id'], register_retval['token']
 
     # logging in while logged in
     login_retval = auth.auth_login(email, password)
-    test_u_id, test_token = login_retval['u_id'], login_retval['token']
+    u_id2, token2 = login_retval['u_id'], login_retval['token']
 
-    assert u_id == test_u_id
-    assert token != test_token
+    assert u_id1 == u_id2  # user ids should be the same for each login
+    assert token1 != token2  # tokens should be different for each login
 
 
 # invalid email form during login
