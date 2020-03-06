@@ -64,8 +64,8 @@ def test_auth_register_invalid_password(gen_person_info):
 def test_auth_register_invalid_name(gen_person_info):
     email1, email2, password, name_first, name_last, invalid_name_first, invalid_name_last = gen_person_info
 
-    assert len(invalid_name_first) >= 50 or len(invalid_name_first) == 0
-    assert len(invalid_name_last) >= 50 or len(invalid_name_last) == 0
+    assert len(invalid_name_first) >= 50 
+    assert len(invalid_name_last)  == 0
 
     # test invalid first name only
     with pytest.raises(InputError):
