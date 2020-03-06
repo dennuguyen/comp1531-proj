@@ -4,21 +4,6 @@ import other
 from error import InputError
 from user import user_profile
 
-'''
-@pytest.fixture(scope='module')
-def gen_person_info():
-    # dummy data
-    email1 = 'z1234567@unsw.edu.au'
-    email2 = 'z1234567@gmail.com'
-    password = 'qwetyu231'
-    name_first = 'Zhihan'
-    name_last = 'Qin'
-    invalid_name_first = 'zaqwertyuioplmnbvcxsdfghjklpoiuytrewqazxsdcvfgbnhjmk'
-    invalid_name_last = ''
-
-    return email1, email2, password, name_first, name_last, invalid_name_first, invalid_name_last
-'''
-
 # basic case
 def test_auth_register(gen_person_info):
     email1, password, name_first, name_last, _, _ = gen_person_info
@@ -79,8 +64,8 @@ def test_auth_register_invalid_password(gen_person_info):
 def test_auth_register_invalid_name(gen_person_info):
     email1, email2, password, name_first, name_last, invalid_name_first, invalid_name_last = gen_person_info
 
-    assert len(invalid_name_first) >= 50
-    assert len(invalid_name_last) == 0
+    assert len(invalid_name_first) >= 50 or len(invalid_name_first) == 0
+    assert len(invalid_name_last) >= 50 or len(invalid_name_last) == 0
 
     # test invalid first name only
     with pytest.raises(InputError):

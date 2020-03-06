@@ -47,22 +47,24 @@ def test_login_already_logged_in(get_new_user):
 
 
 # invalid email form during login
-def test_login_invalid_email_form():
+def test_login_invalid_email_form(get_new_user):
     # register a user
     email, password, name_first, name_last = get_new_user
     register_retval = auth.auth_register(email, password, name_first,
                                          name_last)
-    u_id, token = register_retval['u_id'], register_retval['token']
+    token = register_retval['token']
+
+    auth.auth_logout(token)
 
     email.replace('@', '.')  # string is now "z1234567.unsw.edu.au"
 
     with pytest.raises(InputError):
-        auth.auth_login(invalid_email, password)
+        auth.auth_login(email, password)
 
 
 # logging in from valid but nonregistered email
-def test_non_registered_email():
-    email, password, name_first, name_last = get_new_user
+def test_non_registered_email(get_new_user):
+    email, password, _, _ = get_new_user
 
     with pytest.raises(InputError):
         auth.auth_login(email, password)

@@ -25,3 +25,5 @@ def test_logout_invalid_token(get_new_user):
 
     # log out user
     assert auth.auth_logout(token + 'a')['is_success'] == False
+    with pytest.raises(AccessError):
+        auth.auth_logout(token)
