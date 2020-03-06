@@ -6,6 +6,7 @@
 - valid token is generated when receiving a registered user's email and password
 - invalid email, password or unregistered email raises InputError
 - user id and token is returned from login
+- **multiple logins are allowed and return the same u_id but different token**
 
 ### auth_logout()
 
