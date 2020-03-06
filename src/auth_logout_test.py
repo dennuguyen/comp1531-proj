@@ -1,4 +1,3 @@
-from auth_login_test import get_new_user
 import pytest
 import auth
 from error import *
