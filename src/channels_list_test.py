@@ -1,61 +1,104 @@
 import pytest, error
-from channels import *
-from channel import channel_join
-from auth import auth_register
+import channels
+import channel
+import auth
 
-# create an example list for use in test_list() and test_listall()
+
+
 def test_environment():
 
-    # dummy information
-    token = '123'
-    channel1 = 'Channel 1'
-    channel2 = 'Channel 2'
-    channel3 = 'Channel 3'
-    channel4 = 'Channel 4'
+# Dummy information
+    token = auth.auth_register('example@unsw.edu.au', 'qwert123', 'John', 'Doe' )['token']
 
-    # create some channels
-    ch_id1 = channels_create(token, channel1, True)
-    ch_id2 = channels_create(token, channel2, True)
-    ch_id3 = channels_create(token, channel3, True)
-    ch_id4 = channels_create(token, channel4, True)
+# Create some channels
+    ch_id1 = channels.channels_create(token, 'channel 1', True)
+    ch_id2 = channels.channels_create(token, 'channel 2', True)
+    ch_id3 = channels.channels_create(token, 'channel 3', True)
+    ch_id4 = channels.channels_create(token, 'channel 4', True)
 
-    # create a list for comparison
-    example_list = {
+    return ch_id1, ch_id2, ch_id3, ch_id4, token
+
+
+def test_channels_list_creator():
+
+# Setup
+    token = test_environment()[3]
+
+    test_list = {
         'channels': [
         	{
         		'channel_id': ch_id1,
-        		'name': channel1,
+        		'name': 'channel 1',
         	},
             {
         		'channel_id': ch_id2,
-        		'name': channel2,
+        		'name': 'channel 2',
+        	},
+            {
+        		'channel_id': ch_id3,
+        		'name': 'channel 3',
         	},
             {
         		'channel_id': ch_id4,
-        		'name': channel4,
+        		'name': 'channel 4',
         	},
         ],
     }
 
-    return ch_id1, ch_id2, ch_id3, ch_id4, example_list
+# Actual test
+    assert channels.channels_list(token) == test_list
 
-# test successful channel creation
-def test_channels_list():
+def test_channels_list_member():
 
-    ch_id1, ch_id2, ch_id3, ch_id4, example_list = test_environment()
+# Setup
+    ch_id1 = test_environment()[0]
+    ch_id2 = test_environment()[1]
+    ch_id4 = test_environment()[3]
 
-    # create a user and give user some channel memberships
-    u_id, token = auth_register('example@unsw.com', 'password', 'John', 'Doe')
-    channel_join(token, ch_id1)
-    channel_join(token, ch_id2)
-    channel_join(token, ch_id4)
+    token = auth.auth_register('example2@unsw.com', 'password', 'Jaden', 'Smith')['token']
+    channel.channel_join(token, ch_id1)
+    channel.channel_join(token, ch_id2)
+    channel.channel_join(token, ch_id4)
 
-    # valid token
-    assert channels_list(token) == example_list
+    test_list = {
+        'channels': [
+        	{
+        		'channel_id': ch_id1,
+        		'name': 'channel 1',
+        	},
+            {
+        		'channel_id': ch_id2,
+        		'name': 'channel 2',
+        	},
+            {
+        		'channel_id': ch_id4,
+        		'name': 'channel 4',
+        	},
+        ],
+    }
 
-    # no given token
-    assert channels_list('') == {}
+# Actual test
+    assert channels.channels_list(token) == test_list
 
-    # invalid token
-    invalid_token = token + 1
-    assert channels_list(invalid_token) == {}
+def test_channels_invalid_token():
+
+# Setup
+    token = test_environment()[3]
+
+# Actual test
+    assert channels.channels_list('') == {}
+
+    invalid_token = token + 'a'
+    assert channels.channels_list(invalid_token) == {}
+
+def test_channels_list_empty():
+
+#Setup  
+    token = auth.auth_register('example@unsw.com', 'password', 'Jaden', 'Smith')['token']
+    
+#Actual test
+    assert channels.channels_list(token) == {}
+
+
+
+
