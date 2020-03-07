@@ -44,7 +44,7 @@ def test_single_user_one_channel_no_message():
     # Create test channel 1
     channel_name = 'Test Channel1'    
     is_public = True
-    channel_id = channels.channels_create(token, channel_name, True)
+    channel_id = channels.channels_create(token1, channel_name, True)
     # Test there is no match here
     assert other.search(token1, "no match") == {'messages' : []}
 
@@ -56,7 +56,7 @@ def test_single_user_one_channel_message_no_match():
     # Create test channel 1
     channel_name = 'Test Channel1'    
     is_public = True
-    channel_id = channels.channels_create(token, channel_name, True)
+    channel_id = channels.channels_create(token1, channel_name, True)
 
     sentence = 'The quick brown fox jumps over the lazy dog'
     # Send message
@@ -72,7 +72,7 @@ def test_single_user_one_channel_message_match():
     # Create test channel 1
     channel_name = 'Test Channel1'    
     is_public = True
-    channel_id = channels.channels_create(token, channel_name, True)
+    channel_id = channels.channels_create(token1, channel_name, True)
 
     sentence = 'The quick brown fox jumps over the lazy dog'
     # Send message
@@ -89,7 +89,7 @@ def test_single_user_channel_one_match():
     # Create test channel 1
     channel_name = 'Test Channel1'    
     is_public = True
-    channel_id = channels.channels_create(token, channel_name, True)
+    channel_id = channels.channels_create(token1, channel_name, True)
 
     sentence1 = 'The quick brown fox jumps over the lazy dog'
     # Send message
@@ -110,7 +110,7 @@ def test_single_user_channel_two_match():
     # Create test channel 1
     channel_name = 'Test Channel1'    
     is_public = True
-    channel_id = channels.channels_create(token, channel_name, True)
+    channel_id = channels.channels_create(token1, channel_name, True)
 
     sentence1 = 'The quick brown fox jumps over the lazy dog'
     # Send message
@@ -132,12 +132,12 @@ def test_single_user_channels_no_match():
     # Create test channel 1
     channel_name = 'Test Channel1'    
     is_public = True
-    channel_id1 = channels.channels_create(token, channel_name, True)
+    channel_id1 = channels.channels_create(token1, channel_name, True)
 
     # Create test channel 2
     channel_name = 'Test Channe2'    
     is_public = True
-    channel_id2 = channels.channels_create(token, channel_name, True)
+    channel_id2 = channels.channels_create(token1, channel_name, True)
 
     sentence1 = 'The quick brown fox jumps over the lazy dog'
     # Send message
@@ -151,19 +151,19 @@ def test_single_user_channels_no_match():
     assert other.search(token1, "no match") == {'messages' : []}
 
     # Test a single user who has created two channels, one match.
-def test_single_user_channels_no_match():
+def test_single_user_channels_one_match():
     # Register person one
     person_one, token1 = create_person_one()
     
     # Create test channel 1
     channel_name = 'Test Channel1'    
     is_public = True
-    channel_id1 = channels.channels_create(token, channel_name, True)
+    channel_id1 = channels.channels_create(token1, channel_name, True)
 
     # Create test channel 2
     channel_name = 'Test Channe2'    
     is_public = True
-    channel_id2 = channels.channels_create(token, channel_name, True)
+    channel_id2 = channels.channels_create(token1, channel_name, True)
 
     sentence1 = 'The quick brown fox jumps over the lazy dog'
     # Send message
@@ -177,19 +177,19 @@ def test_single_user_channels_no_match():
     assert other.search(token1, sentence1) == {'messages' : [stored_message1]}
 
     # Test a single user who has created two channels, two match.
-def test_single_user_channels_no_match():
+def test_single_user_channels_two_match():
     # Register person one
     person_one, token1 = create_person_one()
     
     # Create test channel 1
     channel_name = 'Test Channel1'    
     is_public = True
-    channel_id1 = channels.channels_create(token, channel_name, True)
+    channel_id1 = channels.channels_create(token1, channel_name, True)
 
     # Create test channel 2
     channel_name = 'Test Channe2'    
     is_public = True
-    channel_id2 = channels.channels_create(token, channel_name, True)
+    channel_id2 = channels.channels_create(token1, channel_name, True)
 
     sentence1 = 'The quick brown fox jumps over the lazy dog'
     # Send message
@@ -201,3 +201,55 @@ def test_single_user_channels_no_match():
     
     # Assert no matches
     assert set(other.search(token1, sentence1)['messages']) == set(stored_message1, stored_message2)
+
+
+# Now we will test multiple people. 
+
+    # Test two people who joined a channel (owner is person1), one message sent by person2 and matches person1's query
+def test_users_channel_match():
+    # Register person one
+    person_one, token1 = create_person_one()
+
+    # Register person two
+    person_two, token2 = create_person_two()
+
+    # Create test channel 1
+    channel_name = 'Test Channel1'    
+    is_public = True
+    channel_id1 = channels.channels_create(token1, channel_name, True)
+
+    # Add person 2 to channel 1
+    channels.channel_join(token2, channel_id1)
+
+    # Send message by person 2
+    sentence1 = 'The quick brown fox jumps over the lazy dog'
+    stored_message1 = message.message_send(token2, channel_id1, sentence1)
+
+    # Ensure when person 1 searches, we get a match
+    assert other.search(token1, sentence1) == {'messages' : [stored_message1]}
+
+    # Test two people who make two different channels, one message sent by person2 and matches person1's query.
+    # There should be no match since this is different channels.
+def test_users_channels_match():
+    # Register person one
+    person_one, token1 = create_person_one()
+
+    # Register person two
+    person_two, token2 = create_person_two()
+
+    # Create test channel 1 with person 1
+    channel_name1 = 'Test Channel1'    
+    is_public = True
+    channel_id1 = channels.channels_create(token1, channel_name1, True)
+
+    # Create test channel 2 with person 2
+    channel_name2 = 'Test Channel2'    
+    is_public = True
+    channel_id2 = channels.channels_create(token2, channel_name2, True)
+
+    # Send message with person 2 to channel 2
+    sentence1 = 'The quick brown fox jumps over the lazy dog'
+    stored_message1 = message.message_send(token2, channel_id2, sentence1)
+
+    # Assert person 1 has no search involving this sentence. Even if we search this query
+    assert other.search(token1, sentence1) == {'messages' : []}
