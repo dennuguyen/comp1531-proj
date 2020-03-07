@@ -2,7 +2,7 @@ import pytest
 import channels
 import auth
 
-# for auth_login_test.py & auth_logout_test.py
+@pytest.fixture(scope="session")
 def get_new_user():
     email = "z1234567@unsw.edu.au"
     password = "qwetyu"
@@ -11,10 +11,9 @@ def get_new_user():
 
     return email, password, name_first, name_last
 
-# for auth_register_test.py
 @pytest.fixture(scope="session")
-def gen_person_info():
-    email1, password, name_first, name_last= get_new_user()
+def gen_person_info(get_new_user):
+    email1, password, name_first, name_last= get_new_user
 
     email2 = 'z1234567@gmail.com'
     invalid_name_first = 'zaqwertyuioplmnbvcxsdfghjklpoiuytrewqazxsdcvfgbnhjmk'
@@ -22,7 +21,6 @@ def gen_person_info():
 
     return email1, email2, password, name_first, name_last, invalid_name_first, invalid_name_last
 
-# for channel test
 @pytest.fixture(scope="session")
 def get_new_user_1():
     email = "owner@unsw.com"
@@ -31,7 +29,6 @@ def get_new_user_1():
     name_last = "Owner"
     return auth.auth_register(email, password, name_first, name_last)
 
-# for channel test
 @pytest.fixture(scope="session")
 def get_new_user_2():
     email = "stranger@unsw.com"
@@ -39,4 +36,21 @@ def get_new_user_2():
     name_first = "A"
     name_last = "Stranger"
     return auth.auth_register(email, password, name_first, name_last)
+
+@pytest.fixture(scope="session")
+def get_new_user_3():
+    email = "example@unsw.com"
+    password = "password"
+    name_first = "The"
+    name_last = "User"
+    return auth.auth_register(email, password, name_first, name_last)
+
+@pytest.fixture(scope="session")
+def get_new_user_4():
+    email = "strangerzzz@unsw.com"
+    password = "password"
+    name_first = "Two"
+    name_last = "Strangerzzz"
+    return auth.auth_register(email, password, name_first, name_last)
+
 
