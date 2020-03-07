@@ -3,17 +3,6 @@ import pytest
 import auth
 import re  # Regular Expression Module
 
-# check if the email form is correct or not
-# def check_email_form(email):
-#     regex = '^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$'
-#     # pass the regualar expression
-#     # and the string in search() method
-#     if (re.search(regex, email)):
-#         return True
-#     else:
-#         return False
-
-
 def test_login(get_new_user):
     # register a user
     email, password, name_first, name_last = get_new_user
