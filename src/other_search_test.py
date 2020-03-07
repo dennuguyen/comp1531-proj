@@ -34,5 +34,17 @@ def test_single_user_no_channel():
     # Register person one
     person_one, token1 = create_person_one()
     # This should return a dictionary with an empty list under the 'messages' key.
-    assert other.search(token1, "test") == {'messages' : []}
+    assert other.search(token1, "no match") == {'messages' : []}
+
+# Test a single user who has joined a channel with no messages in it should return the same as above.
+def test_single_user_one_channel_no_message():
+    # Register person one
+    person_one, token1 = create_person_one()
+    
+    # Create test channel 1
+    channel_name = 'Test Channel1'    
+    is_public = True
+    channel_id = channels.channels_create(token, channel_name, True)
+    # Test there is no match here
+    assert other.search(token1, "no match") == {'messages' : []}
 
