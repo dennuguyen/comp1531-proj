@@ -62,5 +62,7 @@
 ## other.py
 - users_all doesn't return a list of users like the documentation. Rather, returns a dictionary with key value 'users' which contains a list of users like the skeleton function. 
 
+- search returns a dictionary with key value 'messages' which contains a list of messages datatype. 
+
 
 ## user.py
