@@ -4,10 +4,12 @@ from error import *
 from channels import channels_create
 from auth import auth_register
 
-def test_environment():
-    u_id1, token1 = auth_register('example@unsw.com', 'password', 'The', 'User')
-    u_id2, token2 = auth_register('owner@unsw.com', 'password', 'The', 'Owner')
-    u_id3, token3 = auth_register('stranger@unsw.com', 'password', 'A', 'Stranger')
+@pytest.fixture(scope="module")
+def test_environment(get_new_user_1, get_new_user_2, get_new_user_3):
+
+    u_id1, token1 = get_new_user_3
+    u_id2, token2 = get_new_user_1
+    u_id3, token3 = get_new_user_2
     ch_id = channels_create(token2, 'New Channel', True) # u_id2 is owner
 
     correct_detail = {
@@ -30,10 +32,10 @@ def test_environment():
 
     return u_id1, token1, u_id2, token2, u_id3, token3, ch_id, correct_detail
 
-def test_channel_details():
+def test_channel_details(test_environment):
 
     # set up environment
-    u_id1, token1, u_id2, token2, u_id3, token3, ch_id, correct_detail = test_environment()
+    u_id1, token1, _, token2, _, token3, ch_id, correct_detail = test_environment
     channel_invite(token2, ch_id, u_id1) # owner invites u_id1
 
     # call detail() as authorised user and owner
