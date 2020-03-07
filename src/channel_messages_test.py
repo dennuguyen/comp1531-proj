@@ -65,10 +65,10 @@ def test_channel_messages_start_is_greater(get_new_user_1):
     _, token1 = get_new_user_1
     ch_id = channels.channels_create(token1, 'New Channel', True)
 
-    for integer in range(1,6):
-        msg = 'test message ' + f'{integer}'
+    for i in range(5):
+        msg = 'test message ' + str(i+1)
         message.message_send(token1, ch_id, msg)
-        integer += 1
+        i += 1
 
     with pytest.raises(error.InputError):
         channel.channel_messages(token1, ch_id, 10)
