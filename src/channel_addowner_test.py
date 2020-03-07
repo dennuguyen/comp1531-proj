@@ -17,7 +17,7 @@ def test_channel_addowner_add_member(test_environment):
 
     # set up environment
     u_id1, token1, u_id2, token2 = test_environment
-    ch_id = channels.channels_create(token1, 'New Channel', True)
+    ch_id = channels.channels_create(token1, 'New Channel', True)['channel_id']
     channel.channel_join(token2, ch_id)
 
     # owner adds an owner
@@ -55,7 +55,7 @@ def test_channel_addowner_add_already_owner(test_environment):
     
     # set up environment
     u_id1, token1, u_id2, token2 = test_environment
-    ch_id = channels.channels_create(token1, 'New Channel', True)
+    ch_id = channels.channels_create(token1, 'New Channel', True)['channel_id']
     channel.channel_join(token2, ch_id)
     channel.channel_addowner(token1, ch_id, u_id2)
 
@@ -64,13 +64,12 @@ def test_channel_addowner_add_already_owner(test_environment):
         channel.channel_addowner(token1, ch_id, u_id2)
 
 
-
 # test case where owner promotes stranger to owner
 def test_channel_addowner_add_stranger(test_environment):
 
     # set up environment
     u_id1, token1, u_id2, token2 = test_environment
-    ch_id = channels.channels_create(token1, 'New Channel', True)
+    ch_id = channels.channels_create(token1, 'New Channel', True)['channel_id']
 
     # owner promotes a stranger
     assert channel.channel_addowner(token1, ch_id, u_id2) == {}
@@ -92,14 +91,13 @@ def test_channel_addowner_add_stranger(test_environment):
         ],
     }               
 
-
 # test case where member promotes member to owner
-def test_channel_addowner_unauthorised_member(test_environment, get_user_3):
+def test_channel_addowner_unauthorised_member(test_environment, get_new_user_3):
 
     # set up environment
     u_id1, token1, u_id2, token2 = test_environment
-    u_id3, token3 = get_user_3
-    ch_id = channels.channels_create(token1, 'New Channel', True)
+    u_id3, token3 = get_new_user_3
+    ch_id = channels.channels_create(token1, 'New Channel', True)['channel_id']
     channel.channel_join(token2, ch_id)
 
     # member promotes member
@@ -112,7 +110,7 @@ def test_channel_addowner_unauthorised_nonmember(test_environment, get_new_user_
     # set up environment
     u_id1, token1, u_id2, token2 = test_environment
     u_id3, token3 = get_new_user_3
-    ch_id = channels.channels_create(token1, 'New Channel', True)
+    ch_id = channels.channels_create(token1, 'New Channel', True)['channel_id']
 
     # stranger promotes member
     with pytest.raises(error.AccessError):
@@ -123,18 +121,17 @@ def test_channel_addowner_invalid_channel_id(test_environment):
 
     # set up environment
     u_id1, token1, u_id2, token2 = test_environment
-    ch_id = channels.channels_create(token1, 'New Channel', True)
+    ch_id = channels.channels_create(token1, 'New Channel', True)['channel_id']
 
     # invalid user id
     with pytest.raises(error.InputError):
         channel.channel_addowner(token1, ch_id, u_id1 + 1)
 
-
 def test_channel_addowner_invalid_u_id(test_environment):
 
     # set up environment
     u_id1, token1, u_id2, token2 = test_environment
-    ch_id = channels.channels_create(token1, 'New Channel', True)
+    ch_id = channels.channels_create(token1, 'New Channel', True)['channel_id']
 
     # invalid channel id
 
