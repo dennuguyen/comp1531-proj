@@ -23,6 +23,11 @@ def test_environment(get_new_user_1, get_new_user_2, get_new_user_3):
         ],
         'all_members': [
             {
+                'u_id': u_id2,
+                'name_first': 'The',
+                'name_last': 'Owner',
+            },
+            {
                 'u_id': u_id1,
                 'name_first': 'The',
                 'name_last': 'User',
