@@ -3,14 +3,13 @@ import pytest
 import auth
 import re  # Regular Expression Module
 
-def test_login(get_new_user):
-    # register a user
-    email, password, name_first, name_last = get_new_user
-    register_retval = auth.auth_register(email, password, name_first,
-                                         name_last)
-    u_id, token = register_retval['u_id'], register_retval['token']
+def test_login(get_new_user_1, get_new_user_detail_1):
+    # Register a user
 
-    # log user we just created out
+    email, password, name_first, name_last = get_new_user_detail_1
+    u_id, token = get_new_user_1
+
+    # Log user we just created out
     auth.auth_logout(token)
 
     login_retval = auth.auth_login(email, password)
@@ -19,57 +18,51 @@ def test_login(get_new_user):
     assert u_id == test_u_id
 
 
-# multiple logins are allowed
-def test_login_already_logged_in(get_new_user):
-    # register a user
-    email, password, name_first, name_last = get_new_user
-    register_retval = auth.auth_register(email, password, name_first,
-                                         name_last)
-    u_id1, token1 = register_retval['u_id'], register_retval['token']
+# Multiple logins are allowed
+def test_login_already_logged_in(get_new_user_1, get_new_user_detail_1):
+    # Register a user
+    email, password, name_first, name_last = get_new_user_detail_1
+    u_id, token = get_new_user_1
 
-    # logging in while logged in
+    # Logging in while logged in
     login_retval = auth.auth_login(email, password)
     u_id2, token2 = login_retval['u_id'], login_retval['token']
 
-    assert u_id1 == u_id2  # user ids should be the same for each login
-    assert token1 != token2  # tokens should be different for each login
+    assert u_id == u_id2  # User ids should be the same for each login
+    assert token != token2  # Tokens should be different for each login
 
 
-# invalid email form during login
-def test_login_invalid_email_form(get_new_user):
-    # register a user
-    email, password, name_first, name_last = get_new_user
-    register_retval = auth.auth_register(email, password, name_first,
-                                         name_last)
-    token = register_retval['token']
+# Invalid email form during login
+def test_login_invalid_email_form(get_new_user_1, get_new_user_detail_1):
+    # Register a user
+    email, password, name_first, name_last = get_new_user_detail_1
+    u_id, token = get_new_user_1
 
     auth.auth_logout(token)
 
-    email.replace('@', '.')  # string is now "z1234567.unsw.edu.au"
+    email.replace('@', '.')  # String is now "z1234567.unsw.edu.au"
 
     with pytest.raises(InputError):
         auth.auth_login(email, password)
 
 
-# logging in from valid but nonregistered email
-def test_non_registered_email(get_new_user):
-    email, password, _, _ = get_new_user
+# Logging in from valid but nonregistered email
+def test_non_registered_email(get_new_user_detail_1):
+    email, password, _, _ = get_new_user_detail_1
 
     with pytest.raises(InputError):
         auth.auth_login(email, password)
 
 
-# incorrect password
-def test_wrong_password(get_new_user):
-    # register a user
-    email, password, name_first, name_last = get_new_user
-    register_retval = auth.auth_register(email, password, name_first,
-                                         name_last)
-    token =  register_retval['token']
+# Incorrect password
+def test_wrong_password(get_new_user_1, get_new_user_detail_1):
+    # Register a user
+    email, password, name_first, name_last = get_new_user_detail_1
+    u_id, token = get_new_user_1
 
-    # log user we just created out
+    # Log user we just created out
     auth.auth_logout(token)
 
-    incorrect_password = password + password  # double the password
+    incorrect_password = password + password  # Double the password
     with pytest.raises(InputError):
         auth.auth_login(email, incorrect_password)

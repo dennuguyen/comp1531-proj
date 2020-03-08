@@ -56,18 +56,7 @@ def get_new_user_detail_4():
     return email, password, name_first, name_last
 
 
-@pytest.fixture(scope="session")
-def gen_person_info(get_new_user):
-    email1, password, name_first, name_last = get_new_user
 
-    email2 = 'z1234567@gmail.com'
-    invalid_name_first = 'zaqwertyuioplmnbvcxsdfghjklpoiuytrewqazxsdcvfgbnhjmk'
-    invalid_name_last = ''
-
-    invalid_name_first2 = ''
-    invalid_name_last2 = 'zaqwertyuioplmnbvcxsdfghjklpoiuytrewqazxsdcvfgbnhjmk'
-
-    return email1, email2, password, name_first, name_last, invalid_name_first, invalid_name_last
 
 
 # for channels.py generating users who have already registered
@@ -109,3 +98,4 @@ def get_new_user_4(get_new_user_detail_4):
     retval = auth.auth_register(email, password, name_first, name_last)
 
     return retval['u_id'], retval['token']
+

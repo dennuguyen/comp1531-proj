@@ -2,76 +2,101 @@ import auth
 import pytest
 import other
 from error import InputError
-from user import user_profile
+import user
 
-# basic case
-def test_auth_register(gen_person_info):
-    email1, password, name_first, name_last, _, _, _= gen_person_info
+# Basic case
+def test_auth_register(get_new_user_1, get_new_user_detail_1):
+    email, password, name_first, name_last = get_new_user_detail_1
+    u_id, token = get_new_user_1
 
-    # register and unpack u_id and token
-    auth_dict = auth.auth_register(email1, password, name_first, name_last)
-    u_id = auth_dict['u_id']
-    token = auth_dict['token']
+    # Register and unpack u_id and token
+    u_id, token = auth.auth_register(email, password, name_first, name_last)
 
-    # create user_dict
+    # Create user_dict
     user_dict = {
         'user': {
             'u_id': u_id,
-            'email': email1,
+            'email': email,
             'name_first': name_first,
             'name_last': name_last,
             'handle_str':
-            (name_first[0] + name_last).lower(),  # makes string all lower case
+            (name_first + name_last).lower(),  # makes string all lower case
         },
     }
 
-    # check if user exists after register
-    assert user_profile(token, u_id) == user_dict
+    # Check if user exists after register
+    assert user.user_profile(token, u_id) == user_dict
     assert user_dict in other.users_all(token)['users']
 
 
-# check email validity
-def test_auth_register_invalid_email(gen_person_info):
-    email1, _, password, name_first, name_last, _, _ = gen_person_info
+# Check email validity
+def test_auth_register_invalid_email(get_new_user_detail_1):
+    email, password, name_first, name_last = get_new_user_detail_1
 
-    email1.replace('@', '.')  # string is now "z1234567.unsw.edu.au"
+    email.replace('@', '.')  # string is now "z1234567.unsw.edu.au"
 
     with pytest.raises(InputError):
-        auth.auth_register(email1, password, name_first, name_last)
+        auth.auth_register(email, password, name_first, name_last)
 
 
-# email address cannot be registered twice
-def test_auth_register_repeated_email(gen_person_info):
-    email1, _, password, name_first, name_last, _, _ = gen_person_info
+# Email address cannot be registered twice
+def test_auth_register_repeated_email(get_new_user_1, get_new_user_detail_1, get_new_user_detail_2):
+    email, password, name_first, name_last = get_new_user_detail_1
+    u_id, token = get_new_user_1
 
-    auth.auth_register(email1, password, name_first, name_last)
+    email2, password2, name_first2, name_last2 = get_new_user_detail_2
 
-    # try registering again
+    # Try registering again
     with pytest.raises(InputError):
-        auth.auth_register(email1, password, name_first, name_last)
+        auth.auth_register(email, password2, name_first2, name_last2)
 
 
-# test case for password less than 6 char
-def test_auth_register_invalid_password(gen_person_info):
-    email1, _, password, name_first, name_last, _, _ = gen_person_info
-    password = password[:5]
+# Test case for password less than 6 char
+def test_auth_register_invalid_password(get_new_user_1, get_new_user_detail_1):
+    email, password, name_first, name_last = get_new_user_detail_1
+    u_id, token = get_new_user_1
 
-    # password less than 6 char raises InputError
+    invalid_password = password[:5]
+
+    # Password less than 6 char raises InputError
     with pytest.raises(InputError):
-        auth.auth_register(email1, password, name_first, name_last)
+        auth.auth_register(email, invalid_password, name_first, name_last)
 
 
-# ensure that name_first and name_last are both between 1 and 50 characters in length
-def test_auth_register_invalid_name(gen_person_info):
-    email1, email2, password, name_first, name_last, invalid_name_first, invalid_name_last = gen_person_info
+# Ensure that name_first and name_last are both between 1 and 50 characters in length
+def test_auth_register_invalid_name(get_new_user_detail_1):
+    email, password, name_first, name_last = get_new_user_detail_1
 
-    assert len(invalid_name_first) >= 50 
-    assert len(invalid_name_last)  == 0
 
-    # test invalid first name only
+    invalid_name_long = 'T'*51
+    invalid_name_empty = ''
+
+    # Test invalid first name only
     with pytest.raises(InputError):
-        auth.auth_register(email1, password, invalid_name_first, name_last)
+        auth.auth_register(email, password, invalid_name_long, name_last)
 
-    # test invalid last name only
     with pytest.raises(InputError):
-        auth.auth_register(email2, password, name_first, invalid_name_last)
+        auth.auth_register(email, password, invalid_name_empty, name_last)
+
+    # Test invalid last name only
+    with pytest.raises(InputError):
+        auth.auth_register(email, password, name_first, invalid_name_long)
+
+    with pytest.raises(InputError):
+        auth.auth_register(email, password, name_first, invalid_name_empty)
+
+    # Test invalid first name and last name
+
+    with pytest.raises(InputError):
+        auth.auth_register(email, password, name_long, invalid_name_empty)
+
+    with pytest.raises(InputError):
+        auth.auth_register(email, password, name_empty, invalid_name_long)
+
+    with pytest.raises(InputError):
+        auth.auth_register(email, password, name_long, invalid_name_long)
+
+    with pytest.raises(InputError):
+        auth.auth_register(email, password, name_empty, invalid_name_empty)        
+
+    
