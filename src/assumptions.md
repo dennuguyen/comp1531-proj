@@ -26,7 +26,7 @@
 
 ### channel_invite()
 - user immmediately becomes channel member after being invited
-- invite() returns empty list on success
+- **returns empty list on success**
 - if inviter is not a member of channel then raise AccessError
 - if user or channel does not exist then raise InputError
 - token belongs to the inviter, user id belongs to the invitee
@@ -46,23 +46,23 @@
 
 ### channel_leave()
 - takes in token of user wanting to leave and the channel being left
-- returns empty list on success
+- **returns empty dictionary on success**
 - if channel id is not valid then raise InputError
 - if user id is not valid then raise AccessError
 
 - **if user is last member of channel then user is owner and cannot leave the channel. Trying to do so will raise InputError**
 
 ### channel_join()
-- returns empty list on success
+- **returns empty dictionary on success**
 - if user tries to join private channel then raise AccessError
 - if channel id is not valid then raise InputError
 - if member of channel tries to rejoin channel then join() succeeds
 
 ### channel_addowner()
-- **return empty list on success**
+- **return empty dictionary on success**
 
 ### channel_removeowner()
-- return empty list on success
+- **return empty dictionary on success**
 - if user to be removed is not an owner then raise InputError
 - if channel id is not valid then raise InputError
 - when the user who is removing is not authorised then raise AccessError
@@ -72,12 +72,10 @@
 ### channels_list()
 - returns a list of channels and their details
 - shows channels user is part of
-- invalid or no given token returns an empty list
 
 ### channels_listall()
 - returns a list of channels and their details
 - shows all channels regardless of membership
-- invalid or no given token returns an empty list
 
 ### channels_create()
 - **channel name can be repeated**
@@ -93,8 +91,13 @@
 
 ## message.py
 
+### message_send()
+- 
+
 ### message_remove()
-- if message no longer exists and is to be removed then throw InputError
+- if message no longer exists and is to be removed then raise InputError
+- only owner and user who sent message can remove message else raise AccessError
+- **returns empty dictionary on success**
 
 ## other.py
 - users_all doesn't return a list of users like the documentation. Rather, returns a dictionary with key value 'users' which contains a list of users like the skeleton function. 
