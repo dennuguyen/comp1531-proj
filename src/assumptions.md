@@ -11,14 +11,14 @@
 
 ### auth_register()
 - when user registers, automatically login
-- if user handle is alraedy taken on register then suffix a number
+- if user handle is already taken on register then concatenate a number
 
 ## channel.py
 
 ### channel_invite()
 - user immmediately becomes channel member after being invited
 - returns empty list on success
-- self-invitation does nothing
+- self-invitation if already a member does nothing as this can be a useful feature to find a particular channel
 
 ### channel_details()
 - all_members key will include list of channel members including owners
@@ -27,21 +27,24 @@
 
 ### channel_leave()
 - returns empty dictionary on success
-
-- if user is last member of channel then user is owner and cannot leave the channel. Trying to do so will raise InputError
+- sole owner cannot leave the channel or will raise InputError
+- leaving a public channel has the same environment as leaving a private channel
 
 ### channel_join()
 - returns empty dictionary on success
-- if member of channel tries to rejoin channel then do nothing
+- if member of channel tries to rejoin channel then raise InputError
+- if slackr owner joins a channel then they are automatically promoted to channel owner
 
 ### channel_addowner()
 - return empty dictionary on success
-- only members of the channel can be given owner permissions by an owner
+- only members of the channel can be given owner permissions by an owner of that channel
 - giving an owner owner permissions will raise InputError
+- giving a stranger owner permissions will raise InputError
 
 ### channel_removeowner()
 - return empty dictionary on success
-- there must always be at least 1 owner in any channel
+- channel and slackr owner can remove other owner permissions except for the slackr owner
+- must always be at least 1 owner in any channel
 
 ## channels.py
 

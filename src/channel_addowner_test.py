@@ -2,154 +2,206 @@ import pytest
 import channel
 import error
 import channels
-import auth
 
-
-@pytest.fixture(scope="module")
-def test_environment(get_new_user_1, get_new_user_2):
-    u_id1, token1 = get_new_user_1
-    u_id2, token2 = get_new_user_2
-
-    return u_id1, token1, u_id2, token2
 
 # test case where owner promotes a member to owner
-def test_channel_addowner_add_member(test_environment):
+def test_channel_addowner_promote_member(get_new_user_1, get_new_user_detail_1,
+                                         get_new_user_2, get_new_user_detail_2,
+                                         get_channel_name_1):
 
-    # set up environment
-    u_id1, token1, u_id2, token2 = test_environment
-    ch_id = channels.channels_create(token1, 'New Channel', True)['channel_id']
+    # get user 1
+    u_id1, token1 = get_new_user_1
+    _, _, name_first1, name_last1 = get_new_user_detail_1
+
+    # get user 2
+    u_id2, token2 = get_new_user_2
+    _, _, name_first2, name_last2 = get_new_user_detail_2
+
+    # user 1 creates a channel
+    ch_name = get_channel_name_1
+    ch_id = channels.channels_create(token1, ch_name, True)['channel_id']
+
+    # user 2 joins channel
     channel.channel_join(token2, ch_id)
 
     # owner adds an owner
     assert channel.channel_addowner(token1, ch_id, u_id2) == {}
+
+    # user 2 joins channel
+    channel.channel_join(token2, ch_id)
+
+    # user 1 gives user 2 owner permissions
+    assert channel.channel_addowner(token1, ch_id, u_id2) == {}
     assert channel.channel_details(token1, ch_id) == {
-        'name': 'New Channel',
+        'name':
+        ch_name,
         'owner_members': [
             {
                 'u_id': u_id1,
-                'name_first': 'The',
-                'name_last': 'Owner',
+                'name_first': name_first1,
+                'name_last': name_last1,
             },
             {
                 'u_id': u_id2,
-                'name_first': 'A',
-                'name_last': 'Stranger',
-            }
+                'name_first': name_first2,
+                'name_last': name_last2,
+            },
         ],
         'all_members': [
             {
                 'u_id': u_id1,
-                'name_first': 'The',
-                'name_last': 'Owner',
+                'name_first': name_first1,
+                'name_last': name_last1,
             },
             {
                 'u_id': u_id2,
-                'name_first': 'A',
-                'name_last': 'Stranger',
-            }
+                'name_first': name_first2,
+                'name_last': name_last2,
+            },
         ],
     }
 
-# test case where owner promotes owner to owner
-def test_channel_addowner_add_already_owner(test_environment):
-    
-    # set up environment
-    u_id1, token1, u_id2, token2 = test_environment
-    ch_id = channels.channels_create(token1, 'New Channel', True)['channel_id']
-    channel.channel_join(token2, ch_id)
-    channel.channel_addowner(token1, ch_id, u_id2)
 
-    # owner promotes someone
+# test case where owner promotes owner to owner
+def test_channel_addowner_promote_owner(get_new_user_1, get_new_user_2,
+                                        get_channel_name_1):
+
+    # get user 1
+    _, token1 = get_new_user_1
+
+    # get user 2
+    u_id2, token2 = get_new_user_2
+
+    # user 1 creates a channel
+    ch_name = get_channel_name_1
+    ch_id = channels.channels_create(token1, ch_name, True)['channel_id']
+
+    # user 2 joins channel
+    channel.channel_join(token2, ch_id)
+
+    # user 1 gives user 2 owner permissions
+    assert channel.channel_addowner(token1, ch_id, u_id2) == {}
+
+    # user 1 gives user 2 owner permissions again
     with pytest.raises(error.InputError):
         channel.channel_addowner(token1, ch_id, u_id2)
 
 
 # test case where owner promotes stranger to owner
-def test_channel_addowner_add_stranger(test_environment):
+def test_channel_addowner_promote_stranger(get_new_user_1, get_new_user_2,
+                                           get_channel_name_1):
 
-    # set up environment
-    u_id1, token1, u_id2, token2 = test_environment
-    ch_id = channels.channels_create(token1, 'New Channel', True)['channel_id']
+    # get user 1
+    _, token1 = get_new_user_1
+
+    # get user 2
+    u_id2, _ = get_new_user_2
+
+    # user 1 creates a channel
+    ch_name = get_channel_name_1
+    ch_id = channels.channels_create(token1, ch_name, True)['channel_id']
 
     # owner promotes a stranger
-    assert channel.channel_addowner(token1, ch_id, u_id2) == {}
-    assert channel.channel_details(token1, ch_id) == {
-            'name': 'New Channel',
-        'owner_members': [
-            {
-                'u_id': u_id1,
-                'name_first': 'The',
-                'name_last': 'Owner',
-            },
-        ],
-        'all_members': [
-            {
-                'u_id': u_id1,
-                'name_first': 'The',
-                'name_last': 'Owner',
-            },
-        ],
-    }               
+    with pytest.raises(error.InputError):
+        channel.channel_addowner(token1, ch_id, u_id2)
+
 
 # test case where member promotes member to owner
-def test_channel_addowner_unauthorised_member(test_environment, get_new_user_3):
+def test_channel_addowner_unauthorised_member(get_new_user_1, get_new_user_2,
+                                              get_new_user_3,
+                                              get_channel_name_1):
 
-    # set up environment
-    u_id1, token1, u_id2, token2 = test_environment
-    u_id3, token3 = get_new_user_3
-    ch_id = channels.channels_create(token1, 'New Channel', True)['channel_id']
+    # get user 1
+    _, token1 = get_new_user_1
+
+    # get user 2
+    u_id2, token2 = get_new_user_2
+
+    # get user 3
+    u_id2, token3 = get_new_user_3
+
+    # user 1 creates a channel
+    ch_name = get_channel_name_1
+    ch_id = channels.channels_create(token1, ch_name, True)['channel_id']
+
+    # user 2 and 3 joins channel
     channel.channel_join(token2, ch_id)
+    channel.channel_join(token3, ch_id)
 
-    # member promotes member
+    # user 2 promotes user 2 (self)
     with pytest.raises(error.AccessError):
-        channel.channel_addowner(token2, ch_id, u_id3)
+        channel.channel_addowner(token2, ch_id, u_id2)
+
+    # user 3 promotes user 2 (another member)
+    with pytest.raises(error.AccessError):
+        channel.channel_addowner(token3, ch_id, u_id2)
+
 
 # test case where stranger promotes member to owner
-def test_channel_addowner_unauthorised_nonmember(test_environment, get_new_user_3):
+def test_channel_addowner_unauthorised_stranger(get_new_user_1, get_new_user_2,
+                                                get_new_user_3,
+                                                get_channel_name_1):
 
-    # set up environment
-    u_id1, token1, u_id2, token2 = test_environment
-    u_id3, token3 = get_new_user_3
-    ch_id = channels.channels_create(token1, 'New Channel', True)['channel_id']
+    # get user 1
+    _, token1 = get_new_user_1
+
+    # get user 2
+    u_id2, token2 = get_new_user_2
+
+    # get user 3
+    u_id2, token3 = get_new_user_3
+
+    # user 1 creates a channel
+    ch_name = get_channel_name_1
+    ch_id = channels.channels_create(token1, ch_name, True)['channel_id']
+
+    # user 2 joins channel
+    channel.channel_join(token2, ch_id)
 
     # stranger promotes member
     with pytest.raises(error.AccessError):
-        channel.channel_addowner(token2, ch_id, u_id3)
+        channel.channel_addowner(token3, ch_id, u_id2)
 
-# validity cases
-def test_channel_addowner_invalid_channel_id(test_environment):
 
-    # set up environment
-    u_id1, token1, u_id2, token2 = test_environment
-    ch_id = channels.channels_create(token1, 'New Channel', True)['channel_id']
+# channel id validity
+def test_channel_addowner_invalid_channel_id(get_new_user_1, get_new_user_2,
+                                             get_channel_name_1):
+
+    # get user 1
+    _, token1 = get_new_user_1
+
+    # get user 2
+    u_id2, token2 = get_new_user_2
+
+    # user 1 creates a channel
+    ch_name = get_channel_name_1
+    ch_id = channels.channels_create(token1, ch_name, True)['channel_id']
+
+    # user 2 joins channel
+    channel.channel_join(token2, ch_id)
 
     # invalid user id
     with pytest.raises(error.InputError):
-        channel.channel_addowner(token1, ch_id, u_id1 + 1)
+        channel.channel_addowner(token1, ch_id + 1, u_id2)
 
-def test_channel_addowner_invalid_u_id(test_environment):
 
-    # set up environment
-    u_id1, token1, u_id2, token2 = test_environment
-    ch_id = channels.channels_create(token1, 'New Channel', True)['channel_id']
+# u_id does not match any existing user
+def test_channel_addowner_invalid_u_id(get_new_user_1, get_new_user_2,
+                                       get_channel_name_1):
 
-    # invalid channel id
+    # get user 1
+    u_id1, token1 = get_new_user_1
 
-    assert channel.channel_addowner(token1, ch_id, u_id2 + 1) == {}
-    assert channels.channels_list(token1) == {
-            'name': 'New Channel',
-        'owner_members': [
-            {
-                'u_id': u_id1,
-                'name_first': 'The',
-                'name_last': 'Owner',
-            },
-        ],
-        'all_members': [
-            {
-                'u_id': u_id1,
-                'name_first': 'The',
-                'name_last': 'Owner',
-            },
-        ],
-    }
+    # get user 2
+    u_id2, token2 = get_new_user_2
+
+    # user 1 creates a channel
+    ch_name = get_channel_name_1
+    ch_id = channels.channels_create(token1, ch_name, True)['channel_id']
+
+    # user 2 joins channel
+    channel.channel_join(token2, ch_id)
+
+    # invalid user id
+    with pytest.raises(error.InputError):
+        channel.channel_addowner(token1, ch_id, u_id1 + u_id2)

@@ -2,79 +2,85 @@ import pytest
 import channel
 import error
 import channels
-import auth
 
-@pytest.fixture(scope="module")
-def test_environment(get_new_user_1, get_new_user_2, get_new_user_3):
 
-    u_id1, token1 = get_new_user_3
-    u_id2, token2 = get_new_user_1
-    u_id3, token3 = get_new_user_2
+# basic test for channel details
+def test_channel_details(get_new_user_1, get_new_user_detail_1, get_new_user_2,
+                         get_new_user_detail_2, get_channel_name_1):
 
-    ch_id = channels.channels_create(token2, 'New Channel', True)['channel_id'] # u_id2 is owner
+    # get user 1
+    u_id1, token1 = get_new_user_1
+    _, _, name_first1, name_last1 = get_new_user_detail_1
 
-    return u_id1, token1, u_id2, token2, u_id3, token3, ch_id
-    
-def test_channel_details():
+    # get user 2
+    u_id2, token2 = get_new_user_2
+    _, _, name_first2, name_last2 = get_new_user_detail_2
 
-    # set up environment
-    u_id1, token1, u_id2, token2, u_id3, token3, ch_id = test_environment
-    channel.channel_invite(token2, ch_id, u_id1)
+    # user 1 creates a channel
+    ch_name = get_channel_name_1
+    ch_id = channels.channels_create(token1, ch_name, True)['channel_id']
 
-    correct_detail = {
-        'name': 'New Channel',
+    # user 2 joins channel
+    channel.channel_join(token2, ch_id)
+
+    # check channel details
+    assert channel.channel_details(token2, ch_id) == {
+        'name':
+        ch_name,
         'owner_members': [
             {
-                'u_id': u_id2,
-                'name_first': 'The',
-                'name_last': 'Owner',
-            }
+                'u_id': u_id1,
+                'name_first': name_first1,
+                'name_last': name_last1,
+            },
         ],
         'all_members': [
             {
-                'u_id': u_id2,
-                'name_first': 'The',
-                'name_last': 'Owner',
+                'u_id': u_id1,
+                'name_first': name_first1,
+                'name_last': name_last1,
             },
             {
-                'u_id': u_id1,
-                'name_first': 'The',
-                'name_last': 'User',
-            }
+                'u_id': u_id2,
+                'name_first': name_first2,
+                'name_last': name_last2,
+            },
         ],
     }
 
 
-    # call detail() as authorised user and owner
-    assert channel.channel_details(token2, ch_id) == correct_detail
+# nonmember of channel tries to call its details
+def test_channel_details_invalid_user(get_new_user_1, get_new_user_2,
+                                      get_channel_name_1):
 
-def test_channel_details_unauthorised_user(test_environment):
+    # get user 1
+    _, token1 = get_new_user_1
 
-    # set up environment
-    u_id1, token1, u_id2, token2, u_id3, token3, ch_id = test_environment
-    channel.channel_invite(token2, ch_id, u_id1)
+    # get user 2
+    _, token2 = get_new_user_2
 
+    # user 1 creates a channel
+    ch_name = get_channel_name_1
+    ch_id = channels.channels_create(token1, ch_name, True)['channel_id']
 
-    # call detail() as non-authorised user
+    # call detail() as non-authorised user 2 (stranger)
     with pytest.raises(error.AccessError):
-        channel.channel_details(token3, ch_id)
+        channel.channel_details(token2, ch_id)
 
-def test_channel_details_invalid_user(test_environment):
-
-    # set up environment
-    u_id1, token1, u_id2, token2, u_id3, token3, ch_id = test_environment
-    channel.channel_invite(token2, ch_id, u_id1)
+    # non-existent user's token
+    with pytest.raises():
+        channel.channel_details(token1 + 'a', ch_id)
 
 
-    # non-existent user's id
-    invalid_user = token3 + 'a'
-    assert channel.channel_details(invalid_user, ch_id) == {}
+# invalid channel id
+def test_channel_details_invalid_channel_id(get_new_user_1, get_channel_name_1):
 
-def test_channel_details_invalid_channel_id(test_environment):
+    # get user 1
+    _, token1 = get_new_user_1
 
-    # set up environment
-    u_id1, token1, u_id2, token2, u_id3, token3, ch_id = test_environment
-    channel.channel_invite(token2, ch_id, u_id1)
+    # user 1 creates a channel
+    ch_name = get_channel_name_1
+    ch_id = channels.channels_create(token1, ch_name, True)['channel_id']
 
     # invalid channel id
     with pytest.raises(error.InputError):
