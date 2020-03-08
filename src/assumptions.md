@@ -65,6 +65,12 @@
 
 ### message_remove()
 - returns empty dictionary on success
+- channel owner and slackr owner can remove messages
+
+### message_edit()
+- returns empty dictionary on success
+- channel owner and slackr owner can remove messages
+- editing messages updates the time stamp
 
 ## other.py
 - users_all doesn't return a list of users like the documentation. Rather, returns a dictionary with key value 'users' which contains a list of users like the skeleton function. 
