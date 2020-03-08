@@ -11,7 +11,8 @@
 
 ### auth_register()
 - when user registers, automatically login
-- if user handle is already taken on register then concatenate a number
+- if user handle is already taken on register then concatenate a number and increment it for every taken user handle from 1
+- the very first registered user is the slackr owner
 
 ## channel.py
 
@@ -27,13 +28,13 @@
 
 ### channel_leave()
 - returns empty dictionary on success
-- sole owner cannot leave the channel or will raise InputError
-- leaving a public channel has the same environment as leaving a private channel
+- owners and members can leave the channel
+- slackr owner attempting to leave the channel will raise InputError
+- leaving a public channel has the same test environment as leaving a private channel
 
 ### channel_join()
 - returns empty dictionary on success
 - if member of channel tries to rejoin channel then raise InputError
-- if slackr owner joins a channel then they are automatically promoted to channel owner
 
 ### channel_addowner()
 - return empty dictionary on success
@@ -43,8 +44,8 @@
 
 ### channel_removeowner()
 - return empty dictionary on success
-- channel and slackr owner can remove other owner permissions except for the slackr owner
-- must always be at least 1 owner in any channel
+- channel and slackr owner can remove other owner permissions
+- slackr owner cannot be stripped of owner permissions
 
 ## channels.py
 
@@ -54,10 +55,11 @@
 - shows all channels regardless of membership
 
 ### channels_create()
-- channel name can be repeated o users who want to make channels with the same name can be happy
+- channel name can be repeated
 - channel_id is unique
 - channel name cannot be empty or consist of only whitespace
-- user who creates the channel becomes the owner of the channel because otherwise there will be no user with permissions to add other users to the channel or edit the channel
+- user who creates the channel becomes the owner of the channel
+- slackr owner is automatically invited to the channel as a channel owner
 
 ## echo.py
 
@@ -72,8 +74,8 @@
 
 ### message_edit()
 - returns empty dictionary on success
-- channel owner and slackr owner can remove messages
-- editing messages updates the time stamp
+- channel owner and slackr owner can edit messages
+- editing messages updates the time and user id
 
 ## other.py
 - users_all doesn't return a list of users like the documentation. Rather, returns a dictionary with key value 'users' which contains a list of users like the skeleton function. 
