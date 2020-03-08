@@ -56,10 +56,6 @@ def get_new_user_detail_4():
     return email, password, name_first, name_last
 
 
-
-
-
-# for channels.py generating users who have already registered
 @pytest.fixture(scope="session")
 def get_new_user_0(get_new_user_detail_0):
     email, password, name_first, name_last = get_new_user_detail_0
@@ -99,3 +95,7 @@ def get_new_user_4(get_new_user_detail_4):
 
     return retval['u_id'], retval['token']
 
+
+@pytest.fixture(scope="session")
+def get_channel_name():
+    return 'New Channel'
