@@ -1,65 +1,75 @@
 import pytest, channels, channel, auth, error
 
-def test_environment():
-
-# Dummy information
-    token = auth.auth_register('example@unsw.edu.au', 'qwert123', 'John', 'Doe' )['token']
-
-# Create some channels
-    ch_id1 = channels.channels_create(token, 'channel 1', True)['channel_id']
-
-    return ch_id1, token
-
-def test_channels_create_public():
+def test_channels_create_public(get_new_user_1):
 
 #Setup
-    ch_id, token = test_environment()
-
+    token = get_new_user_1[1]
+    ch_id = channels.channels_create(token, 'channel 1', True)['channel_id']
 
 # Actual test
-    assert ch_id == channels.channels_listall(token)['channels'][0]['channel_id']
+    flag = False
+    for channel in channels.channels_listall(token)['channels']:
+        if(channel['channel_id'] == ch_id):
+            flag = True
+    assert flag == True
 
-def test_channels_create_private():
+def test_channels_create_private(get_new_user_1):
 
 # Setup
-    token = test_environment()[1]
-
+    token = get_new_user_1[1]
     # creating a channel should return a unique channel id
     ch_id = channels.channels_create(token, 'My Channel', False)['channel_id']
     
 # Actual test
-    assert ch_id == channels.channels_listall(token)['channels'][0]['channel_id']
+    flag = False
+    for channel in channels.channels_listall(token)['channels']:
+        if(channel['channel_id'] == ch_id):
+            flag = True
+    assert flag == True
 
-def test_channels_create_multiple():
+def test_channels_create_multiple(get_new_user_1):
 
 # Setup
-    token = test_environment()[1]
+    token = get_new_user_1[1]
     ch_id1 = channels.channels_create(token, 'My Second Channel', False)['channel_id']
     ch_id2 = channels.channels_create(token, 'My Second Channel', False)['channel_id']
 
 # Actual test
-    assert channels.channels_listall(token)['channels'][0]['channel_id'] == ch_id1
-    assert channels.channels_listall(token)['channels'][1]['channel_id'] == ch_id2
+    flag1, flag2 = False, False
+    for channel in channels.channels_listall(token)['channels']:
+        if(channel['channel_id'] == ch_id1):
+            flag1 = True
+        if(channel['channel_id'] == ch_id2):
+            flag2 = True
+    assert flag1 == True and flag2 == True
 
-def test_channels_create_invalid_token():
-    token = test_environment()[1]
+def test_channels_create_invalid_token(get_new_user_1):
+    token = get_new_user_1[1]
     invalid_token = token + 'a'
 
     with pytest.raises(error.InputError):
         channels.channels_create(invalid_token, 'My Channel', True)
 
-def test_channels_create_invalid_name():
+def test_channels_create_invalid_name(get_new_user_1):
 
 # Setup
-    token = test_environment()[1]
+    token = get_new_user_1[1]
 
 # Actual test
     # Making a channel with empty name
-    assert channels.channels_create(token, '', False)['channel_id'] != channels.channels_listall(token)['channels'][1]['channel_id']
+    flag = False
+    for channel in channels.channels_listall(token)['channels']:
+        if(channel['channel_id'] == channels.channels_create(token, '', False)['channel_id']):
+            flag = True
+    assert flag == False
     assert channels.channels_create(token, '', False) == {}
 
     # Making a channel with only whitespace name
-    assert channels.channels_create(token, ' ', False)['channel_id'] != channels.channels_listall(token)['channels'][1]['channel_id']
+    flag = False
+    for channel in channels.channels_listall(token)['channels']:
+        if(channel['channel_id'] == channels.channels_create(token, '', False)['channel_id']):
+            flag = True
+    assert flag == False
     assert channels.channels_create(token, ' ', False) == {}
     # Making a channel with word exceeding limit
     with pytest.raises(error.InputError):
