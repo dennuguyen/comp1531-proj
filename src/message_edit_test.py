@@ -1,23 +1,16 @@
-#Raymond: Tests on message_edit()
-
 import pytest
 import message
 import auth
 import channel
 import channels
 import error
-import message_test_helper
 
 
 # User edits their own message
-def test_message_edit():
+def test_message_edit(get_new_user_1):
 
     # Register test user 1 (owner)
-    email1, password1, name_first1, name_last1 = message_test_helper.get_new_user1(
-    )
-    register_retval1 = auth.auth_register(email1, password1, name_first1,
-                                          name_last1)
-    u_id1, token1 = register_retval1['u_id'], register_retval1['token']
+    u_id1, token1 = get_new_user_1
 
     # Create test channel
     ch_id = channels.channels_create(token1, 'test_channel1',
@@ -37,21 +30,13 @@ def test_message_edit():
 
 
 # User edits another user's message
-def test_message_edit_by_non_authorised_user():
+def test_message_edit_by_non_authorised_user(get_new_user_1, get_new_user_2):
 
     # Register test user 1 (owner)
-    email1, password1, name_first1, name_last1 = message_test_helper.get_new_user1(
-    )
-    register_retval1 = auth.auth_register(email1, password1, name_first1,
-                                          name_last1)
-    u_id1, token1 = register_retval1['u_id'], register_retval1['token']
+    u_id1, token1 = get_new_user_1
 
-    # Register test user 2 (user)
-    email2, password2, name_first2, name_last2 = message_test_helper.get_new_user2(
-    )
-    register_retval2 = auth.auth_register(email2, password2, name_first2,
-                                          name_last2)
-    u_id2, token2 = register_retval2['u_id'], register_retval2['token']
+    # Register test user 2
+    u_id2, token2 = get_new_user_2
 
     # Create test channel
     ch_id = channels.channels_create(token1, 'test_channel1',
@@ -69,21 +54,13 @@ def test_message_edit_by_non_authorised_user():
 
 
 # Channel owner can edit any message
-def test_message_edit_by_owner():
+def test_message_edit_by_owner(get_new_user_1, get_new_user_2):
 
     # Register test user 1 (owner)
-    email1, password1, name_first1, name_last1 = message_test_helper.get_new_user1(
-    )
-    register_retval1 = auth.auth_register(email1, password1, name_first1,
-                                          name_last1)
-    u_id1, token1 = register_retval1['u_id'], register_retval1['token']
+    u_id1, token1 = get_new_user_1
 
     # Register test user 2
-    email2, password2, name_first2, name_last2 = message_test_helper.get_new_user2(
-    )
-    register_retval2 = auth.auth_register(email2, password2, name_first2,
-                                          name_last2)
-    u_id2, token2 = register_retval2['u_id'], register_retval2['token']
+    u_id2, token2 = get_new_user_2
 
     # Create test channel
     ch_id = channels.channels_create(token1, 'test_channel1',
@@ -103,14 +80,10 @@ def test_message_edit_by_owner():
 
 
 # Message edit is empty therefore must be removed
-def test_message_edit_to_remove():
+def test_message_edit_to_remove(get_new_user_1):
 
     # Register test user 1 (owner)
-    email1, password1, name_first1, name_last1 = message_test_helper.get_new_user1(
-    )
-    register_retval1 = auth.auth_register(email1, password1, name_first1,
-                                          name_last1)
-    u_id1, token1 = register_retval1['u_id'], register_retval1['token']
+    u_id1, token1 = get_new_user_1
 
     # Create test channel
     ch_id = channels.channels_create(token1, 'test_channel1',
