@@ -1,5 +1,3 @@
-#Raymond: Tests for user_profile function
-
 import pytest
 import user
 import user_test_helper
