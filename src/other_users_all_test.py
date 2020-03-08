@@ -20,7 +20,7 @@ def create_person_one():
 def create_person_two():
     # Returns dictionary and token of person 2
     person_two = {}
-    u_id1, token1 = auth.auth_register('person2@unsw.com', 'password', 'Second', 'Person')
+    u_id2, token2 = auth.auth_register('person2@unsw.com', 'password', 'Second', 'Person')
     person_two['u_id'] = u_id2
     person_two['email'] = 'person2@unsw.com'
     person_two['name_first'] = 'Second'
@@ -45,6 +45,13 @@ def test_users_all_two_people():
     # I have done this using sets since, each person is unique by their u_id
     # also sets are un-ordered. It lets me removed the assumpion in which way 
     # people will be added to the output of users_all 
-    output_users_all = set(other.users_all(token)['users'])
-    comparison = set(person_one, person_two)
-    assert output_users_all == comparison
+    output_users_all = other.users_all(token1)['users']
+    comparison = (person_one, person_two)
+
+    person_found = 0
+    for a in output_users_all:
+        for b in comparison:
+            if a == b:
+                person_found += 1
+
+    assert person_found == 2
