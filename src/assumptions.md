@@ -61,6 +61,8 @@
 
 ### channel_addowner()
 - **return empty dictionary on success**
+- **only members of the channel can be given owner permissions by an owner**
+- **giving an owner owner permissions will raise InputError**
 
 ### channel_removeowner()
 - **return empty dictionary on success**
