@@ -91,6 +91,9 @@
 
 ## message.py
 
+### message_send()
+- 
+
 ### message_remove()
 - if message no longer exists and is to be removed then raise InputError
 - only owner and user who sent message can remove message else raise AccessError

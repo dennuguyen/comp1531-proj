@@ -8,62 +8,80 @@ import channels
 import error
 import message_test_helper
 
-def test_send_by_authorised_user():
 
-    #Setup
-        #Register test user 1
-    token = message_test_helper.get_new_user1()[1]
+# User sends a message to a channel they are a member of
+def test_message_send_member():
 
-        #Create test channel 1
-    channel_id = channels.channels_create(token, 'test_channel1', True)['channel_id']
+    # Register test user 1 (owner)
+    email1, password1, name_first1, name_last1 = message_test_helper.get_new_user1(
+    )
+    register_retval1 = auth.auth_register(email1, password1, name_first1,
+                                          name_last1)
+    u_id1, token1 = register_retval1['u_id'], register_retval1['token']
 
-    #Actual test
-    msgsend = 'The quick brown fox jumps over the lazy dog'
-    message_id = message.message_send(token, channel_id, message)['message_id']
+    # Create test channel
+    ch_id = channels.channels_create(token1, 'test_channel1',
+                                     True)['channel_id']
+
+    # Actual test
+    msg_send1 = 'The quick brown fox jumps over the lazy dog'
+    msg_id1 = message.message_send(token1, ch_id, msg_send1)['message_id']
     start = 0
-    channel_messages_retval = channel.channel_messages(token, channel_id, start)
-    assert channel_messages_retval['messages'][0]['message_id'] == message_id
-    assert channel_messages_retval['messages'][0]['message'] == msgsend
+    ch_msg_retval = channel.channel_messages(token1, ch_id, start)
+    assert ch_msg_retval['messages'][0]['message_id'] == msg_id1
+    assert ch_msg_retval['messages'][0]['message'] == msg_send1
 
-    #Clean up (if necessary)
+    # Confirm next message test
+    msg_send2 = 'The quick brown dog jumps over the lazy fox'
+    msg_id2 = message.message_send(token1, ch_id, msg_send2)['message_id']
+    ch_msg_retval = channel.channel_messages(token1, ch_id, start)
+    assert ch_msg_retval['messages'][1]['message_id'] == msg_id2
+    assert ch_msg_retval['messages'][1]['message'] == msg_send2
 
-def test_send_non_member():
-    #Setup
-        #Register test user 1
-    token = message_test_helper.get_new_user1()[1]
 
-        #Create test channel 1
-    channel_id = channels.channels_create(token, 'test_channel1', True)['channel_id']
+# Stranger to channel sends a message to that channel
+def test_message_send_stranger():
 
-        #Log out test user 1
-    auth.auth_logout(token)
+    # Register test user 1 (owner)
+    email1, password1, name_first1, name_last1 = message_test_helper.get_new_user1(
+    )
+    register_retval1 = auth.auth_register(email1, password1, name_first1,
+                                          name_last1)
+    u_id1, token1 = register_retval1['u_id'], register_retval1['token']
 
-        #Register test user 2
+    # Register test user 2 (stranger)
+    email2, password2, name_first2, name_last2 = message_test_helper.get_new_user2(
+    )
+    register_retval2 = auth.auth_register(email2, password2, name_first2,
+                                          name_last2)
+    u_id2, token2 = register_retval2['u_id'], register_retval2['token']
 
-    token2 = message_test_helper.get_new_user2()[1]
+    # Create test channel
+    ch_id = channels.channels_create(token1, 'test_channel1',
+                                     True)['channel_id']
 
-    #Actual test
-    msg_tosend = 'The quick brown fox jumps over the lazy dog'
+    # Actual test
+    msg_send = 'The quick brown fox jumps over the lazy dog'
     with pytest.raises(error.AccessError):
-        message.message_send(token2, channel_id, msg_tosend)
+        message.message_send(token2, ch_id, msg_send)
 
-    #Clean up (if necessary)
-    pass
 
-def test_send_message_exceed_limit():
-    
-    #Setup
-        #Register test user 1
-    token = message_test_helper.get_new_user1()[1]
+# Message is more than 1000 char
+def test_message_send_1000_char():
 
-        #Create test channel 1
-    channel_id = channels.channels_create(token, 'test_channel1', True)['channel_id']
-    
-    #Actual test
-    msg_tosend = ('T'*1001)
-    message.message_send(token, channel_id, message)
+    # Register test user 1 (owner)
+    email1, password1, name_first1, name_last1 = message_test_helper.get_new_user1(
+    )
+    register_retval1 = auth.auth_register(email1, password1, name_first1,
+                                          name_last1)
+    u_id1, token1 = register_retval1['u_id'], register_retval1['token']
+
+    # Create test channel
+    ch_id = channels.channels_create(token1, 'test_channel1',
+                                     True)['channel_id']
+
+    # Actual test
+    msg_send = ('T' * 1001)
+    message.message_send(token1, ch_id, msg_send)
     with pytest.raises(error.InputError):
-        message.message_send(token, channel_id, msg_tosend)
-
-    #Clean up (if necessary)
-    pass
+        message.message_send(token1, ch_id, msg_send)
