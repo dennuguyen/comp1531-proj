@@ -16,8 +16,8 @@ def get_new_user_detail_0():
 def get_new_user_detail_1():
     email = "ownerofslackrs@unsw.com"
     password = "qwetls"
-    name_first = "Dan"
-    name_last = "Nguyen"
+    name_first = "The"
+    name_last = "Owner"
 
     return email, password, name_first, name_last
 
