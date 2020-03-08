@@ -13,14 +13,16 @@ def test_user_profile_setname():
     u_id, token = reg_retval['u_id'], reg_retval['token'])
 
     # Actual test
-    user.user_profile_setname(token, 'Ted', 'Bundy')
+    new_name_first = name_first + 'suffix'
+    new_name_last = 'prefix' + name_last
+    user.user_profile_setname(token, new_name_first, new_name_last)
     assert user.user_profile(token, u_id) == {
         'user': {
             'u_id': u_id,
             'email': email,
-            'name_first': 'Ted',
-            'name_last': 'Bundy',
-            'handle_str': 'tedbundy',
+            'name_first': new_name_first,
+            'name_last': new_name_last,
+            'handle_str': (new_name_first + new_name_last).lower(),
         },
     }
 
@@ -35,16 +37,16 @@ def test_user_profile_setname_invalid():
 
     # first name cannot be empty
     with pytest.raises(error.InputError):
-        user.user_profile_setname(token, '', 'Bundy')
+        user.user_profile_setname(token, '', name_last)
     
     # last name cannot be empty
     with pytest.raises(error.InputError):
-        user.user_profile_setname(token, 'Ted', '')
+        user.user_profile_setname(token, name_first, '')
 
     # first name cannot be more than 50 char
     with pytest.raises(error.InputError):
-        user.user_profile_setname(token, 'T' * 51, 'Bundy')
+        user.user_profile_setname(token, 'T' * 51, name_last)
     
     # last name cannot be more than 50 char
     with pytest.raises(error.InputError):
-        user.user_profile_setname(token, 'Ted', 'B' * 51)
+        user.user_profile_setname(token, name_first, 'B' * 51)
