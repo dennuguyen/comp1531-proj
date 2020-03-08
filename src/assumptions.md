@@ -36,6 +36,7 @@
 - only channel members may call details()
 - if channel id is not valid then raise InputError
 - if user is not member of channel then raise AccessError
+- **all_members key will include list of channel members including owners**
 
 ### channel_messages()
 - returns a list of messages, start, end
