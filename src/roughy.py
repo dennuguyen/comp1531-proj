@@ -16,5 +16,5 @@ def add_int_to_string():
         print(message)
         integer += 1
 
-add_int_to_string()
+print('HELLO'.lower()+'there')
 
