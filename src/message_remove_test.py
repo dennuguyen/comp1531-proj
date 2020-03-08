@@ -4,25 +4,17 @@ import auth
 import channel
 import channels
 import error
-import message_test_helper
+import other
 
 
 # Test user removing own message
-def test_message_remove_message_user():
+def test_message_remove_message_user(get_new_user_1, get_new_user_2):
 
     # Register test user 1 (owner)
-    email1, password1, name_first1, name_last1 = message_test_helper.get_new_user1(
-    )
-    register_retval1 = auth.auth_register(email1, password1, name_first1,
-                                          name_last1)
-    u_id1, token1 = register_retval1['u_id'], register_retval1['token']
+    _, token1 = get_new_user_1
 
     # Register test user 2
-    email2, password2, name_first2, name_last2 = message_test_helper.get_new_user2(
-    )
-    register_retval2 = auth.auth_register(email2, password2, name_first2,
-                                          name_last2)
-    u_id2, token2 = register_retval2['u_id'], register_retval2['token']
+    _, token2 = get_new_user_2
 
     # Create test channel
     ch_id = channels.channels_create(token1, 'test_channel1',
@@ -35,27 +27,20 @@ def test_message_remove_message_user():
 
     # Actual test
     message.message_remove(token2, msg_id)
-    start = 0
-    channel_messages_retval = channel.channel_messages(token, ch_id, start)
-    assert channel_messages_retval == {}
+
+    # Search for the message
+    retval = other.search(token1, msg_send)['messages']
+    assert len(retval) == 0
 
 
 # Test owner removing user message
-def test_message_remove_message_owner():
+def test_message_remove_message_owner(get_new_user_1, get_new_user_2):
 
     # Register test user 1 (owner)
-    email1, password1, name_first1, name_last1 = message_test_helper.get_new_user1(
-    )
-    register_retval1 = auth.auth_register(email1, password1, name_first1,
-                                          name_last1)
-    u_id1, token1 = register_retval1['u_id'], register_retval1['token']
+    _, token1 = get_new_user_1
 
     # Register test user 2
-    email2, password2, name_first2, name_last2 = message_test_helper.get_new_user2(
-    )
-    register_retval2 = auth.auth_register(email2, password2, name_first2,
-                                          name_last2)
-    u_id2, token2 = register_retval2['u_id'], register_retval2['token']
+    _, token2 = get_new_user_2
 
     # Create test channel
     ch_id = channels.channels_create(token1, 'test_channel1',
@@ -68,27 +53,20 @@ def test_message_remove_message_owner():
 
     # Actual test
     message.message_remove(token1, msg_id)
-    start = 0
-    channel_messages_retval = channel.channel_messages(token, ch_id, start)
-    assert channel_messages_retval == {}
+
+    # Search for the message
+    retval = other.search(token1, msg_send)['messages']
+    assert len(retval) == 0
 
 
 # Test InputError case
-def test_message_remove_input_error():
+def test_message_remove_input_error(get_new_user_1, get_new_user_2):
 
     # Register test user 1 (owner)
-    email1, password1, name_first1, name_last1 = message_test_helper.get_new_user1(
-    )
-    register_retval1 = auth.auth_register(email1, password1, name_first1,
-                                          name_last1)
-    u_id1, token1 = register_retval1['u_id'], register_retval1['token']
+    _, token1 = get_new_user_1
 
     # Register test user 2
-    email2, password2, name_first2, name_last2 = message_test_helper.get_new_user2(
-    )
-    register_retval2 = auth.auth_register(email2, password2, name_first2,
-                                          name_last2)
-    u_id2, token2 = register_retval2['u_id'], register_retval2['token']
+    _, token2 = get_new_user_2
 
     # Create test channel
     ch_id = channels.channels_create(token1, 'test_channel1',
@@ -102,24 +80,17 @@ def test_message_remove_input_error():
     # Testing message removal in empty channel
     message.message_remove(token1, msg_id)
     with pytest.raises(error.InputError):
-        message.message_remove(token, msg_id)
+        message.message_remove(token1, msg_id)
 
 
 # Test AccessError case
-def test_message_remove_access_error():
+def test_message_remove_access_error(get_new_user_1, get_new_user_2):
+
     # Register test user 1 (owner)
-    email1, password1, name_first1, name_last1 = message_test_helper.get_new_user1(
-    )
-    register_retval1 = auth.auth_register(email1, password1, name_first1,
-                                          name_last1)
-    u_id1, token1 = register_retval1['u_id'], register_retval1['token']
+    _, token1 = get_new_user_1
 
     # Register test user 2
-    email2, password2, name_first2, name_last2 = message_test_helper.get_new_user2(
-    )
-    register_retval2 = auth.auth_register(email2, password2, name_first2,
-                                          name_last2)
-    u_id2, token2 = register_retval2['u_id'], register_retval2['token']
+    _, token2 = get_new_user_2
 
     # Create test channel
     ch_id = channels.channels_create(token1, 'test_channel1',

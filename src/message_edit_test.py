@@ -1,23 +1,18 @@
-#Raymond: Tests on message_edit()
-
 import pytest
 import message
 import auth
 import channel
 import channels
 import error
-import message_test_helper
+import other
+import datetime
 
 
 # User edits their own message
-def test_message_edit():
+def test_message_edit(get_new_user_1):
 
     # Register test user 1 (owner)
-    email1, password1, name_first1, name_last1 = message_test_helper.get_new_user1(
-    )
-    register_retval1 = auth.auth_register(email1, password1, name_first1,
-                                          name_last1)
-    u_id1, token1 = register_retval1['u_id'], register_retval1['token']
+    u_id1, token1 = get_new_user_1
 
     # Create test channel
     ch_id = channels.channels_create(token1, 'test_channel1',
@@ -27,31 +22,36 @@ def test_message_edit():
     msg_send1 = 'The quick brown fox jumps over the lazy dog.'
     msg_id = message.message_send(token1, ch_id, msg_send1)
 
-    # Actual test
+    # Edit message
     msg_send2 = 'The quick brown dog jumps over the lazy fox.'
+    time_before = datetime.datetime.now()
     message.message_edit(token1, msg_id, msg_send2)
+    time_after = datetime.datetime.now()
 
-    start = 0
-    assert channel.channel_messages(
-        token1, ch_id, start)['messages'][0]['message'] == msg_send2
+    # Check the first message
+    retval1 = other.search(token1, msg_send1)['messages']
+    assert len(retval1) == 0
+
+    # Check the edited message
+    retval2 = other.search(token1, msg_send2)['messages']
+    assert retval2[0]['message_id'] == msg_id
+    assert retval2[0]['u_id'] == u_id1
+    assert retval2[0]['message'] == msg_send2
+    assert retval2[0]['time_created'] > time_before
+    assert retval2[0]['time_created'] < time_after
+
+    # Check for duplicate
+    assert len(retval2) == 1
 
 
 # User edits another user's message
-def test_message_edit_by_non_authorised_user():
+def test_message_edit_by_non_authorised_user(get_new_user_1, get_new_user_2):
 
     # Register test user 1 (owner)
-    email1, password1, name_first1, name_last1 = message_test_helper.get_new_user1(
-    )
-    register_retval1 = auth.auth_register(email1, password1, name_first1,
-                                          name_last1)
-    u_id1, token1 = register_retval1['u_id'], register_retval1['token']
+    _, token1 = get_new_user_1
 
-    # Register test user 2 (user)
-    email2, password2, name_first2, name_last2 = message_test_helper.get_new_user2(
-    )
-    register_retval2 = auth.auth_register(email2, password2, name_first2,
-                                          name_last2)
-    u_id2, token2 = register_retval2['u_id'], register_retval2['token']
+    # Register test user 2
+    _, token2 = get_new_user_2
 
     # Create test channel
     ch_id = channels.channels_create(token1, 'test_channel1',
@@ -62,28 +62,20 @@ def test_message_edit_by_non_authorised_user():
     msg_send1 = 'The quick brown fox jumps over the lazy dog.'
     msg_id = message.message_send(token1, ch_id, msg_send1)
 
-    # Actual test
+    # Edit message
     msg_send2 = 'The quick brown dog jumps over the lazy fox.'
     with pytest.raises(error.AccessError):
         message.message_edit(token2, msg_id, msg_send2)
 
 
 # Channel owner can edit any message
-def test_message_edit_by_owner():
+def test_message_edit_by_owner(get_new_user_1, get_new_user_2):
 
     # Register test user 1 (owner)
-    email1, password1, name_first1, name_last1 = message_test_helper.get_new_user1(
-    )
-    register_retval1 = auth.auth_register(email1, password1, name_first1,
-                                          name_last1)
-    u_id1, token1 = register_retval1['u_id'], register_retval1['token']
+    u_id1, token1 = get_new_user_1
 
     # Register test user 2
-    email2, password2, name_first2, name_last2 = message_test_helper.get_new_user2(
-    )
-    register_retval2 = auth.auth_register(email2, password2, name_first2,
-                                          name_last2)
-    u_id2, token2 = register_retval2['u_id'], register_retval2['token']
+    _, token2 = get_new_user_2
 
     # Create test channel
     ch_id = channels.channels_create(token1, 'test_channel1',
@@ -94,23 +86,33 @@ def test_message_edit_by_owner():
     msg_send1 = 'The quick brown fox jumps over the lazy dog.'
     msg_id = message.message_send(token2, ch_id, msg_send1)
 
-    #Actual test
+    # Edit message
     msg_send2 = 'The quick brown dog jumps over the lazy fox.'
+    time_before = datetime.datetime.now()
     message.message_edit(token1, msg_id, msg_send2)
-    start = 0
-    assert channel.channel_messages(
-        token2, ch_id, start)['messages'][0]['message'] == msg_send2
+    time_after = datetime.datetime.now()
+
+    # Check the first message
+    retval1 = other.search(token1, msg_send1)['messages']
+    assert len(retval1) == 0
+
+    # Check the message
+    retval2 = other.search(token1, msg_send2)['messages']
+    assert retval2[0]['message_id'] == msg_id
+    assert retval2[0]['u_id'] == u_id1
+    assert retval2[0]['message'] == msg_send2
+    assert retval2[0]['time_created'] > time_before
+    assert retval2[0]['time_created'] < time_after
+
+    # Check for duplicate
+    assert len(retval2) == 1
 
 
 # Message edit is empty therefore must be removed
-def test_message_edit_to_remove():
+def test_message_edit_to_remove(get_new_user_1):
 
     # Register test user 1 (owner)
-    email1, password1, name_first1, name_last1 = message_test_helper.get_new_user1(
-    )
-    register_retval1 = auth.auth_register(email1, password1, name_first1,
-                                          name_last1)
-    u_id1, token1 = register_retval1['u_id'], register_retval1['token']
+    _, token1 = get_new_user_1
 
     # Create test channel
     ch_id = channels.channels_create(token1, 'test_channel1',
@@ -120,9 +122,13 @@ def test_message_edit_to_remove():
     msg_send1 = 'The quick brown fox jumps over the lazy dog.'
     msg_id = message.message_send(token1, ch_id, msg_send1)
 
-    #Actual test
+    # Edit message
     msg_send2 = ''
     message.message_edit(token1, msg_id, msg_send2)
-    start = 0
-    channel_messages_retval = channel.channel_messages(token1, ch_id, start)
-    assert channel_messages_retval == {}
+
+    # Message does not exist
+    retval1 = other.search(token1, msg_send1)['messages']
+    assert len(retval1) == 0
+
+    retval2 = other.search(token1, msg_send2)['messages']
+    assert len(retval2) == 0
