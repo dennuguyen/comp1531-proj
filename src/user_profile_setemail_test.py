@@ -9,7 +9,7 @@ def test_user_profile_setemail(get_new_user_1, get_new_user_detail_1):
 
     # Register test user 1
     u_id, token = get_new_user_1
-    email, password, name_first, name_last = get_new_user_detail_1
+    email, _, name_first, name_last = get_new_user_detail_1
 
     # Actual test
     new_email = 'prefix' + email
@@ -29,8 +29,7 @@ def test_user_profile_setemail(get_new_user_1, get_new_user_detail_1):
 def test_user_profile_setemail_invalid_email(get_new_user_1):
 
     # Register test user 1
-    u_id, token = get_new_user_1
-
+    _, token = get_new_user_1
 
     # Actual test
     with pytest.raises(error.InputError):
@@ -41,13 +40,14 @@ def test_user_profile_setemail_invalid_email(get_new_user_1):
 
 
 # email address already used
-def test_user_profile_setemail_email_already_used(get_new_user_1, get_new_user_detail_1, get_new_user_2):
+def test_user_profile_setemail_email_already_used(get_new_user_1,
+                                                  get_new_user_detail_1,
+                                                  get_new_user_2):
 
     # Register test user 1 and 2
-    u_id, token = get_new_user_1
-    email, password, name_first, name_last = get_new_user_detail_1
-    u_id2, token2 = get_new_user_2
-
+    _, _ = get_new_user_1
+    email, _, _, _ = get_new_user_detail_1
+    _, token2 = get_new_user_2
 
     # Actual test
     with pytest.raises(error.InputError):
