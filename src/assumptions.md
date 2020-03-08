@@ -14,6 +14,7 @@
 
 ### auth_register()
 - **when user registers, automatically login**
+- **if user registers with the same name as a registered user then default handle will suffix a number**
 
 ## channel.py
 
