@@ -1,57 +1,64 @@
+# get_new_user_detail gets the root information used to register a user
+# get_new_user gets the u_id and token after registering a user
+
 import pytest
 import channels
 import auth
 
 
-# for auth.py generating a user who is going to register next
 @pytest.fixture(scope="session")
 def get_new_user_detail_0():
-    email = "ownerofslackrs@unsw.com"
-    password = "qwetmn"
-    name_first = "Ownerof"
-    name_last = "Slackr"
+    email = "john_doe@unsw.com"
+    password = "password1234"
+    name_first = "John"
+    name_last = "Doe"
 
     return email, password, name_first, name_last
+
 
 @pytest.fixture(scope="session")
 def get_new_user_detail_1():
-    email = "ownerofslackrs@unsw.com"
-    password = "qwetls"
-    name_first = "The"
-    name_last = "Owner"
+    email = "hugh_jackman@unsw.com"
+    password = "strong password"
+    name_first = "Hugh"
+    name_last = "Jackman"
 
     return email, password, name_first, name_last
+
 
 @pytest.fixture(scope="session")
 def get_new_user_detail_2():
-    email = "stranger@unsw.com"
-    password = "qwetla"
-    name_first = "A"
-    name_last = "Stranger"
+    email = "ted_bundy@unsw.com"
+    password = "AJkh28aH2k21l!"
+    name_first = "Ted"
+    name_last = "Bundy"
 
     return email, password, name_first, name_last
-    
+
+
 @pytest.fixture(scope="session")
 def get_new_user_detail_3():
-    email = "anotherstranger@unsw.com"
-    password = "qwetrb"
-    name_first = "Another"
-    name_last = "Stranger"
+    email = "king_kong@unsw.com"
+    password = "2134oplka"
+    name_first = "King"
+    name_last = "Kong"
 
     return email, password, name_first, name_last
+
 
 @pytest.fixture(scope="session")
 def get_new_user_detail_4():
-    email = "strangerzzz@unsw.com"
-    password = "qwetds"
-    name_first = "Two"
-    name_last = "Strangerzzz"
+    email = "toocool4school@unsw.com"
+    password = "p455w0rd"
+    name_first = "Kid"
+    name_last = "Kyle"
 
     return email, password, name_first, name_last
 
+
 @pytest.fixture(scope="session")
 def gen_person_info(get_new_user):
-    email1, password, name_first, name_last= get_new_user
+    email1, password, name_first, name_last = get_new_user
 
     email2 = 'z1234567@gmail.com'
     invalid_name_first = 'zaqwertyuioplmnbvcxsdfghjklpoiuytrewqazxsdcvfgbnhjmk'
@@ -65,58 +72,40 @@ def gen_person_info(get_new_user):
 
 # for channels.py generating users who have already registered
 @pytest.fixture(scope="session")
-def get_new_user_0():
-    email = "ownerofslackrs@unsw.com"
-    password = "qwetmn"
-    name_first = "Ownerof"
-    name_last = "Slackr"
-
+def get_new_user_0(get_new_user_detail_0):
+    email, password, name_first, name_last = get_new_user_detail_0
     retval = auth.auth_register(email, password, name_first, name_last)
 
     return retval['u_id'], retval['token']
+
 
 @pytest.fixture(scope="session")
-def get_new_user_1():
-    email = "owner@unsw.com"
-    password = "qwetls"
-    name_first = "The"
-    name_last = "Owner"
-
+def get_new_user_1(get_new_user_detail_1):
+    email, password, name_first, name_last = get_new_user_detail_1
     retval = auth.auth_register(email, password, name_first, name_last)
 
     return retval['u_id'], retval['token']
+
 
 @pytest.fixture(scope="session")
-def get_new_user_2():
-    email = "stranger@unsw.com"
-    password = "qwetla"
-    name_first = "A"
-    name_last = "Stranger"
-
+def get_new_user_2(get_new_user_detail_2):
+    email, password, name_first, name_last = get_new_user_detail_2
     retval = auth.auth_register(email, password, name_first, name_last)
 
     return retval['u_id'], retval['token']
+
 
 @pytest.fixture(scope="session")
-def get_new_user_3():
-    email = "anotherstranger@unsw.com"
-    password = "qwetrb"
-    name_first = "Another"
-    name_last = "Stranger"
-
+def get_new_user_3(get_new_user_detail_3):
+    email, password, name_first, name_last = get_new_user_detail_3
     retval = auth.auth_register(email, password, name_first, name_last)
 
     return retval['u_id'], retval['token']
+
 
 @pytest.fixture(scope="session")
-def get_new_user_4():
-    email = "strangerzzz@unsw.com"
-    password = "qwetds"
-    name_first = "Two"
-    name_last = "Strangerzzz"
-
+def get_new_user_4(get_new_user_detail_4):
+    email, password, name_first, name_last = get_new_user_detail_4
     retval = auth.auth_register(email, password, name_first, name_last)
-    
+
     return retval['u_id'], retval['token']
-
-
