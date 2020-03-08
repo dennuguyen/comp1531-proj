@@ -74,7 +74,7 @@ def test_channels_create_invalid_token(get_new_user_1, get_channel_name_1):
 # Test case for creating a channel with invalid name
 def test_channels_create_invalid_name(get_new_user_1):
 
-    # Get user 1 and some channels
+    # Get user 1
     token1 = get_new_user_1[1]
 
     # Channel name cannot be empty
@@ -88,3 +88,114 @@ def test_channels_create_invalid_name(get_new_user_1):
     # Channel name > 20 char
     with pytest.raises(error.InputError):
         channels.channels_create(token1, '0123456789 0123456789', True)
+
+
+# Creator of the channel is the owner of the channel
+def test_channels_create_channel_owner(get_new_user_1, get_new_user_detail_1, get_channel_name_1):
+
+    # Get user 1 and some channels
+    u_id1, token1 = get_new_user_1
+    _, _, name_first1, name_last1 = get_new_user_detail_1
+    ch_id1 = channels.channels_create(
+        token1, get_channel_name_1, True)['channel_id']
+
+    # Check if user 1 is owner of channel
+    assert channel.channel_details(token1, ch_id1) == {
+        'name':
+        get_channel_name_1,
+        'owner_members': [
+            {
+                'u_id': u_id1,
+                'name_first': name_first1,
+                'name_last': name_last1,
+            },
+        ],
+        'all_members': [
+            {
+                'u_id': u_id1,
+                'name_first': name_first1,
+                'name_last': name_last1,
+            },
+        ],
+    }
+
+
+# Slackr owner is automatically joins created channels (public & private)
+def test_channels_create_slackr_owner(get_new_user_1, get_new_user_detail_1, get_new_user_2, get_new_user_detail_2, get_channel_name_1):
+
+    # Get user 1
+    u_id1, token1 = get_new_user_1
+    _, _, name_first1, name_last1 = get_new_user_detail_1
+    assert u_id1 == 1  # slackr owner user id
+
+    # Get user 2
+    u_id2, token2 = get_new_user_2
+    _, _, name_first2, name_last2 = get_new_user_detail_2
+
+    # Create a public channel
+    ch_id1 = channels.channels_create(
+        token2, get_channel_name_1, True)['channel_id']
+
+    # Check if user 1 is owner of channel
+    assert channel.channel_details(token1, ch_id1) == {
+        'name':
+        get_channel_name_1,
+        'owner_members': [
+            {
+                'u_id': u_id1,
+                'name_first': name_first1,
+                'name_last': name_last1,
+            },
+            {
+                'u_id': u_id2,
+                'name_first': name_first2,
+                'name_last': name_last2,
+            },
+        ],
+        'all_members': [
+            {
+                'u_id': u_id1,
+                'name_first': name_first1,
+                'name_last': name_last1,
+            },
+            {
+                'u_id': u_id2,
+                'name_first': name_first2,
+                'name_last': name_last2,
+            },
+        ],
+    }
+
+    # Create a private channel
+    ch_id2 = channels.channels_create(
+        token2, get_channel_name_1, False)['channel_id']
+
+    # Check if user 1 is owner of channel
+    assert channel.channel_details(token1, ch_id2) == {
+        'name':
+        get_channel_name_1,
+        'owner_members': [
+            {
+                'u_id': u_id1,
+                'name_first': name_first1,
+                'name_last': name_last1,
+            },
+            {
+                'u_id': u_id2,
+                'name_first': name_first2,
+                'name_last': name_last2,
+            },
+        ],
+        'all_members': [
+            {
+                'u_id': u_id1,
+                'name_first': name_first1,
+                'name_last': name_last1,
+            },
+            {
+                'u_id': u_id2,
+                'name_first': name_first2,
+                'name_last': name_last2,
+            },
+        ],
+    }
