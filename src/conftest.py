@@ -97,5 +97,13 @@ def get_new_user_4(get_new_user_detail_4):
 
 
 @pytest.fixture(scope="session")
-def get_channel_name():
-    return 'New Channel'
+def get_channel_name1():
+    return 'New_test_channel1'
+
+@pytest.fixture(scope="session")
+def get_channel_name2():
+    return 'New_test_channel2'
+
+@pytest.fixture(scope="session")
+def get_channel_name3():
+    return 'New_test_channel3'
