@@ -63,7 +63,7 @@ def gen_person_info(get_new_user):
 @pytest.fixture(scope="session")
 def get_new_user_0():
     email = "ownerofslackrs@unsw.com"
-    password = "password"
+    password = "qwetmn"
     name_first = "Ownerof"
     name_last = "Slackr"
 
