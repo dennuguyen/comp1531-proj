@@ -48,6 +48,10 @@ def test_message_send_member(get_new_user_1):
     assert retval2[0]['time_created'] < time_after2
     assert len(retval2) == 1
 
+    # Check both messages are in channel
+    retval3 = channel.channel_messages(token1, ch_id, 0)['messages']
+    assert len(retval3) == 2    
+
 
 # Stranger to channel sends a message to that channel
 def test_message_send_stranger(get_new_user_1, get_new_user_2):

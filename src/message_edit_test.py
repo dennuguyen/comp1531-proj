@@ -107,6 +107,9 @@ def test_message_edit_by_owner(get_new_user_1, get_new_user_2):
     # Check for duplicate
     assert len(retval2) == 1
 
+    retval3 = channel.channel_messages(token1, ch_id, 0)['messages']
+    assert len(retval3) == 1    
+
 
 # Message edit is empty therefore must be removed
 def test_message_edit_to_remove(get_new_user_1):
@@ -132,3 +135,6 @@ def test_message_edit_to_remove(get_new_user_1):
 
     retval2 = other.search(token1, msg_send2)['messages']
     assert len(retval2) == 0
+
+    retval3 = channel.channel_messages(token1, ch_id, 0)['messages']
+    assert len(retval3) == 0

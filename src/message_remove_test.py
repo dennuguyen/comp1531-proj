@@ -32,6 +32,9 @@ def test_message_remove_message_user(get_new_user_1, get_new_user_2):
     retval = other.search(token1, msg_send)['messages']
     assert len(retval) == 0
 
+    retval2 = channel.channel_messages(token1, ch_id, 0)['messages']
+    assert len(retval2) == 0
+
 
 # Test owner removing user message
 def test_message_remove_message_owner(get_new_user_1, get_new_user_2):
@@ -58,6 +61,8 @@ def test_message_remove_message_owner(get_new_user_1, get_new_user_2):
     retval = other.search(token1, msg_send)['messages']
     assert len(retval) == 0
 
+    retval2 = channel.channel_messages(token1, ch_id, 0)['messages']
+    assert len(retval2) == 0
 
 # Test InputError case
 def test_message_remove_input_error(get_new_user_1, get_new_user_2):
