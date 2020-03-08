@@ -107,3 +107,7 @@ def get_channel_name_2():
 @pytest.fixture(scope="session")
 def get_channel_name_3():
     return 'New_test_channel3'
+
+@pytest.fixture(scope="session")
+def get_channel_name_4():
+    return 'New_test_channel4'
