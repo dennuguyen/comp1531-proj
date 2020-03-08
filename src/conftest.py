@@ -5,7 +5,7 @@ import auth
 
 # for auth.py generating a user who is going to register next
 @pytest.fixture(scope="session")
-def get_new_user_detail_zero():
+def get_new_user_detail_0():
     email = "ownerofslackrs@unsw.com"
     password = "qwetmn"
     name_first = "Ownerof"
@@ -13,7 +13,7 @@ def get_new_user_detail_zero():
 
     return email, password, name_first, name_last
 
-def get_new_user_detail_a():
+def get_new_user_detail_1():
     email = "ownerofslackrs@unsw.com"
     password = "qwetls"
     name_first = "Dan"
@@ -21,7 +21,7 @@ def get_new_user_detail_a():
 
     return email, password, name_first, name_last
 
-def get_new_user_detail_b():
+def get_new_user_detail_2():
     email = "stranger@unsw.com"
     password = "qwetla"
     name_first = "A"
@@ -29,7 +29,7 @@ def get_new_user_detail_b():
 
     return email, password, name_first, name_last
 
-def get_new_user_detail_c():
+def get_new_user_detail_3():
     email = "anotherstranger@unsw.com"
     password = "qwetrb"
     name_first = "Another"
@@ -37,7 +37,7 @@ def get_new_user_detail_c():
 
     return email, password, name_first, name_last
 
-def get_new_user_detail_d():
+def get_new_user_detail_4():
     email = "strangerzzz@unsw.com"
     password = "qwetds"
     name_first = "Two"
