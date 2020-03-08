@@ -100,14 +100,24 @@ def get_new_user_4(get_new_user_detail_4):
 def get_channel_name_1():
     return 'New_test_channel1'
 
+
 @pytest.fixture(scope="session")
 def get_channel_name_2():
     return 'New_test_channel2'
+
 
 @pytest.fixture(scope="session")
 def get_channel_name_3():
     return 'New_test_channel3'
 
+
 @pytest.fixture(scope="session")
 def get_channel_name_4():
     return 'New_test_channel4'
+
+
+@pytest.fixture(scope="session")
+def get_invalid_user_name():
+    invalid_name_long = 'T' * 51
+    invalid_name_empty = ''
+    return invalid_name_long, invalid_name_empty
