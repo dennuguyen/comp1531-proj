@@ -13,6 +13,7 @@ def get_new_user_detail_0():
 
     return email, password, name_first, name_last
 
+@pytest.fixture(scope="session")
 def get_new_user_detail_1():
     email = "ownerofslackrs@unsw.com"
     password = "qwetls"
@@ -21,6 +22,7 @@ def get_new_user_detail_1():
 
     return email, password, name_first, name_last
 
+@pytest.fixture(scope="session")
 def get_new_user_detail_2():
     email = "stranger@unsw.com"
     password = "qwetla"
@@ -28,7 +30,8 @@ def get_new_user_detail_2():
     name_last = "Stranger"
 
     return email, password, name_first, name_last
-
+    
+@pytest.fixture(scope="session")
 def get_new_user_detail_3():
     email = "anotherstranger@unsw.com"
     password = "qwetrb"
@@ -37,6 +40,7 @@ def get_new_user_detail_3():
 
     return email, password, name_first, name_last
 
+@pytest.fixture(scope="session")
 def get_new_user_detail_4():
     email = "strangerzzz@unsw.com"
     password = "qwetds"
@@ -71,6 +75,7 @@ def get_new_user_0():
 
     return retval['u_id'], retval['token']
 
+@pytest.fixture(scope="session")
 def get_new_user_1():
     email = "owner@unsw.com"
     password = "qwetls"
