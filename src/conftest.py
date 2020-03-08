@@ -5,6 +5,14 @@ import auth
 
 # for auth.py generating a user who is going to register next
 @pytest.fixture(scope="session")
+def get_new_user_detail_zero():
+    email = "z0000000@unsw.edu.au"
+    password = "qwerty"
+    name_first = "Ownerof"
+    name_last = "Slackr"
+
+    return email, password, name_first, name_last
+
 def get_new_user_detail_a():
     email = "z1234567@unsw.edu.au"
     password = "qwetyu"
@@ -53,6 +61,16 @@ def gen_person_info(get_new_user):
 
 # for channels.py generating users who have already registered
 @pytest.fixture(scope="session")
+def get_new_user_0():
+    email = "ownerofslackrs@unsw.com"
+    password = "password"
+    name_first = "Ownerof"
+    name_last = "Slackr"
+
+    retval = auth.auth_register(email, password, name_first, name_last)
+
+    return retval['u_id'], retval['token']
+
 def get_new_user_1():
     email = "owner@unsw.com"
     password = "password"
