@@ -1,7 +1,6 @@
 import pytest
 import user
 import error
-import auth
 
 
 # user changes their own email

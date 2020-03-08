@@ -83,6 +83,7 @@ def test_channel_join_invalid_channel(get_new_user_1, get_new_user_2, get_channe
         channel.channel_join(token2, (ch_id + 1))
 
 
+# rejoining a channel will raise InputError
 def test_channel_join_rejoin(get_new_user_1, get_new_user_2, get_channel_name_1,
                              get_channel_name_2):
 
@@ -102,6 +103,3 @@ def test_channel_join_rejoin(get_new_user_1, get_new_user_2, get_channel_name_1,
     # user 2 joins the channel again
     with pytest.raises(error.InputError):
         channel.channel_join(token2, ch_id)
-
-
-# def test_channel_join_slackr_owner():

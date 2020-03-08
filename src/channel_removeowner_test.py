@@ -1,9 +1,7 @@
 import pytest
 import channel
-import error
 import channels
-import auth
-from error import InputError
+import error
 
 
 # test case where slackr owner is removed

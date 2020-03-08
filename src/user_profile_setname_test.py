@@ -1,6 +1,5 @@
 import pytest
 import user
-import user_test_helper
 import error
 
 

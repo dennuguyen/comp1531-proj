@@ -1,6 +1,5 @@
 import pytest
 import message
-import auth
 import channel
 import channels
 import error
@@ -50,7 +49,7 @@ def test_message_send_member(get_new_user_1):
 
     # Check both messages are in channel
     retval3 = channel.channel_messages(token1, ch_id, 0)['messages']
-    assert len(retval3) == 2    
+    assert len(retval3) == 2
 
 
 # Stranger to channel sends a message to that channel

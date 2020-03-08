@@ -1,7 +1,6 @@
 import pytest
 import user
 import error
-import auth
 
 
 # Base test case for setting new handle
