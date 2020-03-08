@@ -31,13 +31,11 @@ def test_channel_leave_user():
 
     # get user 1
     email1, password1, name_first1, name_last1 = get_new_user_1()
-    u_id1, token1 = auth.auth_register(email1, password1, name_first1,
-                                       name_last1)
+    _, token1 = auth.auth_register(email1, password1, name_first1, name_last1)
 
     # get user 2
     email2, password2, name_first2, name_last2 = get_new_user_2()
-    u_id2, token2 = auth.auth_register(email2, password2, name_first2,
-                                       name_last2)
+    _, token2 = auth.auth_register(email2, password2, name_first2, name_last2)
 
     # user 1 creates a channel
     ch_name = get_channel_name()
@@ -58,8 +56,7 @@ def test_channel_leave_owner():
 
     # get user 1
     email1, password1, name_first1, name_last1 = get_new_user_1()
-    u_id1, token1 = auth.auth_register(email1, password1, name_first1,
-                                       name_last1)
+    _, token1 = auth.auth_register(email1, password1, name_first1, name_last1)
 
     # get user 2
     email2, password2, name_first2, name_last2 = get_new_user_2()
@@ -90,13 +87,11 @@ def test_channel_leave_invalid_channel_id():
 
     # get user 1
     email1, password1, name_first1, name_last1 = get_new_user_1()
-    u_id1, token1 = auth.auth_register(email1, password1, name_first1,
-                                       name_last1)
+    _, token1 = auth.auth_register(email1, password1, name_first1, name_last1)
 
     # get user 2
     email2, password2, name_first2, name_last2 = get_new_user_2()
-    u_id2, token2 = auth.auth_register(email2, password2, name_first2,
-                                       name_last2)
+    _, token2 = auth.auth_register(email2, password2, name_first2, name_last2)
 
     # user 1 creates a channel
     ch_name = get_channel_name()
@@ -115,13 +110,11 @@ def test_channel_leave_unauthorised_user():
 
     # get user 1
     email1, password1, name_first1, name_last1 = get_new_user_1()
-    u_id1, token1 = auth.auth_register(email1, password1, name_first1,
-                                       name_last1)
+    _, token1 = auth.auth_register(email1, password1, name_first1, name_last1)
 
     # get user 2
     email2, password2, name_first2, name_last2 = get_new_user_2()
-    u_id2, token2 = auth.auth_register(email2, password2, name_first2,
-                                       name_last2)
+    _, token2 = auth.auth_register(email2, password2, name_first2, name_last2)
 
     # user 1 creates a channel
     ch_name = get_channel_name()
