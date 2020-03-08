@@ -4,15 +4,36 @@ import error
 import channels
 import auth
 
-def test_environment():
-    u_id1, token1 = auth.auth_register('example@unsw.com', 'password', 'The', 'User')
-    u_id2, token2 = auth.auth_register('owner@unsw.com', 'password', 'The', 'Owner')
-    u_id3, token3 = auth.auth_register('stranger@unsw.com', 'password', 'A', 'Stranger')
+def get_new_user_1():
+    email = 'john_doe@unsw.edu.au'
+    password = 'password'
+    name_first = 'John'
+    name_last = 'Doe'
+    return email, password, name_first, name_last
 
-    return u_id1, token1, u_id2, token2, u_id3, token3, ch_id
+
+def get_new_user_2():
+    email = 'hugh_jackman@unsw.edu.au'
+    password = 'password'
+    name_first = 'Hugh'
+    name_last = 'Jackman'
+    return email, password, name_first, name_last
 
 
-############## COMPLETE TEST FUNCTIONS BELOW ##################
+def get_new_user_3():
+    email = 'ted_bundy@unsw.edu.au'
+    password = 'password'
+    name_first = 'Ted'
+    name_last = 'Bundy'
+    return email, password, name_first, name_last
+
+
+def get_channel_name():
+    ch_name = 'New Channel'
+    return ch_name
+
+
+# check mess
 def test_channel_messages_less_than_50():
 
     # set up environment

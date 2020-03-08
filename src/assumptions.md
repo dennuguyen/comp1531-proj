@@ -30,10 +30,6 @@
 - **self-invitation does nothing**
 
 ### channel_details()
-- returns list of channel name, list of owners, list of members
-- only channel members may call details()
-- if channel id is not valid then raise InputError
-- if user is not member of channel then raise AccessError
 - **all_members key will include list of channel members including owners**
 
 ### channel_messages()
@@ -64,6 +60,7 @@
 
 ### channel_removeowner()
 - **return empty dictionary on success**
+- **there must always be at least 1 owner in any channel**
 - if user to be removed is not an owner then raise InputError
 - if channel id is not valid then raise InputError
 - when the user who is removing is not authorised then raise AccessError

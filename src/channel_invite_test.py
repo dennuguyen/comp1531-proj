@@ -42,8 +42,8 @@ def get_channel_name():
     return ch_name
 
 
-# user 1 (owner) invites a stranger to the channel
-def test_channel_invite_user():
+# user 1 (owner) invites a stranger to a public channel
+def test_channel_invite_public():
 
     # get user 1
     email1, password1, name_first1, name_last1 = get_new_user_1()
@@ -103,6 +103,36 @@ def test_channel_invite_user():
                 'u_id': u_id3,
                 'name_first': name_first3,
                 'name_last': name_last3,
+            },
+        ],
+    }
+
+
+# user 1 (owner) invites a stranger to a private channel
+def test_channel_invite_private():
+
+    # get user 1
+    email1, password1, name_first1, name_last1 = get_new_user_1()
+    _, token1 = auth.auth_register(email1, password1, name_first1, name_last1)
+
+    # get user 2
+    email2, password2, name_first2, name_last2 = get_new_user_2()
+    u_id2, token2 = auth.auth_register(email2, password2, name_first2,
+                                       name_last2)
+
+    # user 1 creates a channel
+    ch_name = get_channel_name()
+    ch_id = channels.channels_create(token1, ch_name, False)
+
+    # user 1 (owner) invites user 2
+    assert channel.channel_invite(token1, ch_id, u_id2) == {}
+
+    # user 2 is immediately added to the channel
+    assert channels.channels_list(token2) == {
+        'channels': [
+            {
+                'channel_id': ch_id,
+                'name': ch_name,
             },
         ],
     }
