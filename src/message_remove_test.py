@@ -36,8 +36,7 @@ def test_message_remove_message_user():
     # Actual test
     message.message_remove(token2, msg_id)
     start = 0
-    channel_messages_retval = channel.channel_messages(token, channel_id,
-                                                       start)
+    channel_messages_retval = channel.channel_messages(token, ch_id, start)
     assert channel_messages_retval == {}
 
 
@@ -70,8 +69,7 @@ def test_message_remove_message_owner():
     # Actual test
     message.message_remove(token1, msg_id)
     start = 0
-    channel_messages_retval = channel.channel_messages(token, channel_id,
-                                                       start)
+    channel_messages_retval = channel.channel_messages(token, ch_id, start)
     assert channel_messages_retval == {}
 
 
