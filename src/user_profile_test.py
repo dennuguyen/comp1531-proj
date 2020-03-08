@@ -2,12 +2,13 @@ import pytest
 import user
 import error
 
+
 # User checks out own profile
 def test_user_profile(get_new_user_1, get_new_user_detail_1):
 
     # Register test user 1
     u_id, token = get_new_user_1
-    email, password, name_first, name_last = get_new_user_detail_1
+    email, _, name_first, name_last = get_new_user_detail_1
 
     # Actual test
     assert user.user_profile(token, u_id) == {

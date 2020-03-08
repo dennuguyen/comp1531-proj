@@ -9,7 +9,7 @@ def test_user_profile_setname(get_new_user_1, get_new_user_detail_1):
 
     # Register test user 1
     u_id, token = get_new_user_1
-    email, password, name_first, name_last = get_new_user_detail_1
+    email, _, _, _ = get_new_user_detail_1
 
     # Actual test
     new_name_first = 'Test'
@@ -30,8 +30,8 @@ def test_user_profile_setname(get_new_user_1, get_new_user_detail_1):
 def test_user_profile_setname_invalid(get_new_user_1, get_new_user_detail_1):
 
     # Register test user 1
-    u_id, token = get_new_user_1
-    email, password, name_first, name_last = get_new_user_detail_1
+    _, token = get_new_user_1
+    _, _, name_first, name_last = get_new_user_detail_1
 
     # first name cannot be empty
     with pytest.raises(error.InputError):
@@ -56,4 +56,4 @@ def test_user_profile_setname_invalid(get_new_user_1, get_new_user_detail_1):
 
     # first name and last name cannot be more than 50 char
     with pytest.raises(error.InputError):
-        user.user_profile_setname(token, 'T' * 51, 'B' * 51)  
+        user.user_profile_setname(token, 'T' * 51, 'B' * 51)
