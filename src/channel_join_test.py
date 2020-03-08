@@ -47,20 +47,25 @@ def test_channel_join_public():
     assert channel.channel_details(token2, ch_id) == {
         'name':
         ch_name,
-        'owner_members': [{
-            'u_id': u_id1,
-            'name_first': name_first1,
-            'name_last': name_last1,
-        }],
-        'all_members': [{
-            'u_id': u_id1,
-            'name_first': name_first1,
-            'name_last': name_last1,
-        }, {
-            'u_id': u_id2,
-            'name_first': name_first2,
-            'name_last': name_last2,
-        }],
+        'owner_members': [
+            {
+                'u_id': u_id1,
+                'name_first': name_first1,
+                'name_last': name_last1,
+            },
+        ],
+        'all_members': [
+            {
+                'u_id': u_id1,
+                'name_first': name_first1,
+                'name_last': name_last1,
+            },
+            {
+                'u_id': u_id2,
+                'name_first': name_first2,
+                'name_last': name_last2,
+            },
+        ],
     }
 
 
@@ -125,11 +130,13 @@ def test_channel_join_already_member():
     assert channel.channel_details(token1, ch_id) == {
         'name':
         ch_name,
-        'owner_members': [{
-            'u_id': u_id1,
-            'name_first': name_first1,
-            'name_last': name_last1,
-        }],
+        'owner_members': [
+            {
+                'u_id': u_id1,
+                'name_first': name_first1,
+                'name_last': name_last1,
+            },
+        ],
         'all_members': [
             {
                 'u_id': u_id1,
@@ -149,11 +156,13 @@ def test_channel_join_already_member():
     assert channel.channel_details(token1, ch_id) == {
         'name':
         ch_name,
-        'owner_members': [{
-            'u_id': u_id1,
-            'name_first': name_first1,
-            'name_last': name_last1,
-        }],
+        'owner_members': [
+            {
+                'u_id': u_id1,
+                'name_first': name_first1,
+                'name_last': name_last1,
+            },
+        ],
         'all_members': [
             {
                 'u_id': u_id1,
