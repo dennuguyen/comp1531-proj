@@ -4,76 +4,175 @@ import error
 import channels
 import auth
 
-def test_environment():
-    u_id1, token1 = auth_register('owner@unsw.com', 'password', 'The', 'Owner')
-    u_id2, token2 = auth_register('stranger@unsw.com', 'password', 'A', 'Stranger')
+
+def get_new_user_1():
+    email = 'john_doe@unsw.edu.au'
+    password = 'password'
+    name_first = 'John'
+    name_last = 'Doe'
+    return email, password, name_first, name_last
 
 
-    return u_id1, token1, u_id2, token2
+def get_new_user_2():
+    email = 'hugh_jackman@unsw.edu.au'
+    password = 'password'
+    name_first = 'Hugh'
+    name_last = 'Jackman'
+    return email, password, name_first, name_last
+
+
+def get_channel_name():
+    ch_name = 'New Channel'
+    return ch_name
+
 
 def test_channel_join_public():
 
-    # set up environment
-    u_id1, token1, u_id2, token2 = test_environment()
-    ch_id = channels.channels_create(token1, 'Test channel1', True)['channel_id']
+    # get user 1
+    email1, password1, name_first1, name_last1 = get_new_user_1()
+    u_id1, token1 = auth.auth_register(email1, password1, name_first1,
+                                       name_last1)
 
-    # stranger joins public channel
+    # get user 2
+    email2, password2, name_first2, name_last2 = get_new_user_2()
+    u_id2, token2 = auth.auth_register(email2, password2, name_first2,
+                                       name_last2)
+
+    # user 1 creates a channel
+    ch_name = get_channel_name()
+    ch_id = channels.channels_create(token1, ch_name, True)
+
+    # user 2 (stranger) joins public channel
     assert channel.channel_join(token2, ch_id) == {}
-    assert channels.channels_details(token2, ch_id) == {
-        'name': 'Test channel1',
+    assert channel.channel_details(token2, ch_id) == {
+        'name':
+        ch_name,
         'owner_members': [
             {
                 'u_id': u_id1,
-                'name_first': 'The',
-                'name_last': 'Owner',
-            }
+                'name_first': name_first1,
+                'name_last': name_last1,
+            },
         ],
         'all_members': [
             {
                 'u_id': u_id1,
-                'name_first': 'The',
-                'name_last': 'Owner',
+                'name_first': name_first1,
+                'name_last': name_last1,
             },
-                        {
+            {
                 'u_id': u_id2,
-                'name_first': 'A',
-                'name_last': 'Stranger',
-            }
+                'name_first': name_first2,
+                'name_last': name_last2,
+            },
         ],
     }
 
+
 def test_channel_join_private():
 
-    # set up environment
-    u_id1, token1, u_id2, token2 = test_environment()
-    ch_id = channels.channels_create(token1, 'Test channel1', False)['channel_id']
+    # get user 1
+    email1, password1, name_first1, name_last1 = get_new_user_1()
+    _, token1 = auth.auth_register(email1, password1, name_first1, name_last1)
+
+    # get user 2
+    email2, password2, name_first2, name_last2 = get_new_user_2()
+    _, token2 = auth.auth_register(email2, password2, name_first2, name_last2)
+
+    # user 1 creates a channel
+    ch_name = get_channel_name()
+    ch_id = channels.channels_create(token1, ch_name, False)
 
     # stranger joins private channel
     with pytest.raises(error.AccessError):
         channel.channel_join(token2, ch_id)
 
+
 def test_channel_join_invalid_channel():
 
-    # set up environment
-    u_id1, token1, u_id2, token2 = test_environment()
-    ch_id = channels.channels_create(token1, 'Test channel1', False)['channel_id']
+    # get user 1
+    email1, password1, name_first1, name_last1 = get_new_user_1()
+    _, token1 = auth.auth_register(email1, password1, name_first1, name_last1)
+
+    # get user 2
+    email2, password2, name_first2, name_last2 = get_new_user_2()
+    _, token2 = auth.auth_register(email2, password2, name_first2, name_last2)
+
+    # user 1 creates a channel
+    ch_name = get_channel_name()
+    ch_id = channels.channels_create(token1, ch_name, True)
 
     # stranger joins private channel
     with pytest.raises(error.InputError):
-        channel.channel_join(token2, ch_id+1)
+        channel.channel_join(token2, ch_id + 1)
 
 
 def test_channel_join_already_member():
 
-    # set up environment
-    u_id1, token1, u_id2, token2 = test_environment()
-    ch_id1 = channels.channels_create(token1, 'Test channel1', True)['channel_id']
-    channel.channel_join(token2, ch_id1)
+    # get user 1
+    email1, password1, name_first1, name_last1 = get_new_user_1()
+    u_id1, token1 = auth.auth_register(email1, password1, name_first1,
+                                       name_last1)
 
-    ch_id2 = channels.channels_create(token1, 'Test channel2', False)['channel_id']
-    channel.channel_join(token2, ch_id2)
+    # get user 2
+    email2, password2, name_first2, name_last2 = get_new_user_2()
+    u_id2, token2 = auth.auth_register(email2, password2, name_first2,
+                                       name_last2)
 
-    assert channel.channel_join(token1, ch_id1) == {}
-    assert channel.channel_join(token2, ch_id1) == {}
-    assert channel.channel_join(token1, ch_id2) == {}
-    assert channel.channel_join(token2, ch_id2) == {}
+    # user 1 creates a channel
+    ch_name = get_channel_name()
+    ch_id = channels.channels_create(token1, ch_name, True)
+
+    # user 1 joins channel again
+    assert channel.channel_join(token1, ch_id) == {}
+
+    # there should be no duplicate of user 1
+    assert channel.channel_details(token1, ch_id) == {
+        'name':
+        ch_name,
+        'owner_members': [
+            {
+                'u_id': u_id1,
+                'name_first': name_first1,
+                'name_last': name_last1,
+            },
+        ],
+        'all_members': [
+            {
+                'u_id': u_id1,
+                'name_first': name_first1,
+                'name_last': name_last1,
+            },
+        ],
+    }
+
+    # user 2 joins the channel
+    channel.channel_join(token2, ch_id)
+
+    # user 2 joins the channel again
+    assert channel.channel_join(token1, ch_id) == {}
+
+    # check duplicate of user 2
+    assert channel.channel_details(token1, ch_id) == {
+        'name':
+        ch_name,
+        'owner_members': [
+            {
+                'u_id': u_id1,
+                'name_first': name_first1,
+                'name_last': name_last1,
+            },
+        ],
+        'all_members': [
+            {
+                'u_id': u_id1,
+                'name_first': name_first1,
+                'name_last': name_last1,
+            },
+            {
+                'u_id': u_id2,
+                'name_first': name_first2,
+                'name_last': name_last2,
+            },
+        ],
+    }
