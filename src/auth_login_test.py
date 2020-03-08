@@ -4,23 +4,25 @@ import auth
 import re  # Regular Expression Module
 
 
-def test_login(get_new_user_1, get_new_user_detail_1):
+def test_auth_login(get_new_user_1, get_new_user_detail_1):
 
     # Register a user
     email1, password1, _, _ = get_new_user_detail_1
     u_id1, token1 = get_new_user_1
 
-    # Log user we just created out
+    # Log out user
     auth.auth_logout(token1)
 
+    # Log in user
     login_retval = auth.auth_login(email1, password1)
     test_u_id = login_retval['u_id']
 
+    # Check user id is the same
     assert u_id1 == test_u_id
 
 
 # Multiple logins are allowed
-def test_login_already_logged_in(get_new_user_1, get_new_user_detail_1):
+def test_auth_login_already_logged_in(get_new_user_1, get_new_user_detail_1):
 
     # Register a user
     email1, password1, _, _ = get_new_user_detail_1
@@ -30,44 +32,68 @@ def test_login_already_logged_in(get_new_user_1, get_new_user_detail_1):
     login_retval = auth.auth_login(email1, password1)
     u_id2, token2 = login_retval['u_id'], login_retval['token']
 
-    assert u_id1 == u_id2  # User ids should be the same for each login
-    assert token1 != token2  # Tokens should be different for each login
+    # User ids and tokens should be the same
+    assert u_id1 == u_id2
+    assert token1 == token2
 
 
 # Invalid email form during login
-def test_login_invalid_email_form(get_new_user_1, get_new_user_detail_1):
+def test_auth_login_invalid_email_form(get_new_user_1, get_new_user_detail_1):
 
     # Register a user
     email1, password1, _, _ = get_new_user_detail_1
     _, token1 = get_new_user_1
 
+    # Log out user
     auth.auth_logout(token1)
 
+    # Invalidate the email
     email1.replace('@', '.')  # String is now "z1234567.unsw.edu.au"
 
+    # Log in user with invalid email
     with pytest.raises(InputError):
         auth.auth_login(email1, password1)
 
 
 # Logging in from valid but nonregistered email
-def test_non_registered_email(get_new_user_detail_1):
+def test_auth_login_non_registered_email(get_new_user_detail_1):
 
+    # Get user details
     email1, password1, _, _ = get_new_user_detail_1
 
+    # Log in a user without registering
     with pytest.raises(InputError):
         auth.auth_login(email1, password1)
 
 
 # Incorrect password
-def test_wrong_password(get_new_user_1, get_new_user_detail_1):
+def test_auth_login_wrong_password(get_new_user_1, get_new_user_detail_1):
 
     # Register a user
     email1, password1, _, _ = get_new_user_detail_1
     _, token1 = get_new_user_1
 
-    # Log user we just created out
+    # Log out user
     auth.auth_logout(token1)
 
+    # Log in with incorrect password
     incorrect_password = password1 + password1  # Double the password
     with pytest.raises(InputError):
         auth.auth_login(email1, incorrect_password)
+
+
+# Two users with the same password should have different hash
+def test_auth_login_same_password(get_new_user_1, get_new_user_detail_1, get_new_user_2, get_new_user_detail_2):
+
+    # Register user 1
+    email1, password1, name_first1, name_last1 = get_new_user_detail_1
+    token1 = auth.auth_register(
+        email1, password1, name_first1, name_last1)['token']
+
+    # Register user 2
+    email2, _, name_first2, name_last2 = get_new_user_detail_2
+    token2 = auth.auth_register(
+        email2, password1, name_first2, name_last2)['token']
+
+    # Check tokens are different
+    assert token1 != token2

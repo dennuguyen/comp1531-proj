@@ -3,11 +3,10 @@
 ## auth.py
 
 ### auth_login()
-- multiple logins are allowed and return the same u_id but different token
+- multiple logins are allowed and return the same u_id and token
 
 ### auth_logout()
-- valid token allows successful logout
-- logout without valid token returns False
+- use of invalidated token returns False
 
 ### auth_register()
 - when user registers, automatically login
