@@ -10,7 +10,7 @@ def test_user_profile_setname():
     # Register test user 1
     email, password, name_first, name_last = user_test_helper.get_new_user1()
     reg_retval = auth.auth_register(email, password, name_first, name_last)
-    u_id, token = reg_retval['u_id'], reg_retval['token'])
+    u_id, token = reg_retval['u_id'], reg_retval['token']
 
     # Actual test
     new_name_first = name_first + 'suffix'
@@ -33,12 +33,12 @@ def test_user_profile_setname_invalid():
     # Register test user 1
     email, password, name_first, name_last = user_test_helper.get_new_user1()
     reg_retval = auth.auth_register(email, password, name_first, name_last)
-    u_id, token = reg_retval['u_id'], reg_retval['token'])
+    u_id, token = reg_retval['u_id'], reg_retval['token']
 
     # first name cannot be empty
     with pytest.raises(error.InputError):
         user.user_profile_setname(token, '', name_last)
-    
+
     # last name cannot be empty
     with pytest.raises(error.InputError):
         user.user_profile_setname(token, name_first, '')
@@ -46,7 +46,7 @@ def test_user_profile_setname_invalid():
     # first name cannot be more than 50 char
     with pytest.raises(error.InputError):
         user.user_profile_setname(token, 'T' * 51, name_last)
-    
+
     # last name cannot be more than 50 char
     with pytest.raises(error.InputError):
         user.user_profile_setname(token, name_first, 'B' * 51)

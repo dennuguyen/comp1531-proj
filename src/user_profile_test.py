@@ -10,7 +10,7 @@ def test_user_profile():
     # Register test user 1
     email, password, name_first, name_last = user_test_helper.get_new_user1()
     reg_retval = auth.auth_register(email, password, name_first, name_last)
-    u_id, token = reg_retval['u_id'], reg_retval['token'])
+    u_id, token = reg_retval['u_id'], reg_retval['token']
 
     # Actual test
     assert user.user_profile(token, u_id) == {
@@ -30,7 +30,7 @@ def test_user_profile_invalid_uid():
     # Register test user 1
     email, password, name_first, name_last = user_test_helper.get_new_user1()
     reg_retval = auth.auth_register(email, password, name_first, name_last)
-    u_id, token = reg_retval['u_id'], reg_retval['token'])
+    u_id, token = reg_retval['u_id'], reg_retval['token']
 
     # Actual test
     with pytest.raises(error.InputError):
