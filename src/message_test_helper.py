@@ -10,7 +10,7 @@ def get_new_user1():
     password = 'qwert111'
     name_first = 'James'
     name_last = 'Bond'
-    return (register_retval['u_id'], register_retval['token'])
+    return email, password, name_first, name_last
 
 
 def get_new_user2():
@@ -18,4 +18,4 @@ def get_new_user2():
     password = 'qwert111'
     name_first = 'John'
     name_last = 'Wick'
-    return (register_retval['u_id'], register_retval['token'])
+    return email, password, name_first, name_last
