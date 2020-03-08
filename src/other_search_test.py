@@ -2,6 +2,8 @@ import pytest
 import auth
 import message
 import channels
+import other
+import channel
 
 # TODO: Check invalid token?
 
@@ -21,7 +23,7 @@ def create_person_one():
 def create_person_two():
     # Returns dictionary and token of person 2
     person_two = {}
-    u_id1, token1 = auth.auth_register('person2@unsw.com', 'password', 'Second', 'Person')
+    u_id2, token2 = auth.auth_register('person2@unsw.com', 'password', 'Second', 'Person')
     person_two['u_id'] = u_id2
     person_two['email'] = 'person2@unsw.com'
     person_two['name_first'] = 'Second'
@@ -221,7 +223,7 @@ def test_users_channel_match():
     channel_id1 = channels.channels_create(token1, channel_name, True)
 
     # Add person 2 to channel 1
-    channels.channel_join(token2, channel_id1)
+    channel.channel_join(token2, channel_id1)
 
     # Send message by person 2
     sentence1 = 'The quick brown fox jumps over the lazy dog'
