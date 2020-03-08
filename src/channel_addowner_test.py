@@ -4,19 +4,20 @@ import error
 import channels
 import auth
 
-def test_environment():
-    u_id1, token1 = auth.auth_register('owner@unsw.com', 'password', 'The', 'Owner')
-    u_id2, token2 = auth.auth_register('stranger@unsw.com', 'password', 'A', 'Stranger')
 
+@pytest.fixture(scope="module")
+def test_environment(get_new_user_1, get_new_user_2):
+    u_id1, token1 = get_new_user_1
+    u_id2, token2 = get_new_user_2
 
     return u_id1, token1, u_id2, token2
 
 # test case where owner promotes a member to owner
-def test_channel_addowner_add_member():
+def test_channel_addowner_add_member(test_environment):
 
     # set up environment
-    u_id1, token1, u_id2, token2 = test_environment()
-    ch_id = channels.channels_create(token1, 'New Channel', True)
+    u_id1, token1, u_id2, token2 = test_environment
+    ch_id = channels.channels_create(token1, 'New Channel', True)['channel_id']
     channel.channel_join(token2, ch_id)
 
     # owner adds an owner
@@ -50,11 +51,11 @@ def test_channel_addowner_add_member():
     }
 
 # test case where owner promotes owner to owner
-def test_channel_addowner_add_already_owner():
+def test_channel_addowner_add_already_owner(test_environment):
     
     # set up environment
-    u_id1, token1, u_id2, token2 = test_environment()
-    ch_id = channels.channels_create(token1, 'New Channel', True)
+    u_id1, token1, u_id2, token2 = test_environment
+    ch_id = channels.channels_create(token1, 'New Channel', True)['channel_id']
     channel.channel_join(token2, ch_id)
     channel.channel_addowner(token1, ch_id, u_id2)
 
@@ -63,13 +64,12 @@ def test_channel_addowner_add_already_owner():
         channel.channel_addowner(token1, ch_id, u_id2)
 
 
-
 # test case where owner promotes stranger to owner
-def test_channel_addowner_add_stranger():
+def test_channel_addowner_add_stranger(test_environment):
 
     # set up environment
-    u_id1, token1, u_id2, token2 = test_environment()
-    ch_id = channels.channels_create(token1, 'New Channel', True)
+    u_id1, token1, u_id2, token2 = test_environment
+    ch_id = channels.channels_create(token1, 'New Channel', True)['channel_id']
 
     # owner promotes a stranger
     assert channel.channel_addowner(token1, ch_id, u_id2) == {}
@@ -91,14 +91,13 @@ def test_channel_addowner_add_stranger():
         ],
     }               
 
-
 # test case where member promotes member to owner
-def test_channel_addowner_unauthorised_member():
+def test_channel_addowner_unauthorised_member(test_environment, get_new_user_3):
 
     # set up environment
-    u_id1, token1, u_id2, token2 = test_environment()
-    u_id3, token3 = auth.auth_register('anotherstranger@unsw.com', 'password', 'Another', 'Stranger')
-    ch_id = channels.channels_create(token1, 'New Channel', True)
+    u_id1, token1, u_id2, token2 = test_environment
+    u_id3, token3 = get_new_user_3
+    ch_id = channels.channels_create(token1, 'New Channel', True)['channel_id']
     channel.channel_join(token2, ch_id)
 
     # member promotes member
@@ -106,34 +105,33 @@ def test_channel_addowner_unauthorised_member():
         channel.channel_addowner(token2, ch_id, u_id3)
 
 # test case where stranger promotes member to owner
-def test_channel_addowner_unauthorised_nonmember():
+def test_channel_addowner_unauthorised_nonmember(test_environment, get_new_user_3):
 
     # set up environment
-    u_id1, token1, u_id2, token2 = test_environment()
-    u_id3, token3 = auth.auth_register('anotherstranger@unsw.com', 'password', 'Another', 'Stranger')
-    ch_id = channels.channels_create(token1, 'New Channel', True)
+    u_id1, token1, u_id2, token2 = test_environment
+    u_id3, token3 = get_new_user_3
+    ch_id = channels.channels_create(token1, 'New Channel', True)['channel_id']
 
     # stranger promotes member
     with pytest.raises(error.AccessError):
         channel.channel_addowner(token2, ch_id, u_id3)
 
 # validity cases
-def test_channel_addowner_invalid_channel_id():
+def test_channel_addowner_invalid_channel_id(test_environment):
 
     # set up environment
-    u_id1, token1, u_id2, token2, ch_id = test_environment()
-    ch_id = channels.channels_create(token1, 'New Channel', True)
+    u_id1, token1, u_id2, token2 = test_environment
+    ch_id = channels.channels_create(token1, 'New Channel', True)['channel_id']
 
     # invalid user id
     with pytest.raises(error.InputError):
-        channel.channel_addowner(token1, ch_id, u_id1 + 2)
+        channel.channel_addowner(token1, ch_id, u_id1 + 1)
 
-
-def test_channel_addowner_invalid_u_id():
+def test_channel_addowner_invalid_u_id(test_environment):
 
     # set up environment
-    u_id1, token1, u_id2, token2, ch_id = test_environment()
-    ch_id = channels.channels_create(token1, 'New Channel', True)
+    u_id1, token1, u_id2, token2 = test_environment
+    ch_id = channels.channels_create(token1, 'New Channel', True)['channel_id']
 
     # invalid channel id
 

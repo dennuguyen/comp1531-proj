@@ -3,29 +3,6 @@ import pytest
 import auth
 import re  # Regular Expression Module
 
-
-@pytest.fixture(scope="module")
-def get_new_user():  
-    # dummy data
-    email = "z1234567@unsw.edu.au"
-    password = "qwetyu"
-    name_first = "Zhihan"
-    name_last = "Qin"
-
-    return email, password, name_first, name_last
-
-
-# check if the email form is correct or not
-# def check_email_form(email):
-#     regex = '^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$'
-#     # pass the regualar expression
-#     # and the string in search() method
-#     if (re.search(regex, email)):
-#         return True
-#     else:
-#         return False
-
-
 def test_login(get_new_user):
     # register a user
     email, password, name_first, name_last = get_new_user
@@ -59,22 +36,24 @@ def test_login_already_logged_in(get_new_user):
 
 
 # invalid email form during login
-def test_login_invalid_email_form():
+def test_login_invalid_email_form(get_new_user):
     # register a user
     email, password, name_first, name_last = get_new_user
     register_retval = auth.auth_register(email, password, name_first,
                                          name_last)
-    u_id, token = register_retval['u_id'], register_retval['token']
+    token = register_retval['token']
+
+    auth.auth_logout(token)
 
     email.replace('@', '.')  # string is now "z1234567.unsw.edu.au"
 
     with pytest.raises(InputError):
-        auth.auth_login(invalid_email, password)
+        auth.auth_login(email, password)
 
 
 # logging in from valid but nonregistered email
-def test_non_registered_email():
-    email, password, name_first, name_last = get_new_user
+def test_non_registered_email(get_new_user):
+    email, password, _, _ = get_new_user
 
     with pytest.raises(InputError):
         auth.auth_login(email, password)
@@ -86,7 +65,7 @@ def test_wrong_password(get_new_user):
     email, password, name_first, name_last = get_new_user
     register_retval = auth.auth_register(email, password, name_first,
                                          name_last)
-    u_id, token = register_retval['u_id'], register_retval['token']
+    token =  register_retval['token']
 
     # log user we just created out
     auth.auth_logout(token)

@@ -2,31 +2,16 @@ import auth
 import pytest
 import other
 from error import InputError
-from auth_login_test import get_new_user
-
-
-@pytest.fixture(scope='module')
-def gen_person_info():
-    # dummy data
-    email1 = 'z1234567@unsw.edu.au'
-    email2 = 'z1234567@gmail.com'
-    password = 'qwetyu231'
-    name_first = 'Zhihan'
-    name_last = 'Qin'
-    invalid_name_first = 'zaqwertyuioplmnbvcxsdfghjklpoiuytrewqazxsdcvfgbnhjmk'
-    invalid_name_last = ''
-
-    return email1, email2, password, name_first, name_last, invalid_name_first, invalid_name_last
-
+from user import user_profile
 
 # basic case
 def test_auth_register(gen_person_info):
-    email1, _, password, name_first, name_last, _, _ = gen_person_info
+    email1, password, name_first, name_last, _, _, _= gen_person_info
 
     # register and unpack u_id and token
     auth_dict = auth.auth_register(email1, password, name_first, name_last)
-    u_id = dictionary['u_id']
-    token = dictionary['token']
+    u_id = auth_dict['u_id']
+    token = auth_dict['token']
 
     # create user_dict
     user_dict = {
@@ -36,12 +21,13 @@ def test_auth_register(gen_person_info):
             'name_first': name_first,
             'name_last': name_last,
             'handle_str':
-            (name_first + name_last).lower(),  # makes string all lower case
+            (name_first[0] + name_last).lower(),  # makes string all lower case
         },
     }
 
     # check if user exists after register
     assert user_profile(token, u_id) == user_dict
+    assert user_dict in other.users_all(token)['users']
 
 
 # check email validity
@@ -79,8 +65,8 @@ def test_auth_register_invalid_password(gen_person_info):
 def test_auth_register_invalid_name(gen_person_info):
     email1, email2, password, name_first, name_last, invalid_name_first, invalid_name_last = gen_person_info
 
-    assert len(invalid_name_first) >= 50
-    assert len(invalid_name_last) == 0
+    assert len(invalid_name_first) >= 50 
+    assert len(invalid_name_last)  == 0
 
     # test invalid first name only
     with pytest.raises(InputError):
