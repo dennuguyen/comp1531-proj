@@ -13,23 +13,12 @@
 - **logout without valid token returns False**
 
 ### auth_register()
-- takes email, password, first name and last name
-- returns list of token and user id on success
-- invalid email raises InputError
-- email already registered raises InputError
-- password less than 6 char
-- name_first between 1 and 50 char
-- name_last between 1 and 50 char
 - **when user registers, automatically login**
 
 ## channel.py
 
 ### channel_invite()
-- user immmediately becomes channel member after being invited
 - **returns empty list on success**
-- if inviter is not a member of channel then raise AccessError
-- if user or channel does not exist then raise InputError
-- token belongs to the inviter, user id belongs to the invitee
 
 ### channel_details()
 - returns list of channel name, list of owners, list of members
@@ -38,11 +27,6 @@
 - if user is not member of channel then raise AccessError
 
 ### channel_messages()
-- returns a list of messages, start, end
-- return at most 50 messages from a given "start"
-- index 0 message is most recent
-- "end" 
-- return -1 if no new messages
 
 ### channel_leave()
 - takes in token of user wanting to leave and the channel being left
@@ -107,3 +91,6 @@
 
 
 ## user.py
+
+### user_profile()
+- 
