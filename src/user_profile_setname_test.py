@@ -1,44 +1,52 @@
-#Raymond: Tests for user_profile_setname function
-
 import pytest
 import user
 import user_test_helper
 import error
 
 
+# basic test case for setting own name
 def test_user_profile_setname():
-    #Setup
-        #Register test user 1
-    user_id, token = user_test_helper.get_new_user1()
 
-    #Actual test
-    user.user_profile_setname(token, 'Ted', 'Bundy')
-    assert user.user_profile(token, user_id) == {
+    # Register test user 1
+    email, password, name_first, name_last = user_test_helper.get_new_user1()
+    reg_retval = auth.auth_register(email, password, name_first, name_last)
+    u_id, token = reg_retval['u_id'], reg_retval['token']
+
+    # Actual test
+    new_name_first = name_first + 'suffix'
+    new_name_last = 'prefix' + name_last
+    user.user_profile_setname(token, new_name_first, new_name_last)
+    assert user.user_profile(token, u_id) == {
         'user': {
-        	'u_id': 1,
-        	'email': 'z1111111@unsw.cedu.au',
-        	'name_first': 'Ted',
-        	'name_last': 'Bundy',
-        	'handle_str': 'jbond',
+            'u_id': u_id,
+            'email': email,
+            'name_first': new_name_first,
+            'name_last': new_name_last,
+            'handle_str': (new_name_first + new_name_last).lower(),
         },
     }
 
-    #Clean up (if necessary)
-    pass
 
-def test_user_profile_setname_name_not_valid():
-    #Setup
-        #Register test user 1
-    token = user_test_helper.get_new_user1()[1]
+# test case for invalid name setting
+def test_user_profile_setname_invalid():
 
-    #Actual test
+    # Register test user 1
+    email, password, name_first, name_last = user_test_helper.get_new_user1()
+    reg_retval = auth.auth_register(email, password, name_first, name_last)
+    u_id, token = reg_retval['u_id'], reg_retval['token']
+
+    # first name cannot be empty
     with pytest.raises(error.InputError):
-        user.user_profile_setname(token, '', 'Bundy')
-        user.user_profile_setname(token, 'Ted', '')
-        user.user_profile_setname(token, '', '')
-        user.user_profile_setname(token, 'T'*51, 'Bundy')
-        user.user_profile_setname(token, 'Ted', 'B'*51)
-        user.user_profile_setname(token, 'T'*51, 'B'*51)
+        user.user_profile_setname(token, '', name_last)
 
-    #Clean up (if necessary)
-    pass
+    # last name cannot be empty
+    with pytest.raises(error.InputError):
+        user.user_profile_setname(token, name_first, '')
+
+    # first name cannot be more than 50 char
+    with pytest.raises(error.InputError):
+        user.user_profile_setname(token, 'T' * 51, name_last)
+
+    # last name cannot be more than 50 char
+    with pytest.raises(error.InputError):
+        user.user_profile_setname(token, name_first, 'B' * 51)
