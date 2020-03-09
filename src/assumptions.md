@@ -52,6 +52,7 @@
 
 ### channels_listall()
 - shows all channels regardless of membership
+- invalid token raises AccessError
 
 ### channels_create()
 - channel name can be repeated
