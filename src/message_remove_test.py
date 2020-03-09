@@ -70,8 +70,7 @@ def test_message_remove_message_owner(get_new_user_1, get_new_user_2, get_channe
 def test_message_remove_message_owner_more(get_new_user_1, get_new_user_2, get_new_user_3, get_channel_name_1):
 
     # Register test user 1 (owner)
-    u_id1, token1 = get_new_user_1
-    assert u_id1 == 1  # slackr owner
+    _, token1 = get_new_user_1
 
     # Register test user 2
     _, token2 = get_new_user_2

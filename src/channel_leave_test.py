@@ -41,8 +41,7 @@ def test_channel_leave_user_leaves(get_new_user_1, get_new_user_2, get_new_user_
 def test_channel_leave_slackr_owner(get_new_user_1, get_new_user_2, get_channel_name_1):
 
     # get user 1
-    u_id1, token1 = get_new_user_1
-    assert u_id1 == 1  # assert user 1 is the slackr owner
+    _, token1 = get_new_user_1
 
     # get user 2
     u_id2, token2 = get_new_user_2

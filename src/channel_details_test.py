@@ -68,8 +68,8 @@ def test_channel_details_invalid_user(get_new_user_1, get_new_user_2,
         channel.channel_details(token2, ch_id)
 
     # non-existent user's token
-    with pytest.raises():
-        channel.channel_details(token1 + 'a', ch_id)
+    with pytest.raises(error.AccessError):
+        channel.channel_details(token1 + token2, ch_id)
 
 
 # invalid channel id

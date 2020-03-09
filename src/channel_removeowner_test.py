@@ -12,7 +12,6 @@ def test_channel_removeowner_slackr_owner(get_new_user_1, get_new_user_detail_1,
     # get user 1
     u_id1, token1 = get_new_user_1
     _, _, name_first1, name_last1 = get_new_user_detail_1
-    assert(u_id1 == 1)  # slackr owner's u_id
 
     # get user 2
     u_id2, token2 = get_new_user_2
@@ -74,7 +73,6 @@ def test_channel_removeowner_channel_owner(get_new_user_1, get_new_user_detail_1
     # get user 1
     u_id1, token1 = get_new_user_1
     _, _, name_first1, name_last1 = get_new_user_detail_1
-    assert(u_id1 == 1)  # slackr owner's u_id
 
     # get user 2
     u_id2, token2 = get_new_user_2
@@ -139,8 +137,7 @@ def test_channel_removeowner_sole_owner(get_new_user_1, get_new_user_2,
                                         get_channel_name_1):
 
     # get user 1
-    u_id1, _ = get_new_user_1
-    assert(u_id1 == 1)  # slackr owner's u_id
+    _, _ = get_new_user_1
 
     # get user 2
     u_id2, token2 = get_new_user_2
@@ -180,8 +177,7 @@ def test_channel_removeowner_unauthorised_user(get_new_user_1, get_new_user_2,
                                                get_new_user_3, get_channel_name_1):
 
     # get user 1
-    u_id1, token1 = get_new_user_1
-    assert(u_id1 == 1)  # slackr owner's u_id
+    _, token1 = get_new_user_1
 
     # get user 2
     u_id2, token2 = get_new_user_2
@@ -214,8 +210,7 @@ def test_channel_removeowner_invalid_user(get_new_user_1, get_new_user_2,
                                           get_new_user_3, get_channel_name_1):
 
     # get user 1
-    u_id1, token1 = get_new_user_1
-    assert(u_id1 == 1)  # slackr owner's u_id
+    _, token1 = get_new_user_1
 
     # get user 2
     u_id2, token2 = get_new_user_2
@@ -247,8 +242,7 @@ def test_channel_removeowner_invalid_channel_id(get_new_user_1, get_new_user_det
                                                 get_channel_name_1):
 
     # get user 1
-    u_id1, token1 = get_new_user_1
-    assert(u_id1 == 1)  # slackr owner's u_id
+    _, token1 = get_new_user_1
 
     # get user 2
     u_id2, token2 = get_new_user_2

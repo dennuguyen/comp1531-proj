@@ -67,7 +67,7 @@ def test_channel_messages_start_is_greater(get_new_user_1):
     ch_id = channels.channels_create(token1, 'New Channel', True)
 
     for i in range(5):
-        msg = 'test message ' + str(i+1)
+        msg = 'test message ' + str(i + 1)
         message.message_send(token1, ch_id, msg)
         i += 1
 

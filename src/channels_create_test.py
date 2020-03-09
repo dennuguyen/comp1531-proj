@@ -67,7 +67,7 @@ def test_channels_create_invalid_token(get_new_user_1, get_channel_name_1):
     invalid_token = token1 + 'a'
 
     # Test
-    with pytest.raises(error.InputError):
+    with pytest.raises(error.AccessError):
         channels.channels_create(invalid_token, get_channel_name_1, True)
 
 
