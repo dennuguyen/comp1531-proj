@@ -1,17 +1,14 @@
 import pytest
 import user
-import user_test_helper
 import error
-import auth
 
 
 # user changes their own email
-def test_user_profile_setemail():
+def test_user_profile_setemail(get_new_user_1, get_new_user_detail_1):
 
     # Register test user 1
-    email, password, name_first, name_last = user_test_helper.get_new_user1()
-    reg_retval = auth.auth_register(email, password, name_first, name_last)
-    u_id, token = reg_retval['u_id'], reg_retval['token']
+    u_id, token = get_new_user_1
+    email, _, name_first, name_last = get_new_user_detail_1
 
     # Actual test
     new_email = 'prefix' + email
@@ -28,12 +25,10 @@ def test_user_profile_setemail():
 
 
 # email address of incorrect format
-def test_user_profile_setemail_invalid_email():
+def test_user_profile_setemail_invalid_email(get_new_user_1):
 
     # Register test user 1
-    email, password, name_first, name_last = user_test_helper.get_new_user1()
-    reg_retval = auth.auth_register(email, password, name_first, name_last)
-    u_id, token = reg_retval['u_id'], reg_retval['token']
+    _, token = get_new_user_1
 
     # Actual test
     with pytest.raises(error.InputError):
@@ -44,21 +39,15 @@ def test_user_profile_setemail_invalid_email():
 
 
 # email address already used
-def test_user_profile_setemail_email_already_used():
+def test_user_profile_setemail_email_already_used(get_new_user_1,
+                                                  get_new_user_detail_1,
+                                                  get_new_user_2):
 
-    # Register test user 1
-    email1, password1, name_first1, name_last1 = user_test_helper.get_new_user1(
-    )
-    reg_retval1 = auth.auth_register(email1, password1, name_first1,
-                                     name_last1)
-
-    # Register test user 2
-    email2, password2, name_first2, name_last2 = user_test_helper.get_new_user2(
-    )
-    reg_retval2 = auth.auth_register(email2, password2, name_first2,
-                                     name_last2)
-    u_id2, token2 = reg_retval2['u_id'], reg_retval2['token']
+    # Register test user 1 and 2
+    _, _ = get_new_user_1
+    email, _, _, _ = get_new_user_detail_1
+    _, token2 = get_new_user_2
 
     # Actual test
     with pytest.raises(error.InputError):
-        user.user_profile_setemail(token2, email1)
+        user.user_profile_setemail(token2, email)

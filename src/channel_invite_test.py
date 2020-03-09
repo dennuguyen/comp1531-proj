@@ -2,143 +2,256 @@ import pytest
 import channel
 import error
 import channels
-import auth
-
-# Test environment
-
-def test_environment():
-    u_id1, token1 = auth.auth_register('example@unsw.com', 'password', 'The', 'User')
-    u_id2, token2 = auth.auth_register('owner@unsw.com', 'password', 'The', 'Owner')
-    u_id3, token3 = auth.auth_register('stranger@unsw.com', 'password', 'A', 'Stranger')
-    u_id4, token4 = auth.auth_register('totalstranger@unsw.com', 'password', 'Total', 'Stranger')
-
-    return u_id1, token1, u_id2, token2, u_id3, token3, u_id4, token4
-
-def test_channel_invite_user():
-
-# Setup
-
-    u_id = test_environment()[0]
-    token = test_environment()[1]
-    u_id2 = test_environment()[2]
-    token2 = test_environment()[3]
 
 
-    ch_id = channels.channels_create(token, 'Test channel1', True)['channel_id']
+# inviting users to a public channel
+def test_channel_invite_public(get_new_user_1, get_new_user_detail_1,
+                               get_new_user_2, get_new_user_detail_2,
+                               get_new_user_3, get_new_user_detail_3,
+                               get_channel_name_1):
 
-# Actual test
+    # get user 1
+    u_id1, token1 = get_new_user_1
+    _, _, name_first1, name_last1 = get_new_user_detail_1
 
-    # The owner invites the user to new channel
-    assert channel.channel_invite(token, ch_id, u_id2) == {}
-    assert channels.channels_list(token2) == {'channels': [{'channel_id' : ch_id, 'name' : 'Test channel1'}]}
-     
-def test_channel_invite_himself():        
+    # get user 2
+    u_id2, token2 = get_new_user_2
+    _, _, name_first2, name_last2 = get_new_user_detail_2
 
-    u_id = test_environment()[0]
-    token = test_environment()[1]
-    ch_id = channels.channels_create(token, 'Test channel1', True)['channel_id']
+    # get user 3
+    u_id3, _ = get_new_user_3
+    _, _, name_first3, name_last3 = get_new_user_detail_3
 
-    assert channel.channel_invite(token, ch_id, u_id) == {}
-    assert channels.channels_list(token) == {'channels': [{'channel_id' : ch_id, 'name' : 'Test channel1'}]}
+    # user 1 creates a channel
+    ch_name = get_channel_name_1
+    ch_id = channels.channels_create(token1, ch_name, True)['channel_id']
 
-def test_channel_invite_already_member():
+    # user 1 (owner) invites user 2 & 3
+    assert channel.channel_invite(token1, ch_id, u_id2) == {}
+    assert channel.channel_invite(token1, ch_id, u_id3) == {}
 
-    # set up environment
+    # user 2 is immediately added to the channel
+    assert channels.channels_list(token2) == {
+        'channels': [
+            {
+                'channel_id': ch_id,
+                'name': ch_name,
+            },
+        ],
+    }
 
-    u_id = test_environment()[0]
-    token = test_environment()[1]
-    u_id2 = test_environment()[2]
-    token2 = test_environment()[3]
+    # check channel details
+    assert channel.channel_details(token1, ch_id) == {
+        'name':
+        ch_name,
+        'owner_members': [
+            {
+                'u_id': u_id1,
+                'name_first': name_first1,
+                'name_last': name_last1,
+            },
+        ],
+        'all_members': [
+            {
+                'u_id': u_id1,
+                'name_first': name_first1,
+                'name_last': name_last1,
+            },
+            {
+                'u_id': u_id2,
+                'name_first': name_first2,
+                'name_last': name_last2,
+            },
+            {
+                'u_id': u_id3,
+                'name_first': name_first3,
+                'name_last': name_last3,
+            },
+        ],
+    }
 
 
-    ch_id = channels.channels_create(token, 'Test channel1', True)['channel_id']
+# inviting users to a private channel
+def test_channel_invite_private(get_new_user_1, get_new_user_detail_1,
+                                get_new_user_2, get_new_user_detail_2,
+                                get_channel_name_1):
 
-    channel.channel_invite(token, ch_id, u_id2)
+    # get user 1
+    u_id1, token1 = get_new_user_1
+    _, _, name_first1, name_last1 = get_new_user_detail_1
 
-    # The owner invites the user to new channel
+    # get user 2
+    u_id2, token2 = get_new_user_2
+    _, _, name_first2, name_last2 = get_new_user_detail_2
 
-    assert channel.channel_invite(token, ch_id, u_id2) == {}
-    assert channels.channels_list(token2) == {'channels': [{'channel_id' : ch_id, 'name' : 'Test channel1'}]}
+    # user 1 creates a private channel
+    ch_name = get_channel_name_1
+    ch_id = channels.channels_create(token1, ch_name, False)['channel_id']
 
-def test_channel_invite_users():
+    # user 1 (owner) invites user 2
+    assert channel.channel_invite(token1, ch_id, u_id2) == {}
 
-# Setup
+    # user 2 is immediately added to the channel
+    assert channels.channels_list(token2) == {
+        'channels': [
+            {
+                'channel_id': ch_id,
+                'name': ch_name,
+            },
+        ],
+    }
 
-    u_id = test_environment()[0]
-    token = test_environment()[1]
-    u_id2 = test_environment()[2]
-    token2 = test_environment()[3]
-    u_id3 = test_environment()[4]
-    token3 = test_environment()[5]
+    # check channel details
+    assert channel.channel_details(token1, ch_id) == {
+        'name':
+        ch_name,
+        'owner_members': [
+            {
+                'u_id': u_id1,
+                'name_first': name_first1,
+                'name_last': name_last1,
+            },
+        ],
+        'all_members': [
+            {
+                'u_id': u_id1,
+                'name_first': name_first1,
+                'name_last': name_last1,
+            },
+            {
+                'u_id': u_id2,
+                'name_first': name_first2,
+                'name_last': name_last2,
+            },
+        ],
+    }
 
 
-    ch_id = channels.channels_create(token, 'Test channel1', True)['channel_id']
+# self invitation has same test environment as re-invitating a member
+def test_channel_self_invitation(get_new_user_1, get_new_user_detail_1,
+                                 get_channel_name_1):
 
-# Actual test
+    # get user 1
+    u_id1, token1 = get_new_user_1
+    _, _, name_first1, name_last1 = get_new_user_detail_1
 
-    # The owner invites the user to new channel
-    assert channel.channel_invite(token, ch_id, u_id2) == {}
-    assert channel.channel_invite(token, ch_id, u_id3) == {}
-    assert channels.channels_list(token2) == {'channels': [{'channel_id' : ch_id, 'name' : 'Test channel1'}]}
-    assert channels.channels_list(token3) == {'channels': [{'channel_id' : ch_id, 'name' : 'Test channel1'}]}
+    # user 1 creates a private channel
+    ch_name = get_channel_name_1
+    ch_id = channels.channels_create(token1, ch_name, False)['channel_id']
 
-def test_channel_invite_unauthorised_user():
+    # user 1 invites user 1 to the channel
+    assert channel.channel_invite(token1, ch_id, u_id1) == {}
 
-    # set up environment
-    u_id = test_environment()[0]
-    token = test_environment()[1]
-    u_id2 = test_environment()[2]
-    token2 = test_environment()[3]
-    u_id3 = test_environment()[4]
-    token3 = test_environment()[5]
-    u_id4 = test_environment()[6]
-    token4 = test_environment()[7]
+    # check for duplicates
+    assert channels.channels_list(token1) == {
+        'channels': [
+            {
+                'channel_id': ch_id,
+                'name': ch_name,
+            },
+        ],
+    }
 
-    ch_id = channels.channels_create(token, 'Test channel1', True)['channel_id']
+    assert channel.channel_details(token1, ch_id) == {
+        'name':
+        ch_name,
+        'owner_members': [
+            {
+                'u_id': u_id1,
+                'name_first': name_first1,
+                'name_last': name_last1,
+            },
+        ],
+        'all_members': [
+            {
+                'u_id': u_id1,
+                'name_first': name_first1,
+                'name_last': name_last1,
+            },
+        ],
+    }
 
-    # A stranger invites the owner to new channel
+
+# test for access error cases
+def test_channel_invite_access_error(get_new_user_1, get_new_user_detail_1,
+                                     get_new_user_2, get_new_user_detail_2,
+                                     get_new_user_3, get_new_user_detail_3,
+                                     get_new_user_4, get_new_user_detail_4,
+                                     get_channel_name_1):
+
+    # get user 1
+    u_id1, token1 = get_new_user_1
+
+    # get user 2
+    u_id2, token2 = get_new_user_2
+
+    # get user 3
+    u_id3, token3 = get_new_user_3
+
+    # get user 4
+    u_id4, _ = get_new_user_4
+
+    # user 1 creates a channel
+    ch_name = get_channel_name_1
+    ch_id = channels.channels_create(token1, ch_name, True)['channel_id']
+
+    # user 2 joins the channel as a member
+    channel.channel_join(token2, ch_id)
+
+    # stranger invites the owner to new channel
     with pytest.raises(error.AccessError):
-        channel.channel_invite(token3, ch_id, u_id)
+        channel.channel_invite(token3, ch_id, u_id1)
 
-    # A stranger invites themself to new channel
-    with pytest.raises(error.AccessError):
-        channel.channel_invite(token3, ch_id, u_id3)
-
-    # A stranger invites the user to new channel
+    # stranger invites the user to new channel
     with pytest.raises(error.AccessError):
         channel.channel_invite(token3, ch_id, u_id2)
 
-    # A stranger invites another stranger to new channel
+    # stranger invites themself to new channel
+    with pytest.raises(error.AccessError):
+        channel.channel_invite(token3, ch_id, u_id3)
+
+    # stranger invites another stranger to new channel
     with pytest.raises(error.AccessError):
         channel.channel_invite(token3, ch_id, u_id4)
 
-def test_channel_invite_invalid_channel():
 
-    # set up environment
-    u_id = test_environment()[0]
-    token = test_environment()[1]
-    u_id2 = test_environment()[2]
-    token2 = test_environment()[3]
+# test case for invalid channel id
+def test_channel_invite_invalid_channel(get_new_user_1, get_new_user_detail_1,
+                                        get_new_user_2, get_new_user_detail_2,
+                                        get_channel_name_1):
 
+    # get user 1
+    _, token1 = get_new_user_1
 
-    ch_id = channels.channels_create(token, 'Test channel1', True)['channel_id']
+    # get user 2
+    u_id2, _ = get_new_user_2
 
-    # invalid channel id i.e. channel does not exist
+    # user 1 creates a channel
+    ch_name = get_channel_name_1
+    ch_id = channels.channels_create(token1, ch_name, True)['channel_id']
+
+    # invalid channel id (inviter is not a member of)
     with pytest.raises(error.InputError):
-        channel.channel_invite(token, ch_id + 1, u_id2)
-
-def test_channel_invite_invalid_user():
-
-    # set up environment
-    u_id = test_environment()[0]
-    token = test_environment()[1]
-    u_id2 = test_environment()[2]
-    token2 = test_environment()[3]
+        channel.channel_invite(token1, (ch_id + 1), u_id2)
 
 
-    ch_id = channels.channels_create(token, 'Test channel1', True)['channel_id']
+# test case for invalid user id
+def test_channel_invite_invalid_user(get_new_user_1, get_new_user_detail_1,
+                                     get_new_user_2, get_new_user_detail_2,
+                                     get_new_user_3, get_new_user_detail_3,
+                                     get_new_user_4, get_new_user_detail_4,
+                                     get_channel_name_1):
+
+    # get user 1
+    u_id1, token1 = get_new_user_1
+
+    # get user 2
+    u_id2, _ = get_new_user_2
+
+    # user 1 creates a channel
+    ch_name = get_channel_name_1
+    ch_id = channels.channels_create(token1, ch_name, True)['channel_id']
 
     # invalid user id i.e. user does not exist
     with pytest.raises(error.InputError):
-        channel.channel_invite(token, ch_id, u_id2 + 1)
-
+        channel.channel_invite(token1, ch_id, (u_id1 + u_id2))

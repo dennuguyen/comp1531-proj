@@ -2,99 +2,103 @@ import pytest
 import channel
 import error
 import channels
-import auth
 
-def test_environment():
-    u_id1, token1 = auth_register('example@unsw.com', 'password', 'The', 'Owner')
-    u_id2, token2 = auth_register('owner@unsw.com', 'password', 'The', 'User')
-    u_id3, token3 = auth_register('stranger@unsw.com', 'password', 'A', 'Stranger')
-    
-    return u_id1, token1, u_id2, token2, u_id3, token3
 
 # case where user leaves
-def test_channel_leave_user_leaves():
+def test_channel_leave_user_leaves(get_new_user_1, get_new_user_2, get_new_user_3,
+                                   get_channel_name_1):
 
-    # set up environment
-    u_id1, token1, u_id2, token2, u_id3, token3, ch_id, correct_detail = test_environment()
-    ch_id = channels.channels_create(token1, 'New Channel', True) # u_id1 is owner
+    # get user 1
+    _, token1 = get_new_user_1
+
+    # get user 2
+    u_id2, token2 = get_new_user_2
+
+    # get user 3
+    _, token3 = get_new_user_3
+
+    # user 1 creates a channel
+    ch_name = get_channel_name_1
+    ch_id = channels.channels_create(token1, ch_name, True)['channel_id']
+
+    # user 2 joins channel and is promoted to owner permissions
     channel.channel_join(token2, ch_id)
+    channel.channel_addowner(token1, ch_id, u_id2)
 
-    # user leaves
+    # user 2 joins channel
+    channel.channel_join(token3, ch_id)
+
+    # user 2 (owner) leaves
     assert channel.channel_leave(token2, ch_id) == {}
-    assert channels.channels_list(token2)['channels'] == [] 
+    assert channels.channels_list(token2)['channels'] == []
 
-# case where channel is owner leaves and user is promoted for channel populated by two
-def test_channel_leave_owner_leaves():
+    # user 3 (member) leaves
+    assert channel.channel_leave(token3, ch_id) == {}
+    assert channels.channels_list(token3)['channels'] == []
 
-    # set up environment
-    u_id1, token1, u_id2, token2, u_id3, token3, ch_id, correct_detail = test_environment()
-    ch_id = channels.channels_create(token1, 'New Channel', True) # u_id1 is owner
+
+# case where slackr owner tries to leave
+def test_channel_leave_slackr_owner(get_new_user_1, get_new_user_2, get_channel_name_1):
+
+    # get user 1
+    _, token1 = get_new_user_1
+
+    # get user 2
+    u_id2, token2 = get_new_user_2
+
+    # user 1 creates a channel
+    ch_name = get_channel_name_1
+    ch_id = channels.channels_create(token1, ch_name, True)['channel_id']
+
+    # slackr owner leaves
+    with pytest.raises(error.InputError):
+        channel.channel_leave(token1, ch_id)
+
+    # user 2 joins channel
     channel.channel_join(token2, ch_id)
 
-    # owner leaves
-    assert channel.channel_leave(token1, ch_id) == {}
-    assert channel.channel_list(token1)['channels'] == []
-    assert channel.channel_details(token2) == {
-        'name': 'New Channel',
-        'owner_members': [
-            {
-                'u_id': ch_id,
-                'name_first': 'The',
-                'name_last': 'User',
-            }
-        ],
-        'all_members': [
-            {
-                'u_id': ch_id,
-                'name_first': 'The',
-                'name_last': 'User',
-            }
-        ],
-    }
+    # give user 2 owner permissions
+    channel.channel_addowner(token1, ch_id, u_id2)
 
-# case where channel is populated by a sole owner
-def test_channel_leave_3():
+    # slackr owner cannot leave regardless
+    with pytest.raises(error.InputError):
+        channel.channel_leave(token1, ch_id)
 
-    u_id1, token1, u_id2, token2, u_id3, token3, ch_id, correct_detail = test_environment()
-    ch_id = channels.channels_create(token1, 'New Channel', True) # u_id1 is owner
 
-    # owner leaves
-    assert channel.channel_leave(token1, ch_id) == {}
-    assert channel.channel_list(token1)['channels'] == []
-    assert channel.channel_details(token1) == {
-        'name': 'New Channel',
-        'owner_members': [
-            {
+# invalid channel id
+def test_channel_leave_invalid_channel_id(get_new_user_1, get_new_user_2, get_channel_name_1):
 
-            }
-        ],
-        'all_members': [
-            {
+    # get user 1
+    _, token1 = get_new_user_1
 
-            }
-        ],
-    }
+    # get user 2
+    _, token2 = get_new_user_2
 
-# invalid id and token cases
-def test_channel_leave_invalid_channel_id():
+    # user 1 creates a channel
+    ch_name = get_channel_name_1
+    ch_id = channels.channels_create(token1, ch_name, True)['channel_id']
 
-    # set up environment
-    u_id1, token1, u_id2, token2, u_id3, token3, ch_id, correct_detail = test_environment()
-    ch_id = channels.channels_create(token1, 'New Channel', True) # u_id1 is owner
+    # user 2 joins channel
     channel.channel_join(token2, ch_id)
 
     # invalid channel id
-    with pytest.raises(error.InputError)
-        channel_leave(token2, ch_id + 1)
+    with pytest.raises(error.InputError):
+        channel.channel_leave(token2, (ch_id + 1))
 
 
-def test_channel_leave_unauthorised_user():
+# stranger leaving channel or invalid token
+def test_channel_leave_unauthorised_user(get_new_user_1, get_new_user_2, get_channel_name_1):
 
-    # set up environment
-    u_id1, token1, u_id2, token2, u_id3, token3, ch_id, correct_detail = test_environment()
-    ch_id = channels.channels_create(token1, 'New Channel', True) # u_id1 is owner
-    channel.channel_join(token2, ch_id)
+    # get user 1
+    _, token1 = get_new_user_1
 
-    # invalid token
-    with pytest.raises(error.AccessError)
-        channel_leave(token3, ch_id) # equivalent to stranger leaving channel
+    # get user 2
+    _, token2 = get_new_user_2
+
+    # user 1 creates a channel
+    ch_name = get_channel_name_1
+    ch_id = channels.channels_create(token1, ch_name, True)['channel_id']
+
+    # user 2 tries to leave the channel
+    with pytest.raises(error.AccessError):
+        channel.channel_leave(token2, ch_id)

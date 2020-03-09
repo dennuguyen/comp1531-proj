@@ -1,65 +1,113 @@
-import pytest, channel, auth, channels, error
+import pytest
+import channel
+import channels
+import error
 
-def test_environment():
 
-# Dummy information
-    token = auth.auth_register('example@unsw.edu.au', 'qwert123', 'John', 'Doe' )['token']
+# Test case use of listall for public channels
+def test_channels_listall_public(get_new_user_1, get_new_user_2, get_channel_name_1, get_channel_name_2, get_channel_name_3, get_channel_name_4):
 
-# Create some channels
-    ch_id1 = channels.channels_create(token, 'channel 1', True)
-    ch_id2 = channels.channels_create(token, 'channel 2', True)
-    ch_id3 = channels.channels_create(token, 'channel 3', True)
-    ch_id4 = channels.channels_create(token, 'channel 4', True)
+    # get user 1 and create channels
+    token1 = get_new_user_1[1]
+    ch_id1 = channels.channels_create(token1, get_channel_name_1, True)
+    ch_id2 = channels.channels_create(token1, get_channel_name_2, True)
+    ch_id3 = channels.channels_create(token1, get_channel_name_3, True)
+    ch_id4 = channels.channels_create(token1, get_channel_name_4, True)
 
-    return ch_id1, ch_id2, ch_id3, ch_id4, token
+    # get user 2 and join some channels
+    u_id2, token2 = get_new_user_2
+    channel.channel_invite(token1, ch_id1, u_id2)
+    channel.channel_invite(token1, ch_id3, u_id2)
 
-def test_channels_listall():
-
-    token1 = test_environment()[4]
-    ch_id1 = test_environment()[0]
-    ch_id3 = test_environment()[2]
-
-    token2 = auth.auth_register('example2@unsw.com', 'qwert246', 'Jaden', 'Smith')['token']
-
-    channel.channel_join(token2, ch_id1)
-    channel.channel_join(token2, ch_id3)
-
-        test_list = {
+    # prepare test_list for comparison
+    test_list = {
         'channels': [
-        	{
-        		'channel_id': ch_id1,
-        		'name': 'channel 1',
-        	},
             {
-        		'channel_id': ch_id2,
-        		'name': 'channel 2',
-        	},
+                'channel_id': ch_id1,
+                'name': get_channel_name_1,
+            },
             {
-        		'channel_id': ch_id3,
-        		'name': 'channel 3',
-        	},
+                'channel_id': ch_id2,
+                'name': get_channel_name_2,
+            },
             {
-        		'channel_id': ch_id4,
-        		'name': 'channel 4',
-        	},
+                'channel_id': ch_id3,
+                'name': get_channel_name_3,
+            },
+            {
+                'channel_id': ch_id4,
+                'name': get_channel_name_4,
+            },
         ],
     }
 
-    # valid token
-    assert channels.channels_listall(token1) == channels.channels_listall(token2) == test_list
+    # listall should return all public channels
+    assert channels.channels_listall(token1) == channels.channels_listall(
+        token2) == test_list
 
-def test_channels_invalid_token():
 
-    token = test_environment()[4]
+# Test case use of listall for private channels
+def test_channels_listall_private(get_new_user_1, get_new_user_2, get_channel_name_1, get_channel_name_2, get_channel_name_3, get_channel_name_4):
+
+    # get user 1 and create channels
+    token1 = get_new_user_1[1]
+    ch_id1 = channels.channels_create(token1, get_channel_name_1, False)
+    ch_id2 = channels.channels_create(token1, get_channel_name_2, False)
+    ch_id3 = channels.channels_create(token1, get_channel_name_3, False)
+    ch_id4 = channels.channels_create(token1, get_channel_name_4, False)
+
+    # get user 2 and join some channels
+    u_id2, token2 = get_new_user_2
+    channel.channel_invite(token1, ch_id1, u_id2)
+    channel.channel_invite(token1, ch_id3, u_id2)
+
+    # prepare test_list for comparison
+    test_list = {
+        'channels': [
+            {
+                'channel_id': ch_id1,
+                'name': get_channel_name_1,
+            },
+            {
+                'channel_id': ch_id2,
+                'name': get_channel_name_2,
+            },
+            {
+                'channel_id': ch_id3,
+                'name': get_channel_name_3,
+            },
+            {
+                'channel_id': ch_id4,
+                'name': get_channel_name_4,
+            },
+        ],
+    }
+
+    # listall should return all private channels
+    assert channels.channels_listall(token1) == channels.channels_listall(
+        token2) == test_list
+
+
+# Test case for invalid token should raise AccessError
+def test_channels_invalid_token(get_new_user_1):
+
+    token = get_new_user_1[1]
 
     # no given token
-    assert channels.channels_listall('') == {}
+    with pytest.raises(error.AccessError):
+        channels.channels_listall('')
 
     # invalid token
-    
     invalid_token = token + 'a'
-    assert channels.channels_listall(invalid_token) == {}
+    with pytest.raises(error.AccessError):
+        channels.channels_listall(invalid_token)
 
-def test_channels_list_empty():
-    token = auth.auth_register('example@unsw.com', 'password', 'Jaden', 'Smith')['token']
+
+# Test case for empty channel list
+def test_channels_list_empty(get_new_user_1):
+
+    # get a user but do not create any channels
+    token = get_new_user_1[1]
+
+    # list all the channels
     assert channels.channels_listall(token) == {}
