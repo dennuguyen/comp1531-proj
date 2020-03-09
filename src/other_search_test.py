@@ -9,39 +9,41 @@ import channel
 
 # Creating dummy data
 
-def create_person_one():
+def create_person_one(get_new_user_1, get_new_user_detail_1):
     # Returns dictionary and token of person 1
+    u_id, token = get_new_user_1
+    email, password, name_first, name_last = get_new_user_detail_1
     person_one = {}
-    u_id1, token1 = auth.auth_register('person1@unsw.com', 'password', 'First', 'Person')
-    person_one['u_id'] = u_id1
-    person_one['email'] = 'person1@unsw.com'
-    person_one['name_first'] = 'First'
-    person_one['name_last'] = 'Person'
-    person_one['handle_str'] = 'firstperson'
-    return person_one, token1
+    person_one['u_id'] = u_id
+    person_one['email'] = email
+    person_one['name_first'] = name_first
+    person_one['name_last'] = name_last
+    person_one['handle_str'] = name_first.lower() + name_last.lower()
+    return person_one, token
     
-def create_person_two():
-    # Returns dictionary and token of person 2
+def create_person_two(get_new_user_2, get_new_user_detail_2):
+    # Returns dictionary and token of person 1
+    u_id, token = get_new_user_2
+    email, password, name_first, name_last = get_new_user_detail_2
     person_two = {}
-    u_id2, token2 = auth.auth_register('person2@unsw.com', 'password', 'Second', 'Person')
-    person_two['u_id'] = u_id2
-    person_two['email'] = 'person2@unsw.com'
-    person_two['name_first'] = 'Second'
-    person_two['name_last'] = 'Person'
-    person_two['handle_str'] = 'secondperson'
-    return person_two, token2
+    person_two['u_id'] = u_id
+    person_two['email'] = email
+    person_two['name_first'] = name_first
+    person_two['name_last'] = name_last
+    person_two['handle_str'] = name_first.lower() + name_last.lower()
+    return person_two, token
 
 # First test will test for a single user that has not joined a channel
-def test_single_user_no_channel():
+def test_single_user_no_channel(get_new_user_1, get_new_user_detail_1):
     # Register person one
-    person_one, token1 = create_person_one()
+    person_one, token1 = create_person_one(get_new_user_1, get_new_user_detail_1)
     # This should return a dictionary with an empty list under the 'messages' key.
     assert other.search(token1, "no match") == {'messages' : []}
 
 # Test a single user who has joined a channel with no messages in it should return the same as above.
-def test_single_user_one_channel_no_message():
+def test_single_user_one_channel_no_message(get_new_user_1, get_new_user_detail_1):
     # Register person one
-    person_one, token1 = create_person_one()
+    person_one, token1 = create_person_one(get_new_user_1, get_new_user_detail_1)
     
     # Create test channel 1
     channel_name = 'Test Channel1'    
@@ -51,9 +53,9 @@ def test_single_user_one_channel_no_message():
     assert other.search(token1, "no match") == {'messages' : []}
 
 # Test a single user who has joined a channel with a message but the query does not match.
-def test_single_user_one_channel_message_no_match():
+def test_single_user_one_channel_message_no_match(get_new_user_1, get_new_user_detail_1):
     # Register person one
-    person_one, token1 = create_person_one()
+    person_one, token1 = create_person_one(get_new_user_1, get_new_user_detail_1)
     
     # Create test channel 1
     channel_name = 'Test Channel1'    
@@ -67,9 +69,9 @@ def test_single_user_one_channel_message_no_match():
     assert other.search(token1, "no match") == {'messages' : []}
 
 # Test a single user who has created a channel with a message and query matches.
-def test_single_user_one_channel_message_match():
+def test_single_user_one_channel_message_match(get_new_user_1, get_new_user_detail_1):
     # Register person one
-    person_one, token1 = create_person_one()
+    person_one, token1 = create_person_one(get_new_user_1, get_new_user_detail_1)
     
     # Create test channel 1
     channel_name = 'Test Channel1'    
@@ -84,9 +86,9 @@ def test_single_user_one_channel_message_match():
     assert other.search(token1, sentence)['messages'][0]['message'] == sentence
 
 # Test a single user who has created a channel with two messages, one match.
-def test_single_user_channel_one_match():
+def test_single_user_channel_one_match(get_new_user_1, get_new_user_detail_1):
     # Register person one
-    person_one, token1 = create_person_one()
+    person_one, token1 = create_person_one(get_new_user_1, get_new_user_detail_1)
     
     # Create test channel 1
     channel_name = 'Test Channel1'    
@@ -105,9 +107,9 @@ def test_single_user_channel_one_match():
     assert other.search(token1, sentence1)['messages'][0]['message'] == sentence1
 
 # Test a single user who has created a channel with two messages, two match.
-def test_single_user_channel_two_match():
+def test_single_user_channel_two_match(get_new_user_1, get_new_user_detail_1):
     # Register person one
-    person_one, token1 = create_person_one()
+    person_one, token1 = create_person_one(get_new_user_1, get_new_user_detail_1)
     
     # Create test channel 1
     channel_name = 'Test Channel1'    
@@ -128,9 +130,9 @@ def test_single_user_channel_two_match():
     assert first_message and second_message
 
 # Test a single user who has created two channels, no match.
-def test_single_user_channels_no_match():
+def test_single_user_channels_no_match(get_new_user_1, get_new_user_detail_1):
     # Register person one
-    person_one, token1 = create_person_one()
+    person_one, token1 = create_person_one(get_new_user_1, get_new_user_detail_1)
     
     # Create test channel 1
     channel_name = 'Test Channel1'    
@@ -154,9 +156,9 @@ def test_single_user_channels_no_match():
     assert other.search(token1, "no match") == {'messages' : []}
 
     # Test a single user who has created two channels, one match.
-def test_single_user_channels_one_match():
+def test_single_user_channels_one_match(get_new_user_1, get_new_user_detail_1):
     # Register person one
-    person_one, token1 = create_person_one()
+    person_one, token1 = create_person_one(get_new_user_1, get_new_user_detail_1)
     
     # Create test channel 1
     channel_name = 'Test Channel1'    
@@ -180,9 +182,9 @@ def test_single_user_channels_one_match():
     assert other.search(token1, sentence1)['messages'][0]['message'] == sentence1
 
     # Test a single user who has created two channels, two match.
-def test_single_user_channels_two_match():
+def test_single_user_channels_two_match(get_new_user_1, get_new_user_detail_1):
     # Register person one
-    person_one, token1 = create_person_one()
+    person_one, token1 = create_person_one(get_new_user_1, get_new_user_detail_1)
     
     # Create test channel 1
     channel_name = 'Test Channel1'    
@@ -210,12 +212,12 @@ def test_single_user_channels_two_match():
 # Now we will test multiple people. 
 
     # Test two people who joined a channel (owner is person1), one message sent by person2 and matches person1's query
-def test_users_channel_match():
+def test_users_channel_match(get_new_user_1, get_new_user_detail_1, get_new_user_2, get_new_user_detail_2):
     # Register person one
-    person_one, token1 = create_person_one()
+    person_one, token1 = create_person_one(get_new_user_1, get_new_user_detail_1)
 
     # Register person two
-    person_two, token2 = create_person_two()
+    person_two, token2 = create_person_two(get_new_user_2, get_new_user_detail_2)
 
     # Create test channel 1
     channel_name = 'Test Channel1'    
@@ -234,12 +236,12 @@ def test_users_channel_match():
 
     # Test two people who make two different channels, one message sent by person2 and matches person1's query.
     # There should be no match since this is different channels.
-def test_users_channels_match():
+def test_users_channels_match(get_new_user_1, get_new_user_detail_1, get_new_user_2, get_new_user_detail_2):
     # Register person one
-    person_one, token1 = create_person_one()
+    person_one, token1 = create_person_one(get_new_user_1, get_new_user_detail_1)
 
     # Register person two
-    person_two, token2 = create_person_two()
+    person_two, token2 = create_person_two(get_new_user_2, get_new_user_detail_2)
 
     # Create test channel 1 with person 1
     channel_name1 = 'Test Channel1'    
