@@ -1,7 +1,6 @@
 import error
 import pytest
-import auth
-import re  # Regular Expression Module
+import ../auth
 
 
 def test_auth_login(get_new_user_1, get_new_user_detail_1):
