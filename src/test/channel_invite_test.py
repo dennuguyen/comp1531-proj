@@ -2,9 +2,12 @@ import pytest
 import channel
 import error
 import channels
-
+import sys
+sys.path.append('../')
 
 # inviting users to a public channel
+
+
 def test_channel_invite_public(get_new_user_1, get_new_user_detail_1,
                                get_new_user_2, get_new_user_detail_2,
                                get_new_user_3, get_new_user_detail_3,

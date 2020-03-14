@@ -2,9 +2,12 @@ import pytest
 import error
 import channels
 import channel
-
+import sys
+sys.path.append('../')
 
 # Test case for some public and private channels
+
+
 def test_channels_list(get_new_user_1, get_new_user_2, get_channel_name_1, get_channel_name_2, get_channel_name_3, get_channel_name_4):
 
     # get user 1 and create channels

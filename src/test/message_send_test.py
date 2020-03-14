@@ -5,6 +5,8 @@ import channels
 import error
 import datetime
 import other
+import sys
+sys.path.append('../')
 
 
 # User sends a message to a channel they are a member of

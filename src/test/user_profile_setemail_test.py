@@ -1,9 +1,12 @@
 import pytest
 import user
 import error
-
+import sys
+sys.path.append('../')
 
 # user changes their own email
+
+
 def test_user_profile_setemail(get_new_user_1, get_new_user_detail_1):
 
     # Register test user 1

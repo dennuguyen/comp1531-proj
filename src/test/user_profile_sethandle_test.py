@@ -1,6 +1,8 @@
 import pytest
 import user
 import error
+import sys
+sys.path.append('../')
 
 
 # Base test case for setting new handle

@@ -2,6 +2,8 @@ import pytest
 import channel
 import error
 import channels
+import sys
+sys.path.append('../')
 
 
 # basic test for channel details

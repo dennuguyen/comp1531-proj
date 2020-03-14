@@ -4,6 +4,7 @@ from flask import Flask, request
 from flask_cors import CORS
 from error import InputError
 
+
 def defaultHandler(err):
     response = err.get_response()
     print('response', err, err.get_response())
@@ -14,6 +15,7 @@ def defaultHandler(err):
     })
     response.content_type = 'application/json'
     return response
+
 
 APP = Flask(__name__)
 CORS(APP)
@@ -26,10 +28,11 @@ APP.register_error_handler(Exception, defaultHandler)
 def echo():
     data = request.args.get('data')
     if data == 'echo':
-   	    raise InputError(description='Cannot echo "echo"')
+        raise InputError(description='Cannot echo "echo"')
     return dumps({
         'data': data
     })
+
 
 if __name__ == "__main__":
     APP.run(port=(int(sys.argv[1]) if len(sys.argv) == 2 else 8080))

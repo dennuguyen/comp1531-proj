@@ -4,9 +4,12 @@ import channel
 import channels
 import error
 import other
-
+import sys
+sys.path.append('../')
 
 # Test user removing own message
+
+
 def test_message_remove_message_user(get_new_user_1, get_new_user_2, get_channel_name_1):
 
     # Register test user 1 (owner)

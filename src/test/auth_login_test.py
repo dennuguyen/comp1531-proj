@@ -1,6 +1,8 @@
-import error
 import pytest
-import ../auth
+import error
+import auth
+import sys
+sys.path.append('../')
 
 
 def test_auth_login(get_new_user_1, get_new_user_detail_1):
