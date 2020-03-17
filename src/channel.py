@@ -3,14 +3,17 @@ from channel_decorator import check_token_isvalid
 from channel_decorator import check_channel_id_isvalid
 from channel_decorator import check_token_isauthorised
 from channel_decorator import check_u_id_isvalid
-from channel_decorator import check_u_id_isnotmember
+from channel_decorator import check_token_isnotmember
+from channel_decorator import check_token_ismember
+from channel_decorator import check_token_isnotslackrking
 from channel_decorator import check_start_issmaller
+from channel_decorator import check_channel_isnotprivate
 
 @check_token_isvalid
 @check_channel_id_isvalid
 @check_token_isauthorised
 @check_u_id_isvalid
-@check_u_id_isnotmember
+@check_token_isnotmember
 def channel_invite(token, channel_id, u_id):
 
 # If all conditions are met add u_id to channel as member
@@ -70,17 +73,11 @@ def channel_messages(token, channel_id, start):
         'end': 50,
     }
 
-
+@check_token_isvalid
+@check_channel_id_isvalid
+@check_token_isnotslackrking
+@check_token_ismember
 def channel_leave(token, channel_id):
-
-# Check token is valid
-    # Raise AccessError if token is not valid
-
-# Check channel_id is valid
-    # Raise InputError if channel_id is not valid
-
-# Check token is a member of channel
-    # Raise AccessError if token is not a member of channel
 
 # If all conditions are met
     # Remove user from channel member list
@@ -88,17 +85,10 @@ def channel_leave(token, channel_id):
     return {
     }
 
-
+@check_token_isvalid
+@check_channel_id_isvalid
+@check_channel_isnotprivate
 def channel_join(token, channel_id):
-
-# Check token is valid
-    # Raise AccessError if token is not valid
-
-# Check channel_id is valid
-    # Raise InputError if channel_id is not valid
-
-# Check channel is not private
-    # Raise AccessError if channel is private
 
 # If all conditons are met
     # Add token to channel member list
@@ -106,20 +96,11 @@ def channel_join(token, channel_id):
     return {
     }
 
-
+@check_token_isvalid
+@check_token_isowner
+@check_channel_id_isvalid
+@check_u_id_isnotowner
 def channel_addowner(token, channel_id, u_id):
-
-# Check token is valid
-    # Raise AccessError if token is not valid
-
-# Check token is authorised
-    # Raise AccessError if token is not authorised
-
-# Check channel_id is valid
-    # Raise InputError if channel_id is not valid
-
-# Check u_id is not already an owner
-    # Raise InputError if u_id is already an owner of the channel
 
 # If all conditons are met
     # Add u_id into channel owner list
@@ -127,20 +108,12 @@ def channel_addowner(token, channel_id, u_id):
     return {
     }
 
-
+@check_token_isvalid
+@check_token_isowner
+@check_u_id_isvalid
+@check_channel_id_isvalid
+@check_u_id_isowner
 def channel_removeowner(token, channel_id, u_id):
-
-# Check token is valid
-    # Raise AccessError if token is not valid
-
-# Check token is authorised
-    # Raise AccessError if token is not authorised
-
-# Check channel_id is valid
-    # Raise InputError if channel_id is not valid
-
-# Check u_id is an owner
-    # Raise InputError if u_id is not an owner of the channel
 
 # If all conditons are met
     # Remove u_id from channel owner list
