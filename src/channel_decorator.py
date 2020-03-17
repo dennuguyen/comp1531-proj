@@ -115,3 +115,7 @@ def check_start_issmaller(function):
 def check_token_isnotslackrking(function):
     def inner(*args):
         token = args[0]
+
+def check_channel_isnotprivate(function):
+    def inner(*args):
+        
