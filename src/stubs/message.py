@@ -1,8 +1,14 @@
 
 
 def message_send(token, channel_id, message):
+
     return {
         'message_id': 1,
+        'u_id': 1,
+        'message': 'Hello World'
+        'time_created': 12345678
+        'reacts': 
+        'is_pinned': True
     }
 
 def message_sendlater(token, channel_id, message, time_sent):
