@@ -118,4 +118,11 @@ def check_token_isnotslackrking(function):
 
 def check_channel_isnotprivate(function):
     def inner(*args):
+
+def check_token_isowner(function):
+    def inner(*args):
+        token = args[0]
+        channel_id = [args[1]
+        ch_details = channel.channel_details(token, channel_id)
+        
         
