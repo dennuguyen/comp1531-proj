@@ -4,10 +4,13 @@ from channel_decorator import check_channel_id_isvalid
 from channel_decorator import check_token_isauthorised
 from channel_decorator import check_u_id_isvalid
 from channel_decorator import check_token_isnotmember
-from channel_decorator import check_token_ismember
-from channel_decorator import check_token_isnotslackrking
 from channel_decorator import check_start_issmaller
+from channel_decorator import check_token_isnotslackrking
+from channel_decorator import check_token_ismember
 from channel_decorator import check_channel_isnotprivate
+from channel_decorator import check_token_isowner
+from channel_decorator import check_u_id_isnotowner
+from channel_decorator import check_u_id_isowner
 
 @check_token_isvalid
 @check_channel_id_isvalid
@@ -120,3 +123,5 @@ def channel_removeowner(token, channel_id, u_id):
 
     return {
     }
+
+

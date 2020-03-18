@@ -84,6 +84,21 @@ def check_token_isnotmember(function):
         return function(*args)
     return inner
 
+# Check that start is equal to or greater than total number of messages in channel
+def check_start_issmaller(function):
+    def inner(*args):
+        token = args[0]
+        channel_id = args[1]
+        start = args[2]
+        # Raise InputError if start is equal or greater than total number of messages
+        # Run function if start is smaller
+        return function(*args)
+    return inner
+
+def check_token_isnotslackrking(function):
+    def inner(*args):
+        token = args[0]
+
 def check_token_ismember(function):
     def inner(*args):
         token = args[0]
@@ -100,29 +115,25 @@ def check_token_ismember(function):
         return function(*args)
     return inner
 
-
-# Check that start is equal to or greater than total number of messages in channel
-def check_start_issmaller(function):
-    def inner(*args):
-        token = args[0]
-        channel_id = args[1]
-        start = args[2]
-        # Raise InputError if start is equal or greater than total number of messages
-        # Run function if start is smaller
-        return function(*args)
-    return inner
-
-def check_token_isnotslackrking(function):
-    def inner(*args):
-        token = args[0]
-
 def check_channel_isnotprivate(function):
     def inner(*args):
+        return function(*args)
+    return inner
 
 def check_token_isowner(function):
     def inner(*args):
         token = args[0]
-        channel_id = [args[1]
+        channel_id = args[1]
         ch_details = channel.channel_details(token, channel_id)
+        return function(*args)
+    return inner
+
+def check_u_id_isnotowner(function):
+    pass
+
+def check_u_id_isowner(function):
+    pass
+
+
         
         
