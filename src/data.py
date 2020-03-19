@@ -2,7 +2,7 @@ import json
 
 data = {
     # Stores logged in users
-    'log_in': [
+    'login': [
         {
             'u_id': 0,
             'token': 0,
@@ -49,15 +49,14 @@ data = {
             ],
         },
     ],
+    'passwords': [
+        {
+            'salt': 0,
+            'hash': 0,
+            'email': 0,
+        },
+    ]
 }
-
-passwords = [
-    {
-        'salt': 0,
-        'hash': 0,
-        'email': 0,
-    },
-]
 
 with open("data.json", "w+") as f:
     json.dump(data, f)

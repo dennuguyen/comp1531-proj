@@ -16,11 +16,11 @@ def generate_token(u_id):
     # Generate a token
     token = secrets.token_hex()
 
-    # Create a log_in dictionary
+    # Create a login dictionary
     new_log = {'u_id': u_id, 'token': token}
 
     # Store the token in a database to keep track of logged in users
-    data.data['log_in'].append(new_log)
+    data.data['login'].append(new_log)
 
 
 # The handle is the concatentation of the lower case of the first name and last
@@ -68,7 +68,7 @@ def generate_hash(email, password):
 
     # Store the salt, hash and username
     data_entry = {salt, pepper, email}
-    data.passwords.append(data_entry)
+    data.data['passwords'].append(data_entry)
 
     return pepper
 
@@ -93,9 +93,19 @@ def auth_login(*, email, password):
 
 @decorators.authenticate_token
 def auth_logout(*, token):
-    return {
-        'is_success': True,
-    }
+
+    # Successful logout is false
+    is_true = False
+
+    # Search for matching token
+    for i in range(len(data.data['login'])):
+        # Invalidate the token
+        if data.data['login'][i].get('token') == token:
+            is_true = True
+            del data.data['login'][i]
+            break
+
+    return {'is_success': is_true}
 
 
 @decorators.authenticate_email
