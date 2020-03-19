@@ -1,6 +1,7 @@
 import re
 import error
 import user
+import data
 
 
 def authenticate_token(fn, *args, **kwargs):
@@ -42,12 +43,23 @@ def authenticate_email(fn, *args, **kwargs):
         else:
             pass
 
-        # 
-        for user in user.users:
-        if email == user['email']:
-            raise error.InputError('Email already exists.')
-        else:
-            pass
+        return fn(*args, **kwargs)
+
+    return wrapper
+
+
+def register_email(fn, *args, **kwargs):
+    def wrapper(*args, **kwargs):
+
+        # Get the email
+        email = kwargs['email']
+
+        # Check if email already exists
+        for registered_user in data.data['users']:
+            if email == registered_user['email']:
+                raise error.InputError('Email already exists.')
+            else:
+                pass
 
         return fn(*args, **kwargs)
 
