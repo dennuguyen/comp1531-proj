@@ -1,3 +1,8 @@
+import re
+import error
+import user
+
+
 def authenticate_token(fn, *args, **kwargs):
     def wrapper(*args, **kwargs):
 
@@ -29,7 +34,20 @@ def authenticate_email(fn, *args, **kwargs):
 
         # Get the email
         email = kwargs['email']
-        print(email)
+
+        # Check the email form
+        regex = '^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$'
+        if not re.search(regex, email):
+            raise error.InputError('Invalid email.')
+        else:
+            pass
+
+        # 
+        for user in user.users:
+        if email == user['email']:
+            raise error.InputError('Email already exists.')
+        else:
+            pass
 
         return fn(*args, **kwargs)
 
