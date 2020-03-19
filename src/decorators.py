@@ -2,6 +2,7 @@ import re
 import error
 import user
 import data
+import auth_helper
 
 
 def authenticate_token(fn, *args, **kwargs):
@@ -70,8 +71,24 @@ def authenticate_password(fn, *args, **kwargs):
     def wrapper(*args, **kwargs):
 
         # Get the password
+        email = kwargs['email']
         password = kwargs['password']
-        print(password)
+
+        # Retrieve the salt by looking up the email in the passwords dictionary
+        for i in range(len(data.data['passwords'])):
+            if email == data.data['passwords'][i].get('email'):
+
+                # Get the salt from passwords dictionary
+                salt = data.data['passwords'][i]['salt']
+
+                # Get the hash for salt + password combination
+                try_hash = auth_helper.get_hash(salt, password)
+
+                # Try the hash. If incorrect raise InputError
+                if try_hash != data.data['passwords'][i]['hash']:
+                    raise error.InputError
+
+                break  # No need to continue
 
         return fn(*args, **kwargs)
 

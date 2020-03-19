@@ -7,18 +7,16 @@ import auth_helper
 @decorators.authenticate_password
 def auth_login(*, email, password):
 
-    # Find the matching email and password in the database
-    for user in data.data['users']:
-        if email == user['email']:
-            if password == user['password']:
-                return {
-                    'u_id': user['u_id'],
-                    'token': auth_helper.generate_token(email),
-                }
+    # Get the user's user id by finding their email in users dictionary
+    for i in range(len(data.data['users'])):
+        if email == data.data['users'][i].get('email'):
+            u_id = data.data['users'][i].get('u_id')
 
-    # Retrieve the salt by looking up the email in the passwords data structure
-
-    # Does the user know their password
+    # Return user id and valid token
+    return {
+        'u_id': u_id,
+        'token': auth_helper.generate_token(u_id),
+    }
 
 
 @decorators.authenticate_token

@@ -4,7 +4,6 @@ from flask import Flask, request
 from flask_cors import CORS
 from error import InputError
 import auth
-import user
 
 
 def defaultHandler(err):

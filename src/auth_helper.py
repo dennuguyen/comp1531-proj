@@ -21,6 +21,8 @@ def generate_token(u_id):
     # Store the token in a database to keep track of logged in users
     data.data['login'].append(new_log)
 
+    return token
+
 
 # The handle is the concatentation of the lower case of the first name and last
 # name limited to 20 char.
@@ -69,4 +71,9 @@ def generate_hash(email, password):
     data_entry = {salt, pepper, email}
     data.data['passwords'].append(data_entry)
 
-    return pepper
+    return salt, pepper
+
+
+# Get the hash for a salt and password combination
+def get_hash(salt, password):
+    return hashlib.sha512((salt + password).encode()).hexdigest()
