@@ -2,6 +2,8 @@ import pytest
 import channel
 import error
 import channels
+import sys
+sys.path.append('../')
 
 
 # test case where owner promotes a member to owner

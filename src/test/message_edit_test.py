@@ -5,7 +5,8 @@ import channels
 import error
 import other
 import datetime
-
+import sys
+sys.path.append('../')
 
 # User edits their own message
 def test_message_edit(get_new_user_1, get_new_user_2):

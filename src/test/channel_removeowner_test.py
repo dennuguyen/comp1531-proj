@@ -2,6 +2,8 @@ import pytest
 import channel
 import channels
 import error
+import sys
+sys.path.append('../')
 
 
 # test case where slackr owner is removed

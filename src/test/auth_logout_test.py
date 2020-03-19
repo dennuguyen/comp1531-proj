@@ -1,6 +1,7 @@
 import pytest
 import auth
-import error
+import sys
+sys.path.append('../')
 
 
 # Test case valid token

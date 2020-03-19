@@ -2,9 +2,12 @@ import pytest
 import channel
 import error
 import channels
-
+import sys
+sys.path.append('../')
 
 # stranger joins a public channel
+
+
 def test_channel_join_public(get_new_user_1, get_new_user_detail_1, get_new_user_2,
                              get_new_user_detail_2, get_channel_name_1):
 

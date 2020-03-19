@@ -2,8 +2,9 @@
 # get_new_user gets the u_id and token after registering a user
 
 import pytest
-import channels
 import auth
+import sys
+sys.path.append('../')
 
 
 @pytest.fixture(scope="session")

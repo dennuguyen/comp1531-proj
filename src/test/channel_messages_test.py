@@ -3,7 +3,8 @@ import channel
 import error
 import channels
 import message
-
+import sys
+sys.path.append('../')
 
 # if message length <= 50
 def test_channel_messages_less_than_50(get_new_user_1):

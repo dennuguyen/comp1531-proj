@@ -1,10 +1,8 @@
 import auth
 import other
 import pytest
-
-# TODO: Check invalid token?
-
-# Creating dummy data
+import sys
+sys.path.append('../')
 
 
 def create_person_one(get_new_user_1, get_new_user_detail_1):

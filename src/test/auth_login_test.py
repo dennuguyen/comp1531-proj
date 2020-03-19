@@ -1,7 +1,8 @@
-import error
 import pytest
+import error
 import auth
-import re  # Regular Expression Module
+import sys
+sys.path.append('../')
 
 
 def test_auth_login(get_new_user_1, get_new_user_detail_1):

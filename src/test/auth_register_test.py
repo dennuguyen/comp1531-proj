@@ -5,6 +5,8 @@ import pytest
 import other
 import error
 import user
+import sys
+sys.path.append('../')
 
 
 # Basic case

@@ -2,6 +2,8 @@ import pytest
 import channels
 import channel
 import error
+import sys
+sys.path.append('../')
 
 
 # Create a public channel

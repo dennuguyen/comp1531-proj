@@ -1,13 +1,10 @@
 import pytest
-import auth
 import message
 import channels
 import other
 import channel
-
-# TODO: Check invalid token?
-
-# Creating dummy data
+import sys
+sys.path.append('../')
 
 
 def create_person_one(get_new_user_1, get_new_user_detail_1):
