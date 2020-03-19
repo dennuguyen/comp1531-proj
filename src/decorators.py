@@ -12,3 +12,25 @@ def authenticate_token(fn, *args, **kwargs):
         return fn(*args, **kwargs)
 
     return wrapper
+
+def authenticate_email(fn, *args, **kwargs):
+    def wrapper(*args, **kwargs):
+
+        # Get the email
+        email = kwargs['email'])
+        print(email)
+
+        return fn(*args, **kwargs)
+
+    return wrapper
+
+def authenticate_password(fn, *args, **kwargs):
+    def wrapper(*args, **kwargs):
+
+        # Get the password
+        password = kwargs['password'])
+        print(password)
+
+        return fn(*args, **kwargs)
+
+    return wrapper
