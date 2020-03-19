@@ -13,4 +13,7 @@ def create_message_object(u_id, message):
     pass
 
 def add_message_to_channel(u_id, message_id):
-    pass  
+    pass
+
+def add_message_to_queue(u_id, message_id, time_sent):
+    pass
