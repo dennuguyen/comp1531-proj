@@ -4,11 +4,15 @@
 
 - We gave a due date for each of us to select the files we are going to work with and for each person to take up reasonable load.
 
-- As we plan to have 2 sprints where the files will be passed to other team members for the second sprint, we set ourselves due date for Friday 20th March 2020.
+- As we plan to have 2 sprints where the files will be passed to other team members for the second sprint, we set ourselves due date for Friday 20th March 2020. 
+- In the first sprint, we focus on the implementation of functions assigned to each of us and discuss about the possible technical problems frequently on slack to make sure that everyone keeps up with the progress. 
+- In the second sprint, we will complete the integration of the seperate parts and system test as well. Besides, if the time is sufficient enough, we will continue to exchange and review the codes among each other like what we do in it1.
 
 - Other responsibilities such as implementing function decorator will be at first done individually and will be compiled as we approach finish.
     - Communication is required here as some function decorators are common between people. So as to not double up on work.
-
+    - Everyone should guarantee that their code can run successfully with no errors before merge into the common branch.
+ 
 - Common data file such as data.py and data.json are developed as we go and responsible person may change depending on need.
 
 - Purpose of function decorators => authenticate, raise Exceptions. Changed the approach to function decorators from authenticating the entire function's parameters (e.g. @authenticate_login) to authenticating individual parameters for re-usability of function decorators (e.g. @authenticate_email, @authenticate_password).
+
