@@ -5,6 +5,7 @@ from flask_cors import CORS
 from error import InputError
 import auth
 import user
+import error
 
 
 #
@@ -37,32 +38,62 @@ def echo():
     return dumps({'data': data})
 
 
-@APP.route('/login', methods=['GET', 'POST'])
-# Get the email and password from page for login
-def login():
-    if request.method == 'POST':
-        email = request.form['email']
-        password = request.form['password']
-        auth.auth_login(email, password)
-
-    return
-
-
-@APP.route('/register', methods=['GET', 'POST'])
+# Register
+@APP.route('/register', methods=['POST'])
 def register():
-    if request.method == 'POST':
-        # get the user info
-        email = request.form['email']
-        password = request.form['password']
-        name_first = request.form['name_first']
-        name_last = request.form['name_last']
+    while True:
+        try:
+            if request.method == 'POST':
+                # Get the user information
+                register_retval = request.get_json()
+                email = register_retval['email']
+                password = register_retval['password']
+                name_first = register_retval['name_first']
+                name_last = register_retval['name_last']
 
-        # register the user
-        auth.auth_register(email, password, name_first, name_last)
+                # Perform the user registration
+                auth.auth_register(
+                    email=email,
+                    password=password,
+                    name_first=name_first,
+                    name_last=name_last,
+                )
 
-    elif request.method == 'GET':
-        # request.args.get('name')
-        pass
+        except error.InputError:
+            pass
+
+        except Exception:
+            print("GOt an exception here")
+
+        else:
+            break
+
+
+# Login the user
+@APP.route('/login', methods=['POST'])
+def login():
+    while True:
+        try:
+            if request.method == 'POST':
+                # Get the login information
+                login_retval = request.get_json()
+                email = login_retval['email']
+                password = login_retval['password']
+
+                # Perform the login
+                auth.auth_login(
+                    email=email,
+                    password=password,
+                )
+
+        except error.InputError:
+            pass
+
+        except Exception:
+            print("GOt an exception here")
+
+        else:
+            break
 
 
 @APP.route('/profile', methods=['GET'])
