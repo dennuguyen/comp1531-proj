@@ -4,3 +4,6 @@
 - As we plan to have 2 sprints where the files will be passed to other team members for the second sprint, we set ourselves due date for Friday 20th March 2020.
 - Other responsibilities such as implementing function decorator will be at first done individually and will be compiled as we approach finish.
 - Common data file such as data.py and data.json are developed as we go and responsible person may change depending on need.
+
+- Changed the approach to function decorators from authenticating the entire function's parameters (e.g. @authenticate_login) to authenticating individual parameters for re-usability of function decorators (e.g. @authenticate_email, @authenticate_password).
+- 
