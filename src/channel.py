@@ -17,7 +17,7 @@ from channel_decorator import check_u_id_isowner
 @check_token_isauthorised
 @check_u_id_isvalid
 @check_token_isnotmember
-def channel_invite(token='', channel_id=0, u_id=0):
+def channel_invite(token=str, channel_id=int, u_id=int):
 
 # If all conditions are met add u_id to channel as member
     # Edit relevant databases
@@ -28,7 +28,7 @@ def channel_invite(token='', channel_id=0, u_id=0):
 @check_token_isvalid
 @check_channel_id_isvalid
 @check_token_isauthorised
-def channel_details(token='', channel_id=0):
+def channel_details(token=str, channel_id=int):
 
 # If all conditions are met 
     # Return {name, owner_members, all_members}
@@ -55,7 +55,7 @@ def channel_details(token='', channel_id=0):
 @check_channel_id_isvalid
 @check_token_isauthorised
 @check_start_issmaller
-def channel_messages(token='', channel_id=0, start=0):
+def channel_messages(token=str, channel_id=int, start=int):
 # If all conditions are met
     # If end is less than total messages
         # Return {messages, start, end}
@@ -79,7 +79,7 @@ def channel_messages(token='', channel_id=0, start=0):
 @check_channel_id_isvalid
 @check_token_isnotslackrking
 @check_token_ismember
-def channel_leave(token='', channel_id=0):
+def channel_leave(token=str, channel_id=int):
 
 # If all conditions are met
     # Remove user from channel member list
@@ -90,7 +90,7 @@ def channel_leave(token='', channel_id=0):
 @check_token_isvalid
 @check_channel_id_isvalid
 @check_channel_isnotprivate
-def channel_join(token='', channel_id=0):
+def channel_join(token=str, channel_id=int):
 
 # If all conditons are met
     # Add token to channel member list
@@ -102,7 +102,7 @@ def channel_join(token='', channel_id=0):
 @check_token_isowner
 @check_channel_id_isvalid
 @check_u_id_isnotowner
-def channel_addowner(token='', channel_id=0, u_id=0):
+def channel_addowner(token=str, channel_id=int, u_id=int):
 
 # If all conditons are met
     # Add u_id into channel owner list
@@ -115,7 +115,7 @@ def channel_addowner(token='', channel_id=0, u_id=0):
 @check_u_id_isvalid
 @check_channel_id_isvalid
 @check_u_id_isowner
-def channel_removeowner(token='', channel_id=0, u_id=0):
+def channel_removeowner(token=str, channel_id=int, u_id=int):
 
 # If all conditons are met
     # Remove u_id from channel owner list
