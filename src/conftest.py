@@ -60,7 +60,10 @@ def get_new_user_detail_4():
 @pytest.fixture(scope="session")
 def get_new_user_0(get_new_user_detail_0):
     email, password, name_first, name_last = get_new_user_detail_0
-    retval = auth.auth_register(email, password, name_first, name_last)
+    retval = auth.auth_register(email=email,
+                                password=password,
+                                name_first=name_first,
+                                name_last=name_last)
 
     return retval['u_id'], retval['token']
 
@@ -68,7 +71,10 @@ def get_new_user_0(get_new_user_detail_0):
 @pytest.fixture(scope="session")
 def get_new_user_1(get_new_user_detail_1):
     email, password, name_first, name_last = get_new_user_detail_1
-    retval = auth.auth_register(email, password, name_first, name_last)
+    retval = auth.auth_register(email=email,
+                                password=password,
+                                name_first=name_first,
+                                name_last=name_last)
 
     return retval['u_id'], retval['token']
 
@@ -76,7 +82,10 @@ def get_new_user_1(get_new_user_detail_1):
 @pytest.fixture(scope="session")
 def get_new_user_2(get_new_user_detail_2):
     email, password, name_first, name_last = get_new_user_detail_2
-    retval = auth.auth_register(email, password, name_first, name_last)
+    retval = auth.auth_register(email=email,
+                                password=password,
+                                name_first=name_first,
+                                name_last=name_last)
 
     return retval['u_id'], retval['token']
 
@@ -84,7 +93,10 @@ def get_new_user_2(get_new_user_detail_2):
 @pytest.fixture(scope="session")
 def get_new_user_3(get_new_user_detail_3):
     email, password, name_first, name_last = get_new_user_detail_3
-    retval = auth.auth_register(email, password, name_first, name_last)
+    retval = auth.auth_register(email=email,
+                                password=password,
+                                name_first=name_first,
+                                name_last=name_last)
 
     return retval['u_id'], retval['token']
 
@@ -92,7 +104,10 @@ def get_new_user_3(get_new_user_detail_3):
 @pytest.fixture(scope="session")
 def get_new_user_4(get_new_user_detail_4):
     email, password, name_first, name_last = get_new_user_detail_4
-    retval = auth.auth_register(email, password, name_first, name_last)
+    retval = auth.auth_register(email=email,
+                                password=password,
+                                name_first=name_first,
+                                name_last=name_last)
 
     return retval['u_id'], retval['token']
 
