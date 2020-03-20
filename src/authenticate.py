@@ -628,16 +628,3 @@ def already_contains_react(fn):
     pass
     # TODO ### WHAT ###
      # how can I check the channel or any of that. I'm only given a token, message_id and react_id. No channel_id?
-
-
-
-
-
-
-
-
-
-
-"channels": [{"channel_id": 0, "name": 0, "isprivate": 0, "owner_members": [{"u_id": 0, "name_first": 0, "name_last": 0}], "all_members": [{"u_id": 0, "name_first": 0, "name_last": 0}], "messages": []}]
-
-
