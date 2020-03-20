@@ -1,21 +1,45 @@
 import json
 
+
+class Data():
+    def pickle():
+        pass
+
+    def unpickle():
+        pass
+
+
+# Users class inherits Data's pickle and unpickle methods
+# Users class stores registered users and methods to edit the data structure
+class Users(Data):
+    # Class constructor for new initial user
+    # No need to declare the users data structure in Python
+    def __init__(self):
+        self.users = [
+            {
+                'u_id': 0,
+                'email': '',
+                'name_first': '',
+                'name_last': '',
+                'handle_str': '',
+            },
+        ]
+
+    # Member functions
+    # Must pass self as parameter if methods of class act on itself
+    def get_users(self):
+        return self.users
+
+    def add_user(self, user):
+        self.users.append(user)
+
+
 data = {
     # Stores logged in users
     'login': [
         {
             'u_id': 0,
             'token': 0,
-        },
-    ],
-    # Stores registered users
-    'users': [
-        {
-            'u_id': 0,
-            'email': '',
-            'name_first': '',
-            'name_last': '',
-            'handle_str': '',
         },
     ],
     # Stores messages including details
