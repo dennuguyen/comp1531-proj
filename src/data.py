@@ -60,6 +60,12 @@ class Channel():
     def remove_owner(self, u_id):
         self.owner_u_id_list.remove(u_id)
 
+    def add_new_message(self, msg_id):
+        self.message_id_list.append(msg_id)
+
+    def remove_message(self, msg_id):
+        self.message_id_list.remove(msg_id)
+
 class User():
     
     def __init__(self, u_id, email, name_first, name_last, handle_str):
@@ -167,6 +173,14 @@ class Data():
         channel.remove_member(u_id)
         if(is_owner):
             channel.remove_owner(u_id) 
+
+    def add_message_to_channel(self, msg_id, channel_id):
+        channel = self.get_channel(channel_id)
+        channel.add_new_message(msg_id)
+
+    def remove_message_to_channel(self, msg_id, channel_id):
+        channel = self.get_channel(channel_id)
+        channel.remove_message(msg_id)
     
     def remove_channel(self, channel):
         self.channel_list.remove(channel)
@@ -256,7 +270,8 @@ class Data():
         return channel_id_list
 
     def get_all_message_ids_in_a_channel(self, channel_id):
-         return self.get_channel_dict(channel_id)['message_ids']   
+         return self.get_channel_dict(channel_id)['message_ids']
+
     
     def gen_next_u_id(self):
         self.next_u_id += 1
