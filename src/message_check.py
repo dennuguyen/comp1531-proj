@@ -16,3 +16,6 @@ def is_valid_time(time_sent):
 
 def is_valid_reaction(reaction):
     return True
+
+def is_message_in_channel(message_id, channel_id):
+    return True
