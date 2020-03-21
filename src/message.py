@@ -9,7 +9,8 @@ import error
 
 def message_send(token, channel_id, message):
     '''
-    Send a message from authorised_user to the channel specified by channel_id
+    Send a message from authorised_user to the channel specified 
+    by channel_id
     '''
     u_id = message_data.get_uid_with_token(token)
 
@@ -52,20 +53,49 @@ def message_sendlater(token, channel_id, message, time_sent):
     }
 
 def message_react(token, message_id, react_id):
+    '''
+    Given a message within a channel the authorised user is part of, 
+    add a "react" to that particular message
+    '''
+    u_id = message_data.get_uid_with_token(token)
+    if not message_check.is_user_in_channel(u_id, channel_id):
+        raise error.AccessError(description = "The user is not in this channel")
+    if not message_check.is_message_in_channel(message_id, channel_id):
+        raise error.AccessError(description = "The message is not in this channel")
     
+
     return {}
 
 def message_unreact(token, message_id, react_id):
+    '''
+    Given a message within a channel the authorised user is part of,
+    remove a "react" to that particular message
+    '''
     return {}
 
 def message_pin(token, message_id):
+    '''
+    Given a message within a channel, mark it as "pinned" to be given 
+    special display treatment by the frontend
+    '''
     return {}
 
 def message_unpin(token, message_id):
+    '''
+    Given a message within a channel, remove it's mark as unpinned
+    '''
     return {}
 
 def message_remove(token, message_id):
+    '''
+    Given a message_id for a message, 
+    this message is removed from the channel
+    '''
     return {}
 
 def message_edit(token, message_id, message):
+    '''
+    Given a message, update it's text with new text. 
+    If the new message is an empty string, the message is deleted.
+    '''
     return {}
