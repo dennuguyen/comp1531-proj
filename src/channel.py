@@ -24,8 +24,7 @@ def channel_details(token=str, channel_id=int):
 # If all conditions are met 
     # Return {name, owner_members, all_members}
     datapy = data.Data()
-    channel_dict = datapy.get_channel_dict(channel_id)
-    channel_details = {'name' : channel_dict['name'], }
+    return datapy.get_channel_details_dict(channel_id)
 
 
 # @check_token_isvalid
@@ -52,6 +51,7 @@ def channel_messages(token=str, channel_id=int, start=int):
     x = 1
     for i in msg_id_list and x <= show:
         messages.append(datapy.get_message_dict(i))
+
     return {'messages' : messages, 'start' : start, 'end' : end_view}
 
 
@@ -122,5 +122,6 @@ def channel_removeowner(token=str, channel_id=int, u_id=int):
 
     return {
     }
+
 
 

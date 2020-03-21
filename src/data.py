@@ -226,7 +226,7 @@ class Data():
     def get_message_dict(self, message_id):
         return self.get_message(message_id).get_message_dict() if self.get_message(message_id) else {}
     
-    def get_memember(self, u_id):
+    def get_member(self, u_id):
         for member in self.member_list:
             if(member.get_member_dict()['u_id'] == u_id):
                 return member
@@ -274,7 +274,18 @@ class Data():
     def get_all_message_ids_in_a_channel(self, channel_id):
          return self.get_channel_dict(channel_id)['message_ids']
 
-    
+    def get_channel_details_dict(self, channel_id):
+        Channel = self.get_channel(channel_id)
+        Channel_details = {'name' : '', 'owner_members' : [], 'all_members' : []}
+        Channel_details['name'] = Channel.name()
+        for u_id in Channel.owner_u_id_list():
+            Member = self.get_member(u_id)
+            Channel_details['owner_members'].append(Member)
+        for u_id in Channel.u_id_list():
+            Member = self.get_member(u_id)
+            Channel_details['all_members'].append(Member)
+        return Channel_details
+
     def gen_next_u_id(self):
         self.next_u_id += 1
         return self.next_u_id
@@ -305,45 +316,13 @@ class Data():
     # Create a global object data
 data = Data()
 
-
-
     # Create a new user
 u_id = data.gen_next_u_id()
 user_example = User(u_id, '123@unsw.edu.au', 'Sunny', 'Qin', 'SunnyQin')
 data.add_user(user_example)
 
     # get the user_dict with u_id
-user_dict = data.get_user_dict(u_id)
+
+user_dict = getData().get_user_dict(u_id)
 print(user_dict)
-
-u_id = data.gen_next_u_id()
-user_example = User(u_id, '123@unsw.edu.au', 'Raymond', 'Qin', 'SunnyQin')
-data.add_user(user_example)
-user_dict = data.get_user_dict(u_id)
-print(user_dict)
-
-
-new_channel = Channel(data.gen_next_channel_id(), 'Channel0', [], [u_id], [u_id], True)
-print(new_channel.get_channel_dict())
-data.add_channel(new_channel)
-channel_info = data.get_channel_dict(0)
-print(channel_info)
-
-new_channel = Channel(data.gen_next_channel_id(), 'Channel1', [], [u_id], [u_id], True)
-print(new_channel.get_channel_dict())
-data.add_channel(new_channel)
-channel_info = data.get_channel_dict(1)
-print(channel_info)
-
-data.add_user_to_channel(u_id, 1, False)
-channel_info = data.get_channel_dict(1)
-print(channel_info)
-
-data.add_user_to_channel(u_id, 1, False)
-channel_info = data.get_channel_dict(1)
-print(channel_info)
-
-data.add_user_to_channel(u_id, 1, True)
-channel_info = data.get_channel_dict(1)
-print(channel_info)
 '''
