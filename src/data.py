@@ -271,7 +271,16 @@ class Data():
         return self.next_message_id
     
     def reset(self):
-        pass
+        self.user_list = []
+        self.message_list = []
+        self.channel_list = []
+        self.member_list = []
+        self.login_list = []
+        
+        self.next_u_id = -1
+        self.next_channel_id = -1
+        self.next_message_id = -1
+        
 
 
 # Create a global object data
