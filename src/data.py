@@ -284,7 +284,7 @@ class Data():
             Channel_details['all_members'].append(Member)
         return Channel_details
 
-    def get_channels_list(self, u_id)
+    def get_channels_list_dict(self, u_id)
         channel_id_list = self.get_all_channel_ids()
         channels = {'channels' : []}
         channel_info = {}
@@ -295,17 +295,15 @@ class Data():
                 channels['channels'].append(channel_info)
         return channels
 
-    def get_channels_list(self, u_id)
-    channel_id_list = self.get_all_channel_ids()
-    channels = {'channels' : []}
-    channel_info = {}
-    for ch_id in channel_id_list:
-        if u_id in ch_id.get_channel_dict()['uids']:
+    def get_channels_listall_dict(self, u_id)
+        channel_id_list = self.get_all_channel_ids()
+        channels = {'channels' : []}
+        channel_info = {}
+        for ch_id in channel_id_list:
             channel_info = {'channel_id' : ch_id.get_channel_dict()['channel_id'],
                             'name' : ch_id.get_channel_dict()['name']}
             channels['channels'].append(channel_info)
-    return channels
-
+        return channels
 
     def gen_next_u_id(self):
         self.next_u_id += 1
