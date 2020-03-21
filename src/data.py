@@ -283,14 +283,20 @@ class Data():
         
 
 
-# Create a global object data
+# An example of data flow is as follow, you can write in your files "from Data import getData"
+
+    # Create a global object data
 data = Data()
 
-# Create a new user
-u_id = data.gen_next_u_id()
+def getData():
+    global data
+    return data
+
+    # Create a new user
+u_id = getData().gen_next_u_id()
 user_example = User(u_id, '123@unsw.edu.au', 'Sunny', 'Qin', 'SunnyQin')
 data.add_user(user_example)
 
-# get the user_dict with u_id
-user_dict = data.get_user_dict(u_id)
+    # get the user_dict with u_id
+user_dict = getData().get_user_dict(u_id)
 print(user_dict)
