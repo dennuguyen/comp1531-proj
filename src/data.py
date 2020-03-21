@@ -284,7 +284,7 @@ class Data():
             Channel_details['all_members'].append(Member)
         return Channel_details
 
-    def get_channels_list_dict(self, u_id)
+    def get_channels_list_dict(self, u_id):
         channel_id_list = self.get_all_channel_ids()
         channels = {'channels' : []}
         channel_info = {}
@@ -295,7 +295,7 @@ class Data():
                 channels['channels'].append(channel_info)
         return channels
 
-    def get_channels_listall_dict(self, u_id)
+    def get_channels_listall_dict(self):
         channel_id_list = self.get_all_channel_ids()
         channels = {'channels' : []}
         channel_info = {}
