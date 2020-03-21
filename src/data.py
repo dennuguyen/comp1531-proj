@@ -103,7 +103,7 @@ class Member():
 
 class React():
 
-    def __init__(self, react_id, u_id_list, is_this_user_react):
+    def __init__(self, react_id, u_id_list, is_this_user_reacted):
         self.react_id = react_id
         self.u_id_list = u_id_list
         self.is_this_user_react = is_this_user_react
@@ -112,7 +112,7 @@ class React():
         return {
             'react_id' : self.react_id,
             'u_ids' : self.u_id_list,
-            'is_this_user_react' : self.is_this_user_react
+            'is_this_user_reacted' : self.is_this_user_reacted
         }
         
 class Data():
@@ -125,9 +125,9 @@ class Data():
         self.member_list = member_list
         self.login_list = login_list
         
-        self.next_u_id = 0
-        self.next_channel_id = 0
-        self.next_message_id = 0
+        self.next_u_id = -1
+        self.next_channel_id = -1
+        self.next_message_id = -1
 
     def add_channel(self, new_channel):
         self.channel_list.append(new_channel)
@@ -207,7 +207,7 @@ class Data():
     def get_all_u_ids(self):
         u_id_list = []
         for user in self.user_list:
-            u_id_list.append(user.get_user_dict()[u_id])
+            u_id_list.append(user.get_user_dict()['u_id'])
         return u_id_list
     
     def get_all_channel_ids(self):
