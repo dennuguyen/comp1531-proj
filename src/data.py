@@ -224,7 +224,7 @@ class Data():
     def get_message_dict(self, message_id):
         return self.get_message(message_id).get_message_dict() if self.get_message(message_id) else {}
     
-    def get_memember(self, u_id):
+    def get_member(self, u_id):
         for member in self.member_list:
             if(member.get_member_dict()['u_id'] == u_id):
                 return member
@@ -272,7 +272,18 @@ class Data():
     def get_all_message_ids_in_a_channel(self, channel_id):
          return self.get_channel_dict(channel_id)['message_ids']
 
-    
+    def get_channel_details_dict(self, channel_id):
+        Channel = self.get_channel(channel_id)
+        Channel_details = {'name' : '', 'owner_members' : [], 'all_members' : []}
+        Channel_details['name'] = Channel.name()
+        for u_id in Channel.owner_u_id_list():
+            Member = self.get_member(u_id)
+            Channel_details['owner_members'].append(Member)
+        for u_id in Channel.u_id_list():
+            Member = self.get_member(u_id)
+            Channel_details['all_members'].append(Member)
+        return Channel_details
+
     def gen_next_u_id(self):
         self.next_u_id += 1
         return self.next_u_id
@@ -297,7 +308,7 @@ class Data():
         self.next_message_id = -1
         
 
-
+'''
 # An example of data flow is as follow, you can write in your files "from Data import getData"
 
     # Create a global object data
@@ -315,3 +326,4 @@ data.add_user(user_example)
     # get the user_dict with u_id
 user_dict = getData().get_user_dict(u_id)
 print(user_dict)
+'''
