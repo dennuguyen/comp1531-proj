@@ -47,6 +47,18 @@ class Channel():
             'owner_u_ids' : self.owner_u_id_list,
             'is_private' : self.is_private
         }
+    
+    def add_new_member(self, u_id):
+        self.u_id_list.append(u_id)
+    
+    def add_new_owner(self, u_id):
+        self.owner_u_id_list.append(u_id)
+    
+    def remove_member(self, u_id):
+        self.u_id_list.remove(u_id)
+    
+    def remove_owner(self, u_id):
+        self.owner_u_id_list.remove(u_id)
 
 class User():
     
@@ -103,16 +115,16 @@ class Member():
 
 class React():
 
-    def __init__(self, react_id, u_id_list, is_this_user_react):
+    def __init__(self, react_id, u_id_list, is_this_user_reacted):
         self.react_id = react_id
         self.u_id_list = u_id_list
-        self.is_this_user_react = is_this_user_react
+        self.is_this_user_reacted = is_this_user_reacted
     
     def get_react_dict(self):
         return {
             'react_id' : self.react_id,
             'u_ids' : self.u_id_list,
-            'is_this_user_react' : self.is_this_user_react
+            'is_this_user_reacted' : self.is_this_user_reacted
         }
         
 class Data():
@@ -125,9 +137,9 @@ class Data():
         self.member_list = member_list
         self.login_list = login_list
         
-        self.next_u_id = 0
-        self.next_channel_id = 0
-        self.next_message_id = 0
+        self.next_u_id = -1
+        self.next_channel_id = -1
+        self.next_message_id = -1
 
     def add_channel(self, new_channel):
         self.channel_list.append(new_channel)
@@ -143,6 +155,18 @@ class Data():
     
     def add_login(self, new_login):
         self.login_list(new_login)
+
+    def add_user_to_channel(self, u_id, channel_id, is_owner):
+        channel = self.get_channel(channel_id)
+        channel.add_new_member(u_id)
+        if(is_owner):
+            channel.add_new_owner(u_id)
+    
+    def remove_user_to_channel(self, u_id, channel_id, is_owner):
+        channel = self.get_channel(channel_id)
+        channel.remove_member(u_id)
+        if(is_owner):
+            channel.remove_owner(u_id) 
     
     def remove_channel(self, channel):
         self.channel_list.remove(channel)
@@ -159,35 +183,50 @@ class Data():
     def remove_login(self, login):
         self.login_list.remove(login)
     
-    def get_channel_dict(self, channel_id):
+    def get_channel(self, channel_id):
         for channel in self.channel_list:
             if(channel.get_channel_dict()['channel_id'] == channel_id):
-                return channel.get_channel_dict()
-        return {}
+                return channel
+        return None
     
-    def get_user_dict(self, u_id):
+    def get_channel_dict(self, channel_id):
+        return self.get_channel(channel_id).get_channel_dict() if self.get_channel(channel_id) else {}
+
+    def get_user(self, u_id):
         for user in self.user_list:
             if(user.get_user_dict()['u_id'] == u_id):
-                return user.get_user_dict()
-        return {}
-    
-    def get_message_dict(self, message_id):
+                return user
+        return None
+
+    def get_user_dict(self, u_id):
+        return self.get_user(u_id).get_user_dict() if self.get_user(u_id) else {}
+  
+    def get_message(self, message_id):
         for message in self.message_list:
             if(message.get_message_dict()['message_id'] == message_id):
-                return message.get_message_dict()
-        return {}
+                return message
+        return None
+
+    def get_message_dict(self, message_id):
+        return self.get_message(message_id).get_message_dict() if self.get_message(message_id) else {}
     
-    def get_member_dict(self, u_id):
+    def get_memember(self, u_id):
         for member in self.member_list:
             if(member.get_member_dict()['u_id'] == u_id):
-                return member.get_member_dict()
-        return {}
+                return member
+        return None
     
-    def get_login_dict(self, u_id):
+    def get_member_dict(self, u_id):
+        return self.get_member(u_id).get_member_dict() if self.get_member(u_id) else {}
+
+    def get_login(self, u_id):
         for login in self.login_list:
             if(login.get_login_dict()['u_id'] == u_id):
-                return login.get_login_dict()
-        return {}
+                return login
+        return None
+    
+    def get_login_dict(self, u_id):
+        return self.get_login(u_id).get_login_dict() if self.get_login(u_id) else {}
     
     def get_u_id_with_token(self, token):
         for login in self.login_list:
@@ -207,7 +246,7 @@ class Data():
     def get_all_u_ids(self):
         u_id_list = []
         for user in self.user_list:
-            u_id_list.append(user.get_user_dict()[u_id])
+            u_id_list.append(user.get_user_dict()['u_id'])
         return u_id_list
     
     def get_all_channel_ids(self):
@@ -230,6 +269,9 @@ class Data():
     def gen_next_message_id(self):
         self.next_message_id += 1
         return self.next_message_id
+    
+    def reset(self):
+        pass
 
 
 # Create a global object data
