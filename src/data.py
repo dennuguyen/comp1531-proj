@@ -1,67 +1,3 @@
-<<<<<<< HEAD
-import json
-
-data = {
-    # Stores logged in users
-    'login': [
-        {
-            'u_id': 0,
-            'token': 0,
-        },
-    ],
-    # Stores registered users
-    'users': [
-        {
-            'u_id': 0,
-            'email': 0,
-            'name_first': 0,
-            'name_last': 0,
-            'handle_str': 0,
-        },
-    ],
-    # Stores messages including details
-    'messages': [
-        {
-            'message_id': 0,
-            'u_id': 0,
-            'message': 0,
-            'time_created': 0,
-        },
-    ],
-    # Stores channels including details
-    'channels': [
-        {
-            'channel_id': 0,
-            'name': 0,
-            'isprivate': 0,
-            'owner_members': [
-                {
-                    'u_id': 0,
-                    'name_first': 0,
-                    'name_last': 0,
-                },
-            ],
-            'name_last': [
-                {
-                    'u_id': 0,
-                    'name_first': 0,
-                    'name_last': 0,
-                },
-            ],
-        },
-    ],
-    'passwords': [
-        {
-            'salt': 0,
-            'hash': 0,
-            'email': 0,
-        },
-    ]
-}
-
-with open("data.json", "w+") as f:
-    json.dump(data, f)
-=======
 '''
 - Data related operation functions are here.
 - Please read all of the functions below before you call one of them in your file.
@@ -220,6 +156,8 @@ class Data():
     def add_login(self, new_login):
         self.login_list(new_login)
 
+    
+
     def add_user_to_channel(self, u_id, channel_id, is_owner):
         channel = self.get_channel(channel_id)
         channel.add_new_member(u_id)
@@ -346,22 +284,51 @@ class Data():
         self.next_message_id = -1
         
 
-
+'''
 # An example of data flow is as follow, you can write in your files "from Data import getData"
 
     # Create a global object data
 data = Data()
 
-def getData():
-    global data
-    return data
+
 
     # Create a new user
-u_id = getData().gen_next_u_id()
+u_id = data.gen_next_u_id()
 user_example = User(u_id, '123@unsw.edu.au', 'Sunny', 'Qin', 'SunnyQin')
 data.add_user(user_example)
 
     # get the user_dict with u_id
-user_dict = getData().get_user_dict(u_id)
+user_dict = data.get_user_dict(u_id)
 print(user_dict)
->>>>>>> dev2
+
+u_id = data.gen_next_u_id()
+user_example = User(u_id, '123@unsw.edu.au', 'Raymond', 'Qin', 'SunnyQin')
+data.add_user(user_example)
+user_dict = data.get_user_dict(u_id)
+print(user_dict)
+
+
+new_channel = Channel(data.gen_next_channel_id(), 'Channel0', [], [u_id], [u_id], True)
+print(new_channel.get_channel_dict())
+data.add_channel(new_channel)
+channel_info = data.get_channel_dict(0)
+print(channel_info)
+
+new_channel = Channel(data.gen_next_channel_id(), 'Channel1', [], [u_id], [u_id], True)
+print(new_channel.get_channel_dict())
+data.add_channel(new_channel)
+channel_info = data.get_channel_dict(1)
+print(channel_info)
+
+data.add_user_to_channel(u_id, 1, False)
+channel_info = data.get_channel_dict(1)
+print(channel_info)
+
+data.add_user_to_channel(u_id, 1, False)
+channel_info = data.get_channel_dict(1)
+print(channel_info)
+
+data.add_user_to_channel(u_id, 1, True)
+channel_info = data.get_channel_dict(1)
+print(channel_info)
+'''
