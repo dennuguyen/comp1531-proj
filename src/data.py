@@ -2,11 +2,11 @@
 - Data related operation functions are here.
 - Please read all of the functions below before you call one of them in your file.
 - Currently, data is all stored in the program using a global object vairable.
-- Functions may not be named in a way what you like so please just 'Ctrl + H' to 
+- Functions may not be named in a way what you like so please just 'Ctrl + H' to
 change them to better ones.
-- There should be some functions not coverd in this file and you can add whatever 
+- There should be some functions not coverd in this file and you can add whatever
 you want follow the structureor just inform me to help you add something you need.
-- I don't have time to test all functions below and maybe there are some small 
+- I don't have time to test all functions below and maybe there are some small
 mistakes but it's easy to correct them I believe.
 - Setters are something to implement later.
 
@@ -25,7 +25,7 @@ class Login():
         }
 
     def get_u_id_with_token(self, token):
-        return u_id if token in self.token_list else -1
+        return self.u_id if token in self.token_list else -1
     
 
 class Channel():
@@ -84,16 +84,36 @@ class User():
             'handle_str' : self.handle_str
         }
 
+class React():
+
+    def __init__(self, react_id=-1, u_id_list=[], is_this_user_reacted=False):
+        self.react_id = react_id
+        self.u_id_list = u_id_list
+        self.is_this_user_reacted = is_this_user_reacted
+    
+    def get_react_dict(self):
+        return {
+            'react_id' : self.react_id,
+            'u_ids' : self.u_id_list,
+            'is_this_user_reacted' : self.is_this_user_reacted
+        }
+    
+    def add_u_id(self, u_id):
+        self.u_id_list.append(u_id)
+    
+    def set_is_this_user_reacted(self, flag):
+        self.is_this_user_reacted = flag
+
 class Message():
 
-    def __init__(self, message_id, u_id, message, time_created, react_list, is_pinned, is_private):
+    def __init__(self, message_id, u_id, message, time_created, react_list = [React(1,[],False)], is_pinned = False, channel_id = -1):
         self.message_id = message_id
         self.u_id = u_id
         self.message = message
         self.time_created = time_created
         self.react_list = react_list
         self.is_pinned = is_pinned
-        self.is_private = is_private
+        self.channel_id = channel_id
     
     def get_message_dict(self):
         return {
@@ -102,9 +122,19 @@ class Message():
             'message' : self.message,
             'time_created' : self.time_created,
             'reacts' : self.react_list,
-            'is_pinned' : self.is_pinned 
+            'is_pinned' : self.is_pinned,
+            'channel_id' : self.channel_id 
         }
     
+    def set_channel_id(self, channel_id):
+        self.channel_id = channel_id
+    
+    def set_react(self, react_id, u_id, flag):
+        for react in self.react_list:
+            if(react.get_react_dict()['react_id'] == react_id):
+                react.set_is_this_user_reacted(flag)
+                react.add_u_id(u_id)              
+                break
 class Member():
 
     def __init__(self, u_id, name_first, name_last):
@@ -118,24 +148,10 @@ class Member():
             'name_first' : self.name_first,
             'name_last' : self.name_last
         }
-
-class React():
-
-    def __init__(self, react_id, u_id_list, is_this_user_reacted):
-        self.react_id = react_id
-        self.u_id_list = u_id_list
-        self.is_this_user_reacted = is_this_user_reacted
-    
-    def get_react_dict(self):
-        return {
-            'react_id' : self.react_id,
-            'u_ids' : self.u_id_list,
-            'is_this_user_reacted' : self.is_this_user_reacted
-        }
-        
+      
 class Data():
 
-    def __init__(self, user_list = [], message_list = [], channel_list = [], member_list = [], login_list = []):
+    def __init__(self, user_list=[], message_list=[], channel_list=[], member_list=[], login_list=[]):
         
         self.user_list = user_list
         self.message_list = message_list
@@ -146,6 +162,10 @@ class Data():
         self.next_u_id = -1
         self.next_channel_id = -1
         self.next_message_id = -1
+
+
+
+
 
     def add_channel(self, new_channel):
         self.channel_list.append(new_channel)
@@ -168,20 +188,16 @@ class Data():
         if(is_owner):
             channel.add_new_owner(u_id)
     
-    def remove_user_to_channel(self, u_id, channel_id, is_owner):
+    def add_message_to_channel(self, message_id, channel_id):
         channel = self.get_channel(channel_id)
-        channel.remove_member(u_id)
-        if(is_owner):
-            channel.remove_owner(u_id) 
+        channel.add_new_message(message_id)
+        message = self.get_message(message_id)
+        message.set_channel_id(channel_id)
 
-    def add_message_to_channel(self, msg_id, channel_id):
-        channel = self.get_channel(channel_id)
-        channel.add_new_message(msg_id)
 
-    def remove_message_to_channel(self, msg_id, channel_id):
-        channel = self.get_channel(channel_id)
-        channel.remove_message(msg_id)
-    
+
+
+
     def remove_channel(self, channel):
         self.channel_list.remove(channel)
     
@@ -196,7 +212,21 @@ class Data():
     
     def remove_login(self, login):
         self.login_list.remove(login)
-    
+
+    def remove_user_from_channel(self, u_id, channel_id, is_owner):
+        channel = self.get_channel(channel_id)
+        channel.remove_member(u_id)
+        if(is_owner):
+            channel.remove_owner(u_id)
+
+    def remove_message_from_channel(self, msg_id, channel_id):
+        channel = self.get_channel(channel_id)
+        channel.remove_message(msg_id) 
+
+
+
+
+
     def get_channel(self, channel_id):
         for channel in self.channel_list:
             if(channel.get_channel_dict()['channel_id'] == channel_id):
@@ -241,6 +271,10 @@ class Data():
     
     def get_login_dict(self, u_id):
         return self.get_login(u_id).get_login_dict() if self.get_login(u_id) else {}
+    
+    
+    
+       
     
     def get_u_id_with_token(self, token):
         for login in self.login_list:
@@ -305,6 +339,20 @@ class Data():
             channels['channels'].append(channel_info)
         return channels
 
+    def get_channel_id(self, message_id):
+        message = self.get_message(message_id)
+        return message.get_message_dict()['channel_id']
+    
+    def get_all_message_ids(self):
+        message_ids = []
+        for message in self.message_list:
+            message_ids = message.get_message_dict()['message_id']
+        return message_ids
+
+
+
+
+
     def gen_next_u_id(self):
         self.next_u_id += 1
         return self.next_u_id
@@ -317,6 +365,11 @@ class Data():
         self.next_message_id += 1
         return self.next_message_id
     
+    
+    
+    
+    
+    
     def reset(self):
         self.user_list = []
         self.message_list = []
@@ -328,6 +381,29 @@ class Data():
         self.next_channel_id = -1
         self.next_message_id = -1
         
+
+
+
+
+data = Data()
+
+def getData():
+    global data
+    
+    return data
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 '''
 # An example of data flow is as follow, you can write in your files "from Data import getData"
