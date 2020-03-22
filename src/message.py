@@ -3,17 +3,19 @@ Message related operations are here.
 '''
 
 import message_check
-import message_data
+from data import getData, Message, React
+from time import get_current_time
 import error
-
+ 
 
 def message_send(token, channel_id, message):
     '''
     Send a message from authorised_user to the channel specified 
     by channel_id
     '''
-    u_id = message_data.get_uid_with_token(token)
-
+    u_id = getData().get_u_id_with_token(token)
+    
+    # check validity of the input augments
     if not message_check.is_user_in_channel(u_id, channel_id):
         raise error.AccessError(description = "The user is not in this channel")
     if not message_check.is_valid_channel(channel_id):
@@ -21,8 +23,14 @@ def message_send(token, channel_id, message):
     if not message_check.is_valid_message(message):
         raise error.InputError(description = "The message is more than 1000 characters")
     
-    message_id = message_data.create_message_object(u_id, message)['message_id']
-    message_data.add_message_to_channel(u_id, message_id)
+    # setup the message
+    message_id = getData().gen_next_channel_id()
+    time_created = get_current_time()
+    message = Message(message_id, u_id, message, time_created)
+
+    # update the database
+    getData().add_message(message)
+    getData().add_message_to_channel(u_id, message_id)
 
     return {
         'message_id': message_id
@@ -33,8 +41,9 @@ def message_sendlater(token, channel_id, message, time_sent):
     Send a message from authorised_user to the channel specified 
     by channel_id automatically at a specified time in the future
     '''
-    u_id = message_data.get_uid_with_token(token)
+    u_id = getData().get_u_id_with_token(token)
 
+    # check validity of the input augments
     if not message_check.is_user_in_channel(u_id, channel_id):
         raise error.AccessError(description = "The user is not in this channel")
     if not message_check.is_valid_channel(channel_id):
@@ -44,9 +53,14 @@ def message_sendlater(token, channel_id, message, time_sent):
     if not message_check.is_valid_time(time_sent):
         raise error.InputError(description = "Time sent is a time in the past.")
 
+    # setup the message
+    message_id = getData().gen_next_channel_id()
+    time_created = get_current_time()
+    message = Message(message_id, u_id, message, time_created)
 
-    message_id = message_data.create_message_object(u_id, message)['message_id']
-    message_data.add_message_to_queue(u_id, message_id, time_sent)
+    # update the database
+    getData().add_message(message)
+
 
     return {
         'message_id': message_id
@@ -57,7 +71,7 @@ def message_react(token, message_id, react_id):
     Given a message within a channel the authorised user is part of, 
     add a "react" to that particular message
     '''
-    u_id = message_data.get_uid_with_token(token)
+    u_id = getData().get_u_id_with_token(token)
     if not message_check.is_user_in_channel(u_id, channel_id):
         raise error.AccessError(description = "The user is not in this channel")
     if not message_check.is_message_in_channel(message_id, channel_id):
