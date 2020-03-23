@@ -59,8 +59,7 @@ def message_sendlater(token, channel_id, message, time_sent):
     message_object = Message(message_id, u_id, message, time_created)
 
     # update the database
-    getData().add_message(message_object)
-    # !!!!!!!!!!!!!!!!!!!! not solved yet !!!!!!!!!!!!!!!!!!!!!
+    getData().add_message_to_waitlist(message_object)
 
     return {
         'message_id': message_id
@@ -84,7 +83,7 @@ def message_react(token, message_id, react_id):
 
     if not message_check.is_valid_react_id(react_id):
         raise error.InputError(description="This is an invalid reaction.")
-    if not message_check.is_not_reacted_yet(message_id, react_id):
+    if message_check.is_reacted(message_id, react_id):
         raise error.InputError(description="The message has already been reacted with this reaction.")
 
     # update the database
@@ -111,7 +110,7 @@ def message_unreact(token, message_id, react_id):
 
     if not message_check.is_valid_react_id(react_id):
         raise error.InputError(description="This is an invalid reaction.")
-    if message_check.is_not_reacted_yet(message_id, react_id):
+    if not message_check.is_reacted(message_id, react_id):
         raise error.InputError(description="The message has not been reacted with this reaction yet.")
 
     # update the database
