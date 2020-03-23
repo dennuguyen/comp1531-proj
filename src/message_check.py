@@ -29,3 +29,12 @@ def is_valid_react_id(react_id):
 
 def is_not_reacted_yet(message_id, react_id):
     return True
+
+def is_user_the_owner(U_id, channel_id):
+    return True
+
+def is_pinned(message_id):
+    return True
+
+def is_message_sent_by_user(message_id, u_id):
+    return True
