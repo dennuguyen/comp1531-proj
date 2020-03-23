@@ -11,7 +11,6 @@ mistakes but it's easy to correct them I believe.
 - Setters are something to implement later.
 
 '''
-  
 class Login():
     
     def __init__(self, u_id, token_list):
@@ -141,6 +140,12 @@ class Message():
     
     def set_message(self, message):
         self.message = message
+    
+    def get_react_dict(self, react_id):
+        for react in react_list:
+            if(react_id == react.get_react_dict()['react_id']):
+                return react.get_react_dict()
+        return None
 
 class Member():
 
@@ -158,10 +163,11 @@ class Member():
       
 class Data():
 
-    def __init__(self, user_list=[], message_list=[], channel_list=[], member_list=[], login_list=[]):
+    def __init__(self, user_list=[], message_list=[], message_waitlist=[], channel_list=[], member_list=[], login_list=[]):
         
         self.user_list = user_list
         self.message_list = message_list
+        self.message_waitlist = message_wait_list
         self.channel_list = channel_list
         self.member_list = member_list
         self.login_list = login_list
@@ -201,6 +207,10 @@ class Data():
         message = self.get_message(message_id)
         message.set_channel_id(channel_id)
 
+    def add_message_to_waitlist(self, message_id):
+        message = self.get_message(message_id)
+        self.message_waitlist.append(message)
+
 
 
 
@@ -229,6 +239,11 @@ class Data():
     def remove_message_from_channel(self, msg_id, channel_id):
         channel = self.get_channel(channel_id)
         channel.remove_message(msg_id) 
+
+    def remove_message_from_waitlist(self, message_id):
+        message = self.get_message(message_id)
+        self.message_waitlist.remove(message)
+
 
 
 
@@ -376,7 +391,6 @@ class Data():
     
     
     
-    
     def reset(self):
         self.user_list = []
         self.message_list = []
@@ -395,39 +409,5 @@ class Data():
 data = Data()
 
 def getData():
-    global data
-    
+    global data   
     return data
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-'''
-# An example of data flow is as follow, you can write in your files "from Data import getData"
-
-    # Create a global object data
-data = Data()
-
-def getData():
-    global data
-    return data
-
-    # Create a new user
-u_id = getData().gen_next_u_id()
-user_example = User(u_id, '123@unsw.edu.au', 'Sunny', 'Qin', 'SunnyQin')
-data.add_user(user_example)
-
-    # get the user_dict with u_id
-user_dict = getData().get_user_dict(u_id)
-print(user_dict)
-'''
