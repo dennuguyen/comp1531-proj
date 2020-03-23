@@ -135,6 +135,13 @@ class Message():
                 react.set_is_this_user_reacted(flag)
                 react.add_u_id(u_id)              
                 break
+    
+    def set_is_pinned(self, flag):
+        self.is_pinned = flag
+    
+    def set_message(self, message):
+        self.message = message
+
 class Member():
 
     def __init__(self, u_id, name_first, name_last):
