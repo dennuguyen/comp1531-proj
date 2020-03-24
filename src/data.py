@@ -1,15 +1,16 @@
 """
 Data.py defines the classes used to store the server data in memory and methods
 to get or manipulate that data. These classes are:
-- Login
-- Channel
-- User
-- React
-- Message
-- Data
+-> Login
+-> Channel
+-> User
+-> React
+-> Message
+-> Password
+-> Data
 
 The Data class instantiates the parent object, data, which contains the lists of
-child objects i.e. instantiations of the Login, Channel, User, React, Message
+child objects i.e. instantiations of the Login, Channel, User, Message, Password
 classes. Each child object has getters and setters that respectively return and
 manipulate their unique member variables.
 
@@ -53,7 +54,6 @@ The Data class has a reset method to conveniently reset server data in memory.
 
 
 ################################################################################
-#                                                                              #
 # NOTICE for git-push-me-out-a-window:                                         #
 #                                                                              #
 # - Please read all of the functions below before you call one of them in your #
@@ -61,6 +61,8 @@ The Data class has a reset method to conveniently reset server data in memory.
 #                                                                              #
 # - There may be functions that are bugged as they have not been properly      #
 #   tested.                                                                    #
+#                                                                              #
+# - message_wait_list may require some getters in Data                         #                                                                    #
 #                                                                              #
 # - Underscores before a variable name indicates that variable is private.     #
 #                                                                              #
@@ -70,11 +72,11 @@ The Data class has a reset method to conveniently reset server data in memory.
 
 
 
-"""
-Login class
-"""
-class Login():
 
+class Login():
+    """
+    Login class
+    """
     def __init__(self, u_id, token):
         self._u_id = u_id
         self._token = token
@@ -95,11 +97,11 @@ class Login():
         return self._token
     
 
-"""
-Channel class
-"""
-class Channel():
 
+class Channel():
+    """
+    Channel class
+    """
     def __init__(self,
                  ch_id,
                  ch_name,
@@ -168,11 +170,11 @@ class Channel():
         self._msg_id_list.remove(msg_id)
 
 
-"""
-User class
-"""
-class User():
 
+class User():
+    """
+    User class
+    """
     def __init__(self, u_id, email, name_first, name_last, handle_str):
         self._u_id = u_id
         self._email = email
@@ -230,11 +232,11 @@ class User():
     def set_handle_str(self, new_handle_str):
         self._handle_str = new_handle_str
 
-"""
-React Class
-"""
-class React():
 
+class React():
+    """
+    React Class
+    """
     def __init__(self, react_id=-1, u_id_list=[], is_this_user_reacted=False):
         self._react_id = react_id
         self._u_id_list = u_id_list
@@ -271,11 +273,11 @@ class React():
     def set_is_this_user_reacted(self, flag):
         self._is_this_user_reacted = flag
 
-"""
-Message Class
-"""
-class Message():
 
+class Message():
+    """
+    Message Class
+    """
     def __init__(self,
                  msg_id,
                  u_id,
@@ -302,7 +304,6 @@ class Message():
             'time_created' : self._time_created,
             'reacts' : self._react_list,
             'is_pinned' : self._is_pinned,
-            'channel_id' : self._ch_id 
         }
     
     def get_message_id(self):
@@ -320,10 +321,11 @@ class Message():
     def get_react_list(self):
         return self._react_list
 
-    def get_react(self, react_id):
+    def get_react_with_react_id(self, react_id):
         for react in react_list:
             if(react_id == react.get_react_id()):
                 return react.get_react_dict()
+        
         return None
     
     def get_is_pinned(self):
@@ -348,28 +350,61 @@ class Message():
     def set_is_pinned(self, flag):
         self._is_pinned = flag
 
-"""
-Data class
-"""
-class Data():
 
+class Password():
+    """
+    Password class
+    """
+    def __init__(self, u_id, salt, hash_):
+        self._u_id = u_id
+        self._salt = salt
+        self._hash = hash_
+
+    """
+    Getters
+    """
+    def get_u_id(self):
+        return self._u_id
+    
+    def get_salt(self):
+        return self._salt
+    
+    def get_hash(self):
+        return self._hash
+
+    """
+    Setters
+    """
+    def set_u_id(self, new_u_id):
+        self._u_id = new_u_id
+    
+    def set_salt(self, new_salt):
+        self._salt = new_salt
+    
+    def set_hash(self, new_hash):
+        self._hash = new_hash
+
+class Data():
+    """
+    Data class
+    """
     def __init__(self,
                  user_list=[],
                  message_list=[],
                  message_wait_list=[],
                  channel_list=[],
                  login_list=[],
+                 password_list=[],
                  u_id=-1,
                  ch_id=-1,
                  msg_id=-1
                 ):
-        
         self._user_list = user_list
         self._message_list = message_list
         self._message_wait_list = message_wait_list
         self._channel_list = channel_list
         self._login_list = login_list
-
+        self._password_list = password_list
         """
         Global (but not really) variables to keep track of the id's of users,
         channels, messages.
@@ -393,6 +428,9 @@ class Data():
     def get_login_list(self):
         return self._login_list
 
+    def get_password_list(self):
+        return self._password_list
+
     # def get_all_user_id(self):
     #     return [user.get_u_id() for user in self._user_list]
 
@@ -415,21 +453,29 @@ class Data():
         for user in self._user_list:
             if (user.get_u_id() == u_id):
                 return user
-    
+
+        return None
+
     def get_user_with_token(self, token):
         for user in self._user_list:
             if (user.get_token() == token):
                 return user
-    
+
+        return None
+
     def get_user_with_email(self, email):
         for user in self._user_list:
             if (user.get_email() == email):
                 return user
-    
+
+        return None
+
     def get_user_with_handle_str(self, handle_str):
         for user in self._user_list:
             if (user.get_handle_str() == handle_str):
                 return user
+
+        return None
 
     """
     Channel Object Getters
@@ -438,10 +484,14 @@ class Data():
         for channel in self._channel_list:
             if (channel.get_channel_id() == ch_id):
                 return channel
-    
+
+        return None
+
     def get_channel_with_message_id(self, msg_id):
         for channel in self._channel_list:
             if (channel.get_channel_id())
+
+        return None
 
     """
     Login Object Getters
@@ -454,6 +504,8 @@ class Data():
             if (login.get_token() == token):
                 return login
 
+        return None
+
     """
     React Object Getters
     """
@@ -461,7 +513,9 @@ class Data():
         for react in self._react_list:
             if (react.get_react_id() == react_id):
                 return react
-    
+
+        return None
+
     """
     Message Object Getters
     """
@@ -479,6 +533,29 @@ class Data():
     def get_message_with_message(self, message)
         return [msg for msg in self._message_list if msg.get_message() == message]
 
+    """
+    Password Object Getters
+    """
+    def get_password_with_u_id(self, u_id):
+        for pass_ in self._password_list:
+            if pass_.get_u_id() == u_id:
+                return pass_
+        
+        return None
+    
+    def get_password_with_salt(self, salt):
+        for pass_ in self._password_list:
+            if pass_.get_salt() == salt:
+                return pass_
+        
+        return None
+
+    def get_password_with_hash(self, hash_):
+        for pass_ in self._password_list:
+            if pass_.get_hash() == hash_:
+                return pass_
+        
+        return None
 
     """
     Adders
