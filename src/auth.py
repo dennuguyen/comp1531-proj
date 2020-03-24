@@ -8,15 +8,15 @@ import auth_helper
 def auth_login(*, email, password):
 
     # Get the user's user id by finding their email in users dictionary
-    for i in range(len(data.data['users'])):
-        if email == data.data['users'][i].get('email'):
-            u_id = data.data['users'][i].get('u_id')
+    for user in data.data.user_list:
+        if user.get_user_dict()['email'] == email:
+            u_id = user.get_user_dict()['u_id']
+
+    # Update the data structure
+    data.data.add_login(data.Login(u_id, auth_helper.generate_token(u_id)))
 
     # Return user id and valid token
-    return {
-        'u_id': u_id,
-        'token': auth_helper.generate_token(u_id),
-    }
+    return data.data.get_login(u_id)
 
 
 @decorators.authenticate_token
@@ -26,12 +26,16 @@ def auth_logout(*, token):
     is_true = False
 
     # Search for matching token
-    for i in range(len(data.data['login'])):
+    for i in range(len(data.data.get_user['login'])):
         # Invalidate the token
         if data.data['login'][i].get('token') == token:
             is_true = True
             del data.data['login'][i]
             break
+
+    data.data.get_login()
+
+    data.data.remove_login()
 
     return {'is_success': is_true}
 
