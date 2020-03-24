@@ -161,7 +161,7 @@ def valid_email(fn):
     return wrapper
 
 
-def existing_email(fn):
+def email_does_not_exist(fn):
     '''
     Email entered does not belong to a user
     '''
@@ -616,3 +616,33 @@ def permission_id(fn):
     permission_id does not refer to a value permission
     '''
     pass
+
+
+
+#### Authenticator function ####
+
+def authenticator(*decs):
+    def deco(f):
+        for dec in reversed(decs):
+            f = dec(f)
+        return f
+    return deco
+
+'''
+The use of this ultimate decorator is quite simple.
+I will show an example on how to check for all input errors in the first function: "auth/login"
+
+from authenticate import *
+
+@authenticator(valid_email, email_does_not_exist, authenticate_password)
+def login():
+    pass
+
+If we don't want to use the * import method. I will show an example for the first function "auth/login"
+
+import authenticate
+
+@authenticate.authenticator(authenticate.valid_email, authenticate.email_does_not_exist, authenticate.authenticate_password)
+def login():
+    pass
+'''
