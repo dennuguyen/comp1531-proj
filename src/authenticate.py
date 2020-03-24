@@ -1,3 +1,33 @@
+'''
+This file is composed of many decorator functions aimed to check specific "Input Error" cases and "Access Error" cases.
+
+If the function you are writing for has an Input or Access error condition, for example "Email entered does not belong to a user".
+Control + F to search for the function required to test for it then follow the example below.
+
+
+
+EXAMPLES ON USE:
+
+The use of this ultimate decorator is quite simple.
+I will show an example on how to check for all input errors in the first function: "auth/login"
+
+from authenticate import *
+
+@authenticator(valid_email, email_does_not_exist, authenticate_password)
+def login():
+    pass
+
+If we don't want to use the * import method. I will show an example for the first function "auth/login"
+
+import authenticate
+
+@authenticate.authenticator(authenticate.valid_email, authenticate.email_does_not_exist, authenticate.authenticate_password)
+def login():
+    pass
+
+'''
+
+
 import re
 import error
 import user
@@ -627,22 +657,3 @@ def authenticator(*decs):
             f = dec(f)
         return f
     return deco
-
-'''
-The use of this ultimate decorator is quite simple.
-I will show an example on how to check for all input errors in the first function: "auth/login"
-
-from authenticate import *
-
-@authenticator(valid_email, email_does_not_exist, authenticate_password)
-def login():
-    pass
-
-If we don't want to use the * import method. I will show an example for the first function "auth/login"
-
-import authenticate
-
-@authenticate.authenticator(authenticate.valid_email, authenticate.email_does_not_exist, authenticate.authenticate_password)
-def login():
-    pass
-'''
