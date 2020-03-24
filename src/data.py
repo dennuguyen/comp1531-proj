@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 """
 Data.py defines the classes used to store the server data in memory and methods
 to get or manipulate that data. These classes are:
@@ -37,6 +38,28 @@ signifies the creation and deletion of those objects.
 
          Accepts a User object, new_user, and appends this to the list of users.
          This is called upon registration of a new user.
+=======
+<<<<<<< HEAD
+'''
+- Data related operation functions are here.
+- Please read all of the functions below before you call one of them in your file.
+- Currently, data is all stored in the program using a global object vairable.
+- Functions may not be named in a way what you like so please just 'Ctrl + H' to 
+change them to better ones.
+- There should be some functions not coverd in this file and you can add whatever 
+you want follow the structureor just inform me to help you add something you need.
+- I don't have time to test all functions below and maybe there are some small 
+mistakes but it's easy to correct them I believe.
+- Setters are something to implement later.
+
+'''
+  
+class Login():
+    
+    def __init__(self, u_id, token_list):
+        self.u_id = u_id
+        self.token_list = token_list
+>>>>>>> dev2
     
     e.g. remove_user(self, user)
 
@@ -590,6 +613,7 @@ class Data():
         except AssertionError:
             raise AssertionError("Error: Parameter is not 'class Login'")
 
+<<<<<<< HEAD
     def add_message_later(self, new_message):
         try:
             assert isinstance(new_message, Message)
@@ -708,3 +732,73 @@ def get_data():
     """
     global data   
     return data
+=======
+    # get the user_dict with u_id
+user_dict = getData().get_user_dict(u_id)
+print(user_dict)
+'''
+=======
+import json
+
+data = {
+    # Stores logged in users
+    'login': [
+        {
+            'u_id': 0,
+            'token': 0,
+        },
+    ],
+    # Stores registered users
+    'users': [
+        {
+            'u_id': 0,
+            'email': 0,
+            'name_first': 0,
+            'name_last': 0,
+            'handle_str': 0,
+        },
+    ],
+    # Stores messages including details
+    'messages': [
+        {
+            'message_id': 0,
+            'u_id': 0,
+            'message': 0,
+            'time_created': 0,
+        },
+    ],
+    # Stores channels including details
+    'channels': [
+        {
+            'channel_id': 0,
+            'name': 0,
+            'isprivate': 0,
+            'owner_members': [
+                {
+                    'u_id': 0,
+                    'name_first': 0,
+                    'name_last': 0,
+                },
+            ],
+            'name_last': [
+                {
+                    'u_id': 0,
+                    'name_first': 0,
+                    'name_last': 0,
+                },
+            ],
+        },
+    ],
+    'passwords': [
+        {
+            'salt': 0,
+            'hash': 0,
+            'email': 0,
+        },
+    ]
+}
+
+with open("data.json", "w+") as f:
+    json.dump(data, f)
+>>>>>>> it2_decorators
+>>>>>>> dev2
