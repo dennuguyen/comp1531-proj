@@ -3,9 +3,14 @@ import error
 import user
 import data
 import auth_helper
+import datetime
+
+import data
+# TODO Figure out some way to access global dataframe.
 
 # Decorator function that checks if the token exists
 def is_token_valid(token):
+    #TODO Consolidate this with Sunny
 
     # Compare the token to the token list
     for check_token in token_list:                                  ######## TO DO: get this from data.py
@@ -36,11 +41,11 @@ def is_member(fn):
         token = kwargs['token']
         ch_id = kwargs['ch_id']
 
-        # Check if token exists
+        # Check if token exists #TODO since this is every access erorr. We should decorate
         is_token_valid(token)
 
         # Check if user is member of channel
-        for member in data.Channels.get_users(ch_id):            ######## TO DO: get this from data.py
+        for member in data.getData().):            ######## TO DO: get this from data.py
             if token == member['token']
                 return fn(*args, **kwargs)
 
@@ -133,274 +138,14 @@ def is_message_permission(fn):
 
     return wrapper
 
-###### Raymonds Decorators #######
-# raymond need
-# - token is valid
-# - ch_id is valid
-# -
-import channels
-import channel
-import other
-import error
-import re
-
-
-# Check if token is valid
-def check_token_isvalid(function):
-    def inner(**kwargs):
-        # Raise AccessError if channel_id is not valid
-        # Run function if token is valid
-        return function(**kwargs)
-
-    return inner
-
-
-# Check if channel_id is valid
-def check_channel_id_isvalid(function):
-    def inner(**kwargs):
-        token = kwargs['token']
-        channel_id = kwargs['channel_id']
-        ch_list = channels.channels_list(token)
-        isvalid = 0
-        for ch in ch_list['channels']:
-            if ch['channel_id'] == channel_id:
-                isvalid = 1
-        # Raise InputError if channel_id is not valid
-        if isvalid == 0:
-            raise error.InputError('channel_id is not valid')
-        # Run function if channel_id is valid
-        return function(**kwargs)
-
-    return inner
-
-
-# Check if token is authorised
-def check_token_isauthorised(function):
-    def inner(**kwargs):
-        token = kwargs['token']
-        channel_id = kwargs['channel_id']
-        ch_list = channels.channels_list(token)
-        isauthorised = 0
-        for ch in ch_list['channels']:
-            if ch['channel_id'] == channel_id:
-                isauthorised = 1
-        # Raise AccessError if token is not authorised
-        if isauthorised == 0:
-            raise error.AccessError('user is not member of channel')
-        # Run function if token is auhtorised
-        return function(**kwargs)
-
-    return inner
-
-
-# Check if u_id is a valid user
-def check_u_id_isvalid(function):
-    def inner(**kwargs):
-        token = kwargs['token']
-        u_id = kwargs['u_id']
-        users_list = other.users_all(token)
-        isvalid = 0
-        for user in users_list['users']:
-            if user['u_id'] == u_id:
-                isvalid = 1
-    # Raise AccessError if u_id is not valid
-        if isvalid == 0:
-            raise error.InputError('u_id is not a valid user')
-
-    # Run function if u_id is valid
-        return function(**kwargs)
-    return inner
-
-
-# Check that token is not already a member
-def check_token_isnotmember(function):
-    def inner(**kwargs):
-        token = kwargs['token']
-        channel_id = kwargs['channel_id']
-        ch_list = channels.channels_list(token)
-        isnotmember = 1
-        for ch in ch_list['channels']:
-            if ch['channel_id'] == channel_id:
-                isnotmember = 0
-    # Raise AccessError if u_id is a member
-        if isnotmember == 1:
-            raise error.AccessError('u_id is a member')
-
-    # Run function if u_id is valid
-        return function(**kwargs)
-    return inner
-
-
-# Check that start is equal to or greater than total number of messages in channel
-def check_start_issmaller(function):
-    def inner(**kwargs):
-        token = kwargs['token']
-        channel_id = kwargs['channel_id']
-        start = kwargs['start']
-        # Raise InputError if start is equal or greater than total number of messages
-        # Run function if start is smaller
-        return function(**kwargs)
-
-    return inner
-
-
-def check_token_isnotslackrking(function):
-    def inner(**kwargs):
-        token = kwargs['token']
-
-
-def check_token_ismember(function):
-    def inner(**kwargs):
-        token = kwargs['token']
-        channel_id = kwargs['channel_id']
-        ch_list = channels.channels_list(token)
-        ismember = 0
-        for ch in ch_list['channels']:
-            if ch['channel_id'] == channel_id:
-                ismember = 1
-    # Raise AccessError if u_id is not a member
-        if ismember == 0:
-            raise error.AccessError('u_id is not a member')
-
-    # Run function if u_id is valid
-        return function(**kwargs)
-    return inner
-
-
-def check_channel_isnotprivate(function):
-    def inner(**kwargs):
-        return function(**kwargs)
-
-    return inner
-
-
-def check_token_isowner(function):
-    def inner(**kwargs):
-        token = kwargs['token']
-        channel_id = kwargs['channel_id']
-        ch_details = channel.channel_details(token, channel_id)
-        return function(**kwargs)
-
-    return inner
-
-
-def check_u_id_isnotowner(function):
-    pass
-
-
-def check_u_id_isowner(function):
-    pass
-
-
-############
-
-
-def authenticate_u_id(fn, *args, **kwargs):
-    def wrapper(*args, **kwargs):
-
-        # Get the u_id
-        u_id = kwargs['u_id']
-        print(u_id)
-
-        return fn(*args, **kwargs)
-
-    return wrapper
-
-
-def authenticate_email(fn, *args, **kwargs):
-    def wrapper(*args, **kwargs):
-
-        # Get the email
-        email = kwargs['email']
-
-        # Check the email form
-        regex = '^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$'
-        if not re.search(regex, email):
-            raise error.InputError('Invalid email.')
-        else:
-            pass
-
-        return fn(*args, **kwargs)
-
-    return wrapper
-
-
-def register_email(fn, *args, **kwargs):
-    def wrapper(*args, **kwargs):
-
-        # Get the email
-        email = kwargs['email']
-
-        # Check if email already exists
-        for registered_user in data.data['users']:
-            if email == registered_user['email']:
-                raise error.InputError('Email already exists.')
-            else:
-                pass
-
-        return fn(*args, **kwargs)
-
-    return wrapper
-
-
-def authenticate_password(fn, *args, **kwargs):
-    def wrapper(*args, **kwargs):
-
-        # Get the password
-        email = kwargs['email']
-        password = kwargs['password']
-
-        # Retrieve the salt by looking up the email in the passwords dictionary
-        for i in range(len(data.data['passwords'])):
-            if email == data.data['passwords'][i].get('email'):
-
-                # Get the salt from passwords dictionary
-                salt = data.data['passwords'][i]['salt']
-
-                # Get the hash for salt + password combination
-                try_hash = auth_helper.get_hash(salt, password)
-
-                # Try the hash. If incorrect raise InputError
-                if try_hash != data.data['passwords'][i]['hash']:
-                    raise error.InputError
-
-                break  # No need to continue
-
-        return fn(*args, **kwargs)
-
-    return wrapper
-
-
-def authenticate_name(fn, *args, **kwargs):
-    def wrapper(*args, **kwargs):
-
-        # Get the first name
-        name_first = kwargs['name_first']
-        print(name_first)
-
-        return fn(*args, **kwargs)
-
-    return wrapper
-
-
-def authenticate_handle_str(fn, *args, **kwargs):
-    def wrapper(*args, **kwargs):
-
-        # Get the password
-        handle_str = kwargs['handle_str']
-        print(handle_str)
-
-        return fn(*args, **kwargs)
-
-    return wrapper
-
-
-
 ######################## Input Errors #######################3
 
 
 
 def valid_email(fn):
+    '''
+    Email entered is not a valid email.
+    '''
     def wrapper(*args, **kwargs):
 
         # Get the email
@@ -409,7 +154,7 @@ def valid_email(fn):
         # Check the email form
         valid_email_regex = '^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$'
         if not re.search(valid_email_regex, email):
-            raise error.InputError('Invalid email.')
+            raise error.InputError('Email entered is not a valid email.')
 
         return fn(*args, **kwargs)
 
@@ -418,7 +163,7 @@ def valid_email(fn):
 
 def existing_email(fn):
     '''
-    Checks the email actually exists (For Login)
+    Email entered does not belong to a user
     '''
     def wrapper(*args, **kwargs):
 
@@ -426,16 +171,14 @@ def existing_email(fn):
         email = kwargs['email']
 
         # Check if email doesn't exist
-        email_existance = False
-        for registered_user in data.data['users']: # TODO: Check data structure when finalised
+        for registered_user in data.getData().user_list:
             if email == registered_user['email']:
-                email_existance = True
+                return fn(*args, **kwargs)
 
         # If it doesn't exist, raise an error
-        if not email_existance:
-            raise error.InputError("This email does not exist")
+        raise error.InputError('Email entered does not belong to a user.')
 
-        return fn(*args, **kwargs)
+        
 
     return wrapper
 
@@ -469,34 +212,45 @@ def authenticate_password(fn):
     return wrapper
 
 def email_already_used(fn):
+    '''
+    Email address is already being used by another user.
+    '''
     def wrapper(*args, **kwargs):
 
         # Get the email
         email = kwargs['email']
 
         # Check if email already exists
-        for registered_user in data.data['users']: # TODO: Check data structure when finalised
+        for registered_user in data.getData().user_list:
             if email == registered_user['email']:
-                raise error.InputError('Email already exists.')
+                raise error.InputError('Email address is already being used by another user.')
 
         return fn(*args, **kwargs)
 
     return wrapper
 
 def check_password_length(fn):
+    '''
+    Password entered is less than 6 characters long.
+    '''
     def wrapper(*args, **kwargs):
 
         # Get the password
         password = kwargs['password']
 
         if len(password) < 6:
-            raise error.InputError('Password is too short. Must be longer than 6 characters')
+            raise error.InputError('Password entered is less than 6 characters long.')
 
         return fn(*args, **kwargs)
 
     return wrapper
 
 def check_name_length(fn):
+    '''
+    name_first not is between 1 and 50 characters inclusive in length
+
+    name_last is not between 1 and 50 characters inclusive in length
+    '''
     def wrapper(*args, **kwargs):
 
         # Get first and last name
@@ -514,34 +268,24 @@ def check_name_length(fn):
     return wrapper
 
 def is_user_in_channel(fn):
+    '''
+    channel_id does not refer to a valid channel that the authorised user is part of.
+    '''
     def wrapper(*args, **kwargs):
-        '''
-        channel_id does not refer to a valid channel that the authorised user is part of.
-        '''
+        
         # Get the channel id and user id in reference
         channel_id, u_id = kwargs['channel_id'], kwargs['u_id']
 
         # Find the channel respective to the u_id
-        channel_with_id = {}
-        for channel in data.data['channels']: # TODO Check valid data use
-            if channel_id == channel['channel_id']:
-                channel_with_id = channel
-                break
+        channel_with_id = data.getData().get_channel(channel_id)
         
         # Now we either have a channel or not. If its empty, invalid. Else we need to check if user is in it
         if not channel_with_id:
             raise error.InputError('The channel does not exist.')
 
         # Now we are in a situation where we have an actual channel. Now to check if user is in it.
-        user_in_channel = False
-        for user in channel_with_id['all_members']:
-            if u_id = user['u_id']:
-                user_in_channel = True
-                break
-
-        # If user is not in the channel. Input error
-        if not user_in_channel:
-            raise error.InputError('The user is not in this channel.')
+        if not u_id in channel_with_id.u_id_list:
+             raise error.InputError('The user is not in this channel.')
 
         return fn(*args, **kwargs)
     
@@ -549,21 +293,17 @@ def is_user_in_channel(fn):
 
 def check_u_id_existance(fn):
     '''
-    u_id does not refer to a valid user
+    u_id does not refer to a valid user.
+
+    User with u_id is not a valid user.
     '''
     def wrapper(*args, **kwargs):
         # Get user id
         u_id = kwargs['u_id']
 
-        # Assume the user does not exist
-        user_exists = False
-        for user in data.data['users']:
-            if u_id = user['u_id']:
-                user_exists = True
-                break
-        
-        if not user_exists:
-            raise error.InputError('u_id does not refer to a valid user')
+        # Check if user_id exists
+        if not u_id in data.getData().get_all_u_ids():
+            raise error.InputError('u_id does not refer to a valid user.')
 
         return fn(*args, **kwargs)
 
@@ -572,22 +312,14 @@ def check_u_id_existance(fn):
 def valid_channel_id(fn):
     '''
     Channel ID is not a valid channel
-    TODO: This has repeated code with is_user_in_channel. Fix
     '''
     def wrapper(*args, **kwargs):
 
         # Get channel id
         channel_id = kwargs['channel_id']
 
-        # Assume channel does not exist
-        channel_exists = False
-        for channel in data.data['channels']: # TODO Check valid data use
-            if channel_id == channel['channel_id']:
-                channel_exists = True
-                break
-        
-        # Now we either have a channel or not. If its empty, invalid. Else we need to check if user is in it
-        if not channel_exists:
+        # Check if channel_id exists
+        if not channel_id in data.getData().get_all_channel_ids():
             raise error.InputError('Channel ID is not a valid channel.')
 
         return fn(*args, **kwargs)
@@ -605,14 +337,15 @@ def start_has_more_messages(fn):
         start = kwargs['start']
         channel_id = kwargs['channel_id']
 
-        # Get the channel with the id in question. TODO: If there is no channel... fail!
-        channel_with_id = {}
-        for channel in data.data['channels']: # TODO Check valid data use
-            if channel_id == channel['channel_id']:
-                channel_with_id = channel
-                break
-                
-        if start > len(channel_with_id['messages']):
+        # Get the channel with the id in question.
+        channel_with_id = data.getData().get_channel(channel_id)
+
+        # Now we either have a channel or not. If its empty, invalid. Else we need to check if user is in it
+        if not channel_with_id:
+            raise error.InputError('The channel does not exist.')
+        
+        # Now inital condition.
+        if start >= len(channel_with_id.message_id_list):
             raise error.InputError('Start is greater than or equal to the total number of messages in the channel.')
 
         return fn(*args, **kwargs)
@@ -622,7 +355,7 @@ def start_has_more_messages(fn):
 
 def already_owner(fn):
     '''
-    When user with user id u_id is already an owner of the channel
+    When user with user id u_id is already an owner of the channel.
     '''
 
     def wrapper(*args, **kwargs):
@@ -630,15 +363,11 @@ def already_owner(fn):
         # Get user and channel id
         u_id, channel_id = kwargs['u_id'], kwargs['channel_id']
 
-        # Get the channel with the id in question. TODO: If there is no channel... fail!
-        channel_with_id = {}
-        for channel in data.data['channels']: # TODO Check valid data use
-            if channel_id == channel['channel_id']:
-                channel_with_id = channel
-                break
+        # Get owner u_ids with channel
+        owner_ids = data.getData().get_owner_u_ids_with_channel_id(channel_id)
 
-        if channel_with_id['owner_members']['u_id'] == u_id: # TODO Check if there can be multiple owners?!?!
-            raise error.InputError('When user with user id u_id is already an owner of the channel')
+        if u_id in owner_ids:
+            raise error.InputError(f'The user with user id {u_id} is already an owner of the channel')
 
         return fn(*args, **kwargs)
 
@@ -654,15 +383,11 @@ def not_owner(fn):
         # Get user and channel id
         u_id, channel_id = kwargs['u_id'], kwargs['channel_id']
 
-        # Get the channel with the id in question. TODO: If there is no channel... fail!
-        channel_with_id = {}
-        for channel in data.data['channels']: # TODO Check valid data use
-            if channel_id == channel['channel_id']:
-                channel_with_id = channel
-                break
+        # Get owner u_ids with channel
+        owner_ids = data.getData().get_owner_u_ids_with_channel_id(channel_id)
 
-        if channel_with_id['owner_members']['u_id'] != u_id:
-            raise error.InputError('When user with user id u_id is not an owner of the channel')
+        if not u_id in owner_ids:
+            raise error.InputError(f'The user with user id {u_id} is not an owner of the channel')
 
         return fn(*args, **kwargs)
 
@@ -670,7 +395,7 @@ def not_owner(fn):
 
 def channel_name_length(fn):
     '''
-    Name is more than 20 characters long
+    Name is more than 20 characters long.
     '''
     def wrapper(*args, **kwargs):
 
@@ -678,7 +403,7 @@ def channel_name_length(fn):
         channel_name = kwargs['name']
 
         if len(channel_name) > 20:
-            raise error.InputError('Name is more than 20 characters long')
+            raise error.InputError('Name is more than 20 characters long.')
 
         return fn(*args, **kwargs)
 
@@ -704,13 +429,12 @@ def send_message_in_future(fn):
     '''
     Time sent is a time in the past
     '''
+    # TODO Get help for this one
 
     def wrapper(*args, **kwargs):
-        from datetime import datetime
-        # Get time TODO: Check what object this time is in?
-        time = datetime([kwargs['time']])
+        time_sent = kwargs['time_sent']
 
-        if time < datetime.now():
+        if time_sent < datetime.datetime.now():
             raise error.InputError('Time sent is a time in the past')
 
         return fn(*args, **kwargs)
@@ -722,15 +446,26 @@ def is_message_id_in_channel(fn):
     '''
     message_id is not a valid message within a channel that the authorised user has joined
     '''
-
     def wrapper(*args, **kwargs):
 
         # Get message id and channel_id
         message_id = kwargs['message_id']
-        channel_id = kwargs['channel_id']
+        token = kwargs['token']
 
-        #TODO ### WHAT ###
-        # how can I check the channel or any of that. I'm only given a token, message_id and react_id. No channel_id?
+        # Get user id from token
+        user_id = data.getData().get_u_id_with_token(token)
+        # Get a list of channels using the user_id
+        channels_user_is_in = data.getData().get_channels_list_dict(user_id)
+
+        # Check if message id is within a channel the user is in.
+        for channel in channels_user_is_in:
+            if message_id in channel.message_id_list:
+                return fn(*args, **kwargs)
+
+        # If not, raise error.
+        raise error.InputError(f'{message_id} is not a valid message within a channel that the authorised user has joined.')
+
+    return wrapper
 
 def is_valid_react_id(fn):
     '''
@@ -741,13 +476,143 @@ def is_valid_react_id(fn):
         react_id = kwargs['react_id']
 
         if react_id != 1:
-            raise error.InputError('react_id is not a valid React ID. The only valid react ID is 1')
+            raise error.InputError(f'{react_id} is not a valid React ID. The only valid react ID is 1')
 
         return fn(*args, **kwargs)
 
     return wrapper
 
 def already_contains_react(fn):
+    '''
+    Message with ID message_id already contains an active React with ID react_id
+    '''
+    def wrapper(*args, **kwargs):
+        message_id = kwargs['message_id']
+        react_id = kwargs['react_id']
+
+        message = data.getData().get_message(message_id)
+
+        if react_id in message.react_list:
+            raise error.InputError(f'Message with ID {message_id} already contains an active React with ID {react_id}')
+
+        return fn(*args, **kwargs)
+
+    return wrapper
+
+def does_not_contain_react(fn):
+    '''
+    Message with ID message_id does not contain an active React with ID react_id
+    '''
+    def wrapper(*args, **kwargs):
+        message_id = kwargs['message_id']
+        react_id = kwargs['react_id']
+
+        # Get the message datastructure
+        message = data.getData().get_message(message_id)
+
+        # If the react is not in the list. Raise an error
+        if not react_id in message.react_list:
+            raise error.InputError(f'Message with ID {message_id} does not contain an active React with ID {react_id}')
+        
+        # If not return the function
+        return fn(*args, **kwargs)
+
+    return wrapper
+
+def message_id_valid(fn):
+    '''
+    message_id is not a valid message.
+
+    Message (based on ID) no longer exists.
+    '''
+    def wrapper(*args, **kwargs):
+        message_id = kwargs['message_id']
+
+        # Check if message_id is in a list of all the message ids.
+
+        for message in data.getData().message_list:
+            if message_id == message.message_id:
+                return fn(*args, **kwargs)
+
+        raise error.InputError(f'{message_id} is not a valid message or does not exist anymore.')
+
+    return wrapper
+
+def message_already_pinned(fn):
+    '''
+    Message with ID message_id is already pinned
+    '''
+    def wrapper(*args, **kwargs):
+        message_id = kwargs['message_id']
+
+        if data.getData().get_message(message_id).is_pinned:
+            raise error.InputError(f'Message with ID {message_id} is already pinned')
+
+        return fn(*args, **kwargs)
+
+    return wrapper
+
+def message_already_unpinned(fn):
+    '''
+    Message with ID message_id is already unpinned
+    '''
+    def wrapper(*args, **kwargs):
+        message_id = kwargs['message_id']
+
+        if not data.getData().get_message(message_id).is_pinned:
+            raise error.InputError(f'Message with ID {message_id} is already unpinned')
+
+        return fn(*args, **kwargs)
+
+    return wrapper
+
+
+def handle_length(fn):
+    '''
+    handle_str must be between 2 and 20 characters inclusive.
+    '''
+    def wrapper(*args, **kwargs):
+        handle_str = kwargs['handle_str']
+
+        if not (2 <= len(handle_str) <= 20):
+            raise error.InputError('handle_str must be between 2 and 20 characters inclusive.')
+
+        return fn(*args, **kwargs)
+
+    return wrapper
+
+def handle_already_used(fn):
+    '''
+    handle is already used by another user.
+    '''
+    def wrapper(*args, **kwargs):
+        handle_str = kwargs['handle_str']
+
+        for user in data.getData().user_list:
+            if handle_str == user.handle_str:
+                raise error.InputError('Handle is already used by another user.')
+
+        return fn(*args, **kwargs)
+
+    return wrapper
+
+def already_active_standup(fn):
+    # TODO get help. 
+    '''
+    An active standup is currently running in this channel
+    '''
     pass
-    # TODO ### WHAT ###
-     # how can I check the channel or any of that. I'm only given a token, message_id and react_id. No channel_id?
+
+def no_active_standup(fn):
+    # TODO get help.
+    '''
+    An active standup is not currently running in this channel
+    '''
+    pass
+
+def permission_id(fn):
+    # TODO get help.
+    '''
+    permission_id does not refer to a value permission
+    '''
+    pass
