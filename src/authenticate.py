@@ -75,8 +75,8 @@ def is_member(fn):
         is_token_valid(token)
 
         # Check if user is member of channel
-        for member in data.getData().):            ######## TO DO: get this from data.py
-            if token == member['token']
+        for member in data.getData():            ######## TO DO: get this from data.py
+            if token == member['token']:
                 return fn(*args, **kwargs)
 
         # If cannot find a token, then raise AccessError
@@ -123,7 +123,7 @@ def is_owner(fn):
 
         # Check if user is an owner
         for member in data.Channels.get_owners(ch_id):          ######## TO DO: get this from data.py
-            if token == member['token']
+            if token == member['token']:
                 return fn(*args, **kwargs)
 
         # If cannot find a token, then raise AccessError
@@ -153,14 +153,14 @@ def is_message_permission(fn):
                 # Get the channel id to search for channel owners
                 ch_id = channel['ch_id']
                 for member in data.Channels.get_owners(ch_id):     ######## TO DO: get this from data.py
-                    if token == member['token']
+                    if token == member['token']:
                         return fn(*args, **kwargs)
                 
                 break
 
         # Check if user sent the message to edit/remove
         for channel in data.channels.get_channel(ch_id):        ######## TO DO: get this from data.py
-            if token == channel.get_msg(msg_id)['token']        ######## TO DO: get this from data.py
+            if token == channel.get_msg(msg_id)['token']:        ######## TO DO: get this from data.py
                 return fn(*args, **kwargs)
 
         # If user removing message did not create the message then
@@ -175,7 +175,7 @@ def is_owner_of_slackr(fn):
     '''
     The authorised user is not an owner of slackr raise access error
     '''
-        def wrapper(*args, **kwargs):
+    def wrapper(*args, **kwargs):
 
         # Get the token
         token = kwargs['token']
@@ -185,7 +185,7 @@ def is_owner_of_slackr(fn):
 
         # Check if user is an owner
         u_id = data.Login.get_u_id_with_token(token):          ######## TO DO: get this from data.py
-        if  u_id == 0
+        if  u_id == 0:
             return fn(*args, **kwargs)
 
         # If cannot find a token, then raise AccessError
@@ -193,7 +193,6 @@ def is_owner_of_slackr(fn):
 
     return wrapper
 
-    pass
 
 
 def is_sender(fn):
@@ -214,7 +213,7 @@ def is_sender(fn):
         # Check if user is an owner
         for message in data.message_list:          ######## TO DO: get this from data.py
             if message.get_message_dict(message_id)['message_id'] == message_id:
-                if message.get_message_dict(message_id)['u_id'] == u_id
+                if message.get_message_dict(message_id)['u_id'] == u_id:
                     return fn(*args, **kwargs)
 
         # If cannot find a token, then raise AccessError
