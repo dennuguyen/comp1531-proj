@@ -1,69 +1,90 @@
-import data
-import decorators
+"""
+Authentication module that handles the login, logout and register of users.
+"""
+import authenticate as au
 import auth_helper
+import data
 
 
-@decorators.authenticate_email
-@decorators.authenticate_password
+@au.valid_email
+@au.email_does_not_exist
+@au.authenticate_password
 def auth_login(*, email, password):
+    """
+    Logs the user in with email and password.
+    Returns the user's u_id and token.
+    """
+    # Get the u_id from the email
+    u_id = data.get_data().get_user_with_email(email).get_u_id()
 
-    # Get the user's user id by finding their email in users dictionary
-    for user in data.data.user_list:
-        if user.get_user_dict()['email'] == email:
-            u_id = user.get_user_dict()['u_id']
+    # Generate a new token for the new login sessino
+    token = auth_helper.generate_token()
 
-    # Update the data structure
-    data.data.add_login(data.Login(u_id, auth_helper.generate_token(u_id)))
+    # Create the login object
+    new_login = data.Login(u_id, token)
+
+    # Add the login object to data
+    data.get_data().add_login(new_login)
 
     # Return user id and valid token
-    return data.data.get_login(u_id)
+    return data.get_data().get_login_with_u_id(u_id).get_login_dict()
 
 
-@decorators.authenticate_token
+@au.is_token_valid
 def auth_logout(*, token):
-
+    """
+    Logs the user out with just the token.
+    The token becomes invalidated.
+    """
     # Successful logout is false
-    is_true = False
+    is_success = False
 
-    # Search for matching token
-    for i in range(len(data.data.get_user['login'])):
-        # Invalidate the token
-        if data.data['login'][i].get('token') == token:
-            is_true = True
-            del data.data['login'][i]
-            break
+    # Get the login object associated with the given token
+    login_remove = data.get_data().get_login_with_token(token)
 
-    data.data.get_login()
+    # Remove the login object from the list of logins
+    data.get_data().remove_login(login_remove)
 
-    data.data.remove_login()
+    # Generate list of valid tokens
+    valid_tokens = map(lambda login: login.get_token(),
+                       data.get_data().get_login_list())
 
-    return {'is_success': is_true}
+    # Successful logout is true
+    if not token in valid_tokens:
+        is_success = True
+
+    return {'is_success': is_success}
 
 
-@decorators.authenticate_email
-@decorators.register_email
-@decorators.authenticate_password
-@decorators.authenticate_name_first
-@decorators.authenticate_name_last
+@au.valid_email
+@au.email_already_used
+@au.check_name_length
 def auth_register(*, email, password, name_first, name_last):
-
-    # Get the information for the new user
-    new_user = {}
-    new_user['u_id'] = data.data['users'][-1]['u_id'] + 1
-    new_user['email'] = email
-    new_user['name_first'] = name_first
-    new_user['name_last'] = name_last
-    new_user['handle_str'] = auth_helper.generate_handle(
-        new_user['u_id'], name_first, name_last)
-
-    # Add the registered user's information to the database
-    data.data['users'].append(new_user)
+    """
+    Registers the user. Several processes occur in this function: the user id,
+    salt, hash, handle is created. A password, user object is created
+    and stored in data. Returns the call to auth_login.
+    """
+    # Get the user id
+    u_id = data.get_data().global_u_id()
 
     # Generate the hashed password for the new user
-    auth_helper.generate_hash(email, password)
+    salt, hash_ = auth_helper.generate_hash(password)
 
-    # Return the registered user's u_id and their session token
-    return {
-        'u_id': new_user['u_id'],
-        'token': auth_helper.generate_token(new_user['u_id']),
-    }
+    # Instantiate Password (object)
+    hashed_password = data.Password(u_id, salt, hash_)
+
+    # Store Password object in data
+    data.get_data().add_password(hashed_password)
+
+    # Generate the handle string
+    handle_str = auth_helper.generate_handle(u_id, name_first, name_last)
+
+    # Instantiate User (object)
+    new_user = data.User(u_id, email, name_first, name_last, handle_str)
+
+    # Add this new user to the list of users
+    data.get_data().add_user(new_user)
+
+    # Log the user in after registration
+    return auth_login(email=email, password=password)
