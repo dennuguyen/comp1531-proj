@@ -48,7 +48,7 @@ def is_token_valid(fn):
 
         # If the token is not in the list (technically mapping) of valid tokens. Raise Error.
         if not token in valid_tokens:
-            raise error.AccessError('Token passed in is not a valid token')
+            raise error.AccessError('token passed in is not a valid token')
 
         # Else, return the function.
         return fn(*args, **kwargs)
@@ -75,7 +75,7 @@ def is_not_member(fn):
 
         # Check if user is in the channel. If not, raise an error.
         if not user_id in channel_with_id.get_u_id_list():
-            raise error.AccessError(f'User is not a member of channel with {channel_id}.')
+            raise error.AccessError(f'user is not a member of channel with {channel_id}.')
 
         # Else, return the function
         return fn(*args, **kwargs)
@@ -105,8 +105,7 @@ def is_private_not_admin(fn):
         # If private, raise an error
         if not is_admin:
             if channel_with_id.get_is_private():
-                error_message = ''
-                '''
+                error_message = '''
                 channel_id refers to a channel that is private (when the authorised user is not an admin)
                 '''
                 raise error.AccessError(error_message)
