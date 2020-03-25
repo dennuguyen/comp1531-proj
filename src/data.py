@@ -95,7 +95,7 @@ class Channel():
     Channel class
     """
     def __init__(self, ch_id, ch_name, msg_id_list, u_id_list, owner_u_id_list,
-                 is_public, is_active_standup=False, standup_queue=[]):
+                 is_public, is_active_standup=False, standup_queue=[], standup_time_finish=-1):
         self._ch_id = ch_id
         self._ch_name = ch_name
         self._msg_id_list = msg_id_list
@@ -104,6 +104,7 @@ class Channel():
         self._is_public = is_public
         self._is_active_standup = is_active_standup
         self._standup_queue = standup_queue
+        self._standup_time_finish = standup_time_finish
     """
     Getters
     """
@@ -118,6 +119,7 @@ class Channel():
             'is_public': self._is_public,
             'is_active_standup' : self._is_active_standup,
             'standup_queue' : self._standup_queue
+            'standup_time_finish' : self._standup_time_finish
         }
 
     def get_channel_name(self):
@@ -143,6 +145,9 @@ class Channel():
 
     def get_standup_queue(self):
         return self._standup_queue
+    
+    def get_standup_time_finish(self):
+        return self._standup_time_finish
 
     """
     Setters
@@ -174,6 +179,9 @@ class Channel():
 
     def remove_message_from_standup_queue(self, message_id):
         self._standup_queue.remove(message_id)
+    
+    def set_standup_time_finish(self, time_finish):
+        self._standup_time_finish = time_finish
 
 class User():
     """
