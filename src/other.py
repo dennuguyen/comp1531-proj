@@ -1,3 +1,11 @@
+'''
+The other.py file has two main functions.
+
+users_all(.) - returns the details of everyone that's signed up to slackr.
+
+search(.) - Searches for a specific string
+'''
+
 import data
 # TODO: Implemente authenticate and look for tokens
 def users_all(*, token):
@@ -36,6 +44,6 @@ def search(*, token, query_str):
             if query_str == current_message.get_message():
                 matching_messages.append(current_message.get_message_dict())
 
-    sorted_matching_messages = sorted(matching_messages, key=lambda message: message['time_created'])
+    sorted_messages = sorted(matching_messages, key=lambda message: message['time_created'])
 
-    return {'messages' : sorted_matching_messages}
+    return {'messages' : sorted_messages}
