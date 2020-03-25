@@ -10,7 +10,7 @@
 
 ### auth_register()
 - when user registers, automatically login
-- if user handle is already taken on register then concatenate a number and increment it for every taken user handle from 1
+- if user handle is already taken on register then concatenate the u_id
 - the very first registered user is the slackr owner
 - email length is {64}@{255} char long
 
