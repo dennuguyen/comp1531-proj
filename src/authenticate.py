@@ -113,13 +113,17 @@ def is_private_not_admin(fn):
     return wrapper
 
 
-def not_ch_owner_or_owner(fn):
+def is_owner_or_slackr_owner(fn):
     '''
     the authorised user is not an owner of the slackr, or an owner of this channel
     '''
     def wrapper(*args, **kwargs):
         channel_id = kwargs['channel_id']
-        u_id = kwargs['u_id']
+        token = kwargs['token']
+
+        # Get user_id from token
+        user = data.get_data().get_user_with_token(token)
+        u_id = user.get_user_id()
 
         # Get the corresponding channel with the id
         channel_with_id = data.get_data().get_channel_with_ch_id(channel_id)
