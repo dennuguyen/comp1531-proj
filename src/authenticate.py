@@ -75,8 +75,8 @@ def is_member(fn):
         is_token_valid(token)
 
         # Check if user is member of channel
-        for member in data.getData().):            ######## TO DO: get this from data.py
-            if token == member['token']
+        for member in data.getData():           ######## TO DO: get this from data.py
+            if token == member['token']:
                 return fn(*args, **kwargs)
 
         # If cannot find a token, then raise AccessError
@@ -123,7 +123,7 @@ def is_owner(fn):
 
         # Check if user is an owner
         for member in data.Channels.get_owners(ch_id):          ######## TO DO: get this from data.py
-            if token == member['token']
+            if token == member['token']:
                 return fn(*args, **kwargs)
 
         # If cannot find a token, then raise AccessError
@@ -153,14 +153,14 @@ def is_message_permission(fn):
                 # Get the channel id to search for channel owners
                 ch_id = channel['ch_id']
                 for member in data.Channels.get_owners(ch_id):     ######## TO DO: get this from data.py
-                    if token == member['token']
+                    if token == member['token']:
                         return fn(*args, **kwargs)
                 
                 break
 
         # Check if user sent the message to edit/remove
         for channel in data.channels.get_channel(ch_id):        ######## TO DO: get this from data.py
-            if token == channel.get_msg(msg_id)['token']        ######## TO DO: get this from data.py
+            if token == channel.get_msg(msg_id)['token']:        ######## TO DO: get this from data.py
                 return fn(*args, **kwargs)
 
         # If user removing message did not create the message then
@@ -177,19 +177,19 @@ def is_owner_of_slackr(fn):
     '''
         def wrapper(*args, **kwargs):
 
-        # Get the token
-        token = kwargs['token']
+            # Get the token
+            token = kwargs['token']
 
-        # Check if token exists
-        is_token_valid(token)
+            # Check if token exists
+            is_token_valid(token)
 
-        # Check if user is an owner
-        u_id = data.Login.get_u_id_with_token(token):          ######## TO DO: get this from data.py
-        if  u_id == 0
-            return fn(*args, **kwargs)
+            # Check if user is an owner
+            u_id = data.Login.get_u_id_with_token(token):          ######## TO DO: get this from data.py
+            if  u_id == 0
+                return fn(*args, **kwargs)
 
-        # If cannot find a token, then raise AccessError
-        raise error.AccessError
+            # If cannot find a token, then raise AccessError
+            raise error.AccessError
 
     return wrapper
 

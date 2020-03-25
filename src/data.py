@@ -1,19 +1,4 @@
-<<<<<<< HEAD
-'''
-- Data related operation functions are here.
-- Please read all of the functions below before you call one of them in your file.
-- Currently, data is all stored in the program using a global object vairable.
-- Functions may not be named in a way what you like so please just 'Ctrl + H' to 
-change them to better ones.
-- There should be some functions not coverd in this file and you can add whatever 
-you want follow the structureor just inform me to help you add something you need.
-- I don't have time to test all functions below and maybe there are some small 
-mistakes but it's easy to correct them I believe.
-- Setters are something to implement later.
 
-'''
-  
-=======
 """
 Data.py defines the classes used to store the server data in memory and methods
 to get or manipulate that data. These classes are:
@@ -81,7 +66,6 @@ The Data class has a reset method to conveniently reset server data in memory.
 ################################################################################
 
 
->>>>>>> dev2
 class Login():
     """
     Login class
@@ -570,35 +554,7 @@ class Data():
             raise AssertionError("Error: Parameter is not 'class Channel'")
 
     def add_login(self, new_login):
-<<<<<<< HEAD
-        self.login_list(new_login)
 
-    
-
-    def add_user_to_channel(self, u_id, channel_id, is_owner):
-        channel = self.get_channel(channel_id)
-        channel.add_new_member(u_id)
-        if(is_owner):
-            channel.add_new_owner(u_id)
-    
-    def remove_user_to_channel(self, u_id, channel_id, is_owner):
-        channel = self.get_channel(channel_id)
-        channel.remove_member(u_id)
-        if(is_owner):
-            channel.remove_owner(u_id) 
-
-    def add_message_to_channel(self, msg_id, channel_id):
-        channel = self.get_channel(channel_id)
-        channel.add_new_message(msg_id)
-
-    def remove_message_to_channel(self, msg_id, channel_id):
-        channel = self.get_channel(channel_id)
-        channel.remove_message(msg_id)
-    
-    def remove_channel(self, channel):
-        self.channel_list.remove(channel)
-    
-=======
         try:
             assert isinstance(new_login, Login)
             self._login_list(new_login)
@@ -620,8 +576,6 @@ class Data():
 
     Removes objects from their respective list of objects
     """
-
->>>>>>> dev2
     def remove_user(self, user):
         try:
             assert isinstance(user, User)
@@ -720,19 +674,6 @@ Instantiate data from Data
 """
 data = Data()
 
-<<<<<<< HEAD
-    # Create a new user
-u_id = data.gen_next_u_id()
-user_example = User(u_id, '123@unsw.edu.au', 'Sunny', 'Qin', 'SunnyQin')
-data.add_user(user_example)
-
-    # get the user_dict with u_id
-
-user_dict = getData().get_user_dict(u_id)
-print(user_dict)
-'''
-=======
-
 def get_data():
     """
     get_data() allows loose coupling between the possibility of permanating
@@ -740,4 +681,3 @@ def get_data():
     """
     global data
     return data
->>>>>>> dev2
