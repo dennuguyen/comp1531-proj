@@ -2,4 +2,6 @@
 Standup related functions are here
 '''
 
-from data import getData()
+from data import getData
+
+
