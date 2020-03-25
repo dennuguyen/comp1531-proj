@@ -79,7 +79,7 @@ def channels_create(*, token, name, is_public):
                                msg_id_list=[],
                                u_id_list=[u_id],
                                owner_u_id_list=[u_id],
-                               is_public=is_public) #TODO Uhhh
+                               is_public=is_public)
 
     # Append this to the dataset.
     data.get_data().add_channel(new_channel)
