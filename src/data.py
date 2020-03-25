@@ -182,6 +182,10 @@ class Channel():
     
     def set_standup_time_finish(self, time_finish):
         self._standup_time_finish = time_finish
+    
+    def pop_standup_queue_into_message_queue(self):
+        self._msg_id_list += self._standup_queue
+        self._standup_queue = []
 
 class User():
     """
