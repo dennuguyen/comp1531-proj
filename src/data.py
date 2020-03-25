@@ -95,14 +95,16 @@ class Channel():
     Channel class
     """
     def __init__(self, ch_id, ch_name, msg_id_list, u_id_list, owner_u_id_list,
-                 is_public):
+                 is_public, is_active_standup=False, standup_queue=[], standup_time_finish=-1):
         self._ch_id = ch_id
         self._ch_name = ch_name
         self._msg_id_list = msg_id_list
         self._u_id_list = u_id_list
         self._owner_u_id_list = owner_u_id_list
         self._is_public = is_public
-
+        self._is_active_standup = is_active_standup
+        self._standup_queue = standup_queue
+        self._standup_time_finish = standup_time_finish
     """
     Getters
     """
@@ -115,6 +117,9 @@ class Channel():
             'u_id_list': self._u_id_list,
             'owner_u_id_list': self._owner_u_id_list,
             'is_public': self._is_public,
+            'is_active_standup' : self._is_active_standup,
+            'standup_queue' : self._standup_queue
+            'standup_time_finish' : self._standup_time_finish
         }
 
     def get_channel_name(self):
@@ -134,6 +139,15 @@ class Channel():
 
     def get_is_public(self):
         return self._is_public
+
+    def get_is_active_standup(self):
+        return self._is_active_standup
+
+    def get_standup_queue(self):
+        return self._standup_queue
+    
+    def get_standup_time_finish(self):
+        return self._standup_time_finish
 
     """
     Setters
@@ -157,6 +171,21 @@ class Channel():
     def remove_message(self, msg_id):
         self._msg_id_list.remove(msg_id)
 
+    def set_standup_status(self, status):
+        self._is_active_standup = status
+
+    def add_message_to_standup_queue(self, message_id):
+        self._standup_queue.append(message_id)
+
+    def remove_message_from_standup_queue(self, message_id):
+        self._standup_queue.remove(message_id)
+    
+    def set_standup_time_finish(self, time_finish):
+        self._standup_time_finish = time_finish
+    
+    def pop_standup_queue_into_message_queue(self):
+        self._msg_id_list += self._standup_queue
+        self._standup_queue = []
 
 class User():
     """
@@ -225,7 +254,7 @@ class React():
     """
     React Class
     """
-    def __init__(self, react_id=-1, u_id_list=[], is_this_user_reacted=False):
+    def __init__(self, react_id=1, u_id_list=[], is_this_user_reacted=False):
         self._react_id = react_id
         self._u_id_list = u_id_list
         self._is_this_user_reacted = is_this_user_reacted
@@ -274,7 +303,7 @@ class Message():
         u_id,
         msg,
         time_created,
-        react_list=[React(-1, [], False)],
+        react_list=[React(1, [], False)],
         is_pinned=False,
     ):
         self._msg_id = msg_id
@@ -475,9 +504,8 @@ class Data():
         ]
 
     def get_login_with_token(self, token):
-        return [
-            login for login in self._login_list if login.get_token() == token
-        ]
+        login = filter(lambda login: login.get_token() == token, self._token_list)
+        return next(login, None)
 
     """
     React Object Getters
@@ -566,9 +594,12 @@ class Data():
         except AssertionError:
             raise AssertionError("Error: Parameter is not 'class Message'")
 
-    # def add_message_later(self, msg_id):
-    #     msg = self._get_message_with_message_id(msg_id)
-    #     self._message_wait_list.append(msg)
+    def add_password(self, new_password):
+        try:
+            assert isinstance(new_password, Password)
+            self._password_list.append(new_password)
+        except AssertionError:
+            raise AssertionError("Error: Parameter is not 'class Password'")
     """
     Removers
 
@@ -610,9 +641,12 @@ class Data():
         except AssertionError:
             raise AssertionError("Error: Parameter is not 'class Message'")
 
-    # def remove_message_later(self, msg_id):
-    #         msg = self._get_message_with_message_id(msg_id)
-    #         self._message_wait_list.remove(msg)
+    def remove_password(self, password):
+        try:
+            assert isinstance(password, Password)
+            self._password_list.remove(password)
+        except AssertionError:
+            raise AssertionError("Error: Parameter is not 'class Password'")
     """
     Incrementers
     """
@@ -659,9 +693,11 @@ class Data():
     def reset(self):
         self._user_list = []
         self._message_list = []
+        self._message_wait_list = []
         self._channel_list = []
         self._member_list = []
         self._login_list = []
+        self._password_list = []
 
         self._next_u_id = -1
         self._next_channel_id = -1
