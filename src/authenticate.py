@@ -793,6 +793,25 @@ def permission_id(fn):
 
 
 
+#### Extra Error checkers ####
+def is_not_owner_of_slackr(fn):
+    '''
+    Raise input error if uid is owner of slackr.
+    '''
+    def wrapper(*args, **kwargs):
+        token = kwargs['token']
+
+        # Get u_id id with token
+        user = data.get_data().get_user_with_token(token)
+        u_id = user.get_u_id()
+
+        # If the u_id is 0, this user is the owner of slackr. Raise error.
+        if u_id == 0:
+            raise error.InputError('Raise input error if uid is owner of slackr.')
+
+        return fn(*args, **kwargs)
+return wrapper
+
 
 #### Authenticator function ####
 
