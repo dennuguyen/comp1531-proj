@@ -27,9 +27,10 @@ import time
 # File imports
 import error
 import data
-
+import auth_helper
 
 ######################## Access Errors ########################
+
 
 def is_token_valid(fn):
     '''
@@ -42,7 +43,8 @@ def is_token_valid(fn):
         logged_in_list = data.get_data().get_login_list()
 
         # Get a map variable of all valid tokens.
-        valid_tokens = map(lambda logged_in_user: logged_in_user.get_token(), logged_in_list)
+        valid_tokens = map(lambda logged_in_user: logged_in_user.get_token(),
+                           logged_in_list)
 
         # If the token is not in the list (technically mapping) of valid tokens. Raise Error.
         if not token in valid_tokens:
@@ -52,6 +54,7 @@ def is_token_valid(fn):
         return fn(*args, **kwargs)
 
     return wrapper
+
 
 def is_not_member(fn):
     '''
@@ -73,12 +76,14 @@ def is_not_member(fn):
 
         # Check if user is in the channel. If not, raise an error.
         if not user_id in channel_with_id.get_u_id_list():
-            raise error.AccessError(f'user is not a member of channel with {channel_id}.')
+            raise error.AccessError(
+                f"Error: User is not a member of channel with {channel_id}")
 
         # Else, return the function
         return fn(*args, **kwargs)
 
     return wrapper
+
 
 def is_private_not_admin(fn):
     '''
@@ -97,7 +102,7 @@ def is_private_not_admin(fn):
         channel_with_id = data.get_data().get_channel_with_ch_id(channel_id)
 
         # Check if user is admin TODO: Complete this
-        is_admin = False # False by default.
+        is_admin = False  # False by default.
 
         # If the user is not an admin. We check if the channel is private.
         # If private, raise an error
@@ -160,7 +165,8 @@ def user_not_member_using_message_id(fn):
         u_id = user_with_token.get_u_id()
 
         # Get the channel using message id.
-        channel_with_id = data.get_data().get_channel_with_message_id(message_id)
+        channel_with_id = data.get_data().get_channel_with_message_id(
+            message_id)
 
         # Check if user is in the channel. If not, return error.
         if not u_id in channel_with_id.get_u_id_list():
@@ -173,6 +179,7 @@ def user_not_member_using_message_id(fn):
         return fn(*args, **kwargs)
 
     return wrapper
+
 
 def edit_permissions(fn):
     '''
@@ -198,13 +205,15 @@ def edit_permissions(fn):
         sent_by_user = user_with_token.get_u_id() == message.get_u_id()
 
         # Check if user is an admin or owner of slakr
-        admin_or_owner = user_with_token.get_u_id() == 0 # TODO: Add check for admin.
+        admin_or_owner = user_with_token.get_u_id(
+        ) == 0  # TODO: Add check for admin.
 
         # Check if user is a owner of the channel. First get channel.
         channel = data.get_data().get_channel_with_message_id(message_id)
 
         # Check if his u_id is in the list of owners
-        owner_of_channel = user_with_token.get_u_id() in channel.get_owner_u_id_list()
+        owner_of_channel = user_with_token.get_u_id(
+        ) in channel.get_owner_u_id_list()
 
         # If none of these conditions are true. Raise access error
         if not (sent_by_user or admin_or_owner or owner_of_channel):
@@ -214,6 +223,7 @@ def edit_permissions(fn):
         return fn(*args, **kwargs)
 
     return wrapper
+
 
 def is_admin_or_owner(fn):
     '''
@@ -230,14 +240,15 @@ def is_admin_or_owner(fn):
         admin_of_slackr = False
 
         if not (owner_of_slackr or admin_of_slackr):
-            raise error.AccessError('The authorised user is not an admin or owner')
+            raise error.AccessError(
+                'The authorised user is not an admin or owner')
 
         return fn(*args, **kwargs)
 
     return wrapper
 
-######################## Input Errors ########################
 
+######################## Input Errors ########################
 
 
 def valid_email(fn):
@@ -276,40 +287,53 @@ def email_does_not_exist(fn):
 
     return wrapper
 
-'''
 
 def authenticate_password(fn):
-    
-    Password is not correct
+    """
+    Password is authenticated by retrieving the salt for the user, hashing the
+    password with the salt, then comparing the hashed password with existing
+    hashed passwords stored in the password database.
 
-    # TODO: Get Dan to figure this out. I have no clue about this salt
-    
+            email
+              |
+              V
+            u_id        try_password
+              |             |
+              V             V
+            salt  --> hash_it(salt, try_password)
+                            |
+                            V
+                        try_hash
+                            |
+                            V
+            try_hash == get_password_with_hash(try_hash).get_hash()
+    """
+
+    # TODO for iteration 3, separate the salt + u_id data from password data
     def wrapper(*args, **kwargs):
 
         # Get the email and password
         email = kwargs['email']
-        password = kwargs['password']
+        try_password = kwargs['password']
 
-        # Retrieve the salt by looking up the email in the passwords dictionary
-        for i in range(len(data.data['passwords'])):
-            if email == data.data['passwords'][i].get('email'):
+        # Get the user id from getting the user object with email
+        u_id = data.get_data().get_user_with_email(email).get_u_id()
 
-                # Get the salt from passwords dictionary
-                salt = data.data['passwords'][i]['salt']
+        # Get the salt from getting the password object with user id
+        salt = data.get_data().get_password_with_u_id(u_id).get_salt()
 
-                # Get the hash for salt + password combination
-                try_hash = auth_helper.get_hash(salt, password)
+        # Hash the given password with the stored salt
+        try_hash = auth_helper.hash_it(salt, try_password)
 
-                # Try the hash. If incorrect raise InputError
-                if try_hash != data.data['passwords'][i]['hash']:
-                    raise error.InputError
-
-                break  # No need to continue
+        # Try hash comparison with the stored hash
+        strd_hash = data.get_data().get_password_with_hash(try_hash).get_hash()
+        if try_hash != strd_hash:
+            raise error.InputError("Incorrect password")
 
         return fn(*args, **kwargs)
 
     return wrapper
-'''
+
 
 def email_already_used(fn):
     '''
@@ -322,11 +346,13 @@ def email_already_used(fn):
 
         # If it email is already used, raise an error
         if data.get_data().get_user_with_email(email):
-            raise error.InputError('Email address is already being used by another user.')
+            raise error.InputError(
+                'Email address is already being used by another user.')
 
         return fn(*args, **kwargs)
 
     return wrapper
+
 
 def check_password_length(fn):
     '''
@@ -338,11 +364,13 @@ def check_password_length(fn):
         password = kwargs['password']
 
         if len(password) < 6:
-            raise error.InputError('Password entered is less than 6 characters long.')
+            raise error.InputError(
+                'Password entered is less than 6 characters long.')
 
         return fn(*args, **kwargs)
 
     return wrapper
+
 
 def check_name_length(fn):
     '''
@@ -369,6 +397,7 @@ def check_name_length(fn):
 
     return wrapper
 
+
 def is_user_in_channel(fn):
     '''
     channel_id does not refer to a valid channel that the authorised user is part of.
@@ -394,6 +423,7 @@ def is_user_in_channel(fn):
 
     return wrapper
 
+
 def check_u_id_existance(fn):
     '''
     u_id does not refer to a valid user.
@@ -406,11 +436,13 @@ def check_u_id_existance(fn):
 
         # Check if user_id exists
         if not data.get_data().get_user_with_u_id(u_id):
-            raise error.InputError(f'u_id: {u_id} does not refer to a valid user.')
+            raise error.InputError(
+                f'u_id: {u_id} does not refer to a valid user.')
 
         return fn(*args, **kwargs)
 
     return wrapper
+
 
 def valid_channel_id(fn):
     '''
@@ -423,17 +455,18 @@ def valid_channel_id(fn):
 
         # Check if channel_id exists
         if not data.get_data().get_channel_with_ch_id(channel_id):
-            raise error.InputError(f'Channel ID: {channel_id} is not a valid channel.')
+            raise error.InputError(
+                f'Channel ID: {channel_id} is not a valid channel.')
 
         return fn(*args, **kwargs)
 
     return wrapper
 
+
 def start_has_more_messages(fn):
     '''
     start is greater than or equal to the total number of messages in the channel
     '''
-
     def wrapper(*args, **kwargs):
 
         # Get start number
@@ -464,7 +497,6 @@ def already_owner(fn):
     '''
     When user with user id u_id is already an owner of the channel.
     '''
-
     def wrapper(*args, **kwargs):
 
         # Get user and channel id
@@ -487,11 +519,11 @@ def already_owner(fn):
 
     return wrapper
 
+
 def not_owner(fn):
     '''
     When user with user id u_id is not an owner of the channel
     '''
-
     def wrapper(*args, **kwargs):
         # Get user and channel id
         u_id, channel_id = kwargs['u_id'], kwargs['channel_id']
@@ -504,11 +536,13 @@ def not_owner(fn):
 
         # Check if the user is an owner
         if not u_id in owner_ids:
-            raise error.InputError(f'The user with user id {u_id} is not an owner of the channel')
+            raise error.InputError(
+                f'The user with user id {u_id} is not an owner of the channel')
 
         return fn(*args, **kwargs)
 
     return wrapper
+
 
 def user_not_admin(fn):
     '''
@@ -530,6 +564,7 @@ def user_not_admin(fn):
 
     return wrapper
 
+
 def channel_name_length(fn):
     '''
     Name is more than 20 characters long.
@@ -545,6 +580,7 @@ def channel_name_length(fn):
         return fn(*args, **kwargs)
 
     return wrapper
+
 
 def message_length(fn):
     '''
@@ -562,6 +598,7 @@ def message_length(fn):
 
     return wrapper
 
+
 def send_message_in_future(fn):
     '''
     Time sent is a time in the past
@@ -576,8 +613,8 @@ def send_message_in_future(fn):
 
     return wrapper
 
-def is_message_id_in_channel(fn):
 
+def is_message_id_in_channel(fn):
     '''
     message_id is not a valid message within a channel that the authorised user has joined
     '''
@@ -588,7 +625,8 @@ def is_message_id_in_channel(fn):
         token = kwargs['token']
 
         # Get the channel corresponding to the message id
-        channel_with_id = data.get_data().get_channel_with_message_id(message_id)
+        channel_with_id = data.get_data().get_channel_with_message_id(
+            message_id)
 
         # Get user from token
         user_with_token = data.get_data().get_user_with_token(token)
@@ -604,6 +642,7 @@ def is_message_id_in_channel(fn):
         return fn(*args, **kwargs)
 
     return wrapper
+
 
 def is_valid_react_id(fn):
     '''
@@ -623,6 +662,7 @@ def is_valid_react_id(fn):
 
     return wrapper
 
+
 def already_contains_react(fn):
     '''
     Message with ID message_id already contains an active React with ID react_id
@@ -632,7 +672,8 @@ def already_contains_react(fn):
         react_id = kwargs['react_id']
 
         # Get message with message_id
-        message_with_id = data.get_data().get_message_with_message_id(message_id)
+        message_with_id = data.get_data().get_message_with_message_id(
+            message_id)
 
         # If the react is in the list. Raise an error.
         if react_id in message_with_id.get_react_list():
@@ -646,6 +687,7 @@ def already_contains_react(fn):
 
     return wrapper
 
+
 def does_not_contain_react(fn):
     '''
     Message with ID message_id does not contain an active React with ID react_id
@@ -655,7 +697,8 @@ def does_not_contain_react(fn):
         react_id = kwargs['react_id']
 
         # Get message with message_id
-        message_with_id = data.get_data().get_message_with_message_id(message_id)
+        message_with_id = data.get_data().get_message_with_message_id(
+            message_id)
 
         # If the react is not in the list. Raise an error
         if not react_id in message_with_id.get_react_list():
@@ -669,6 +712,7 @@ def does_not_contain_react(fn):
 
     return wrapper
 
+
 def message_id_valid(fn):
     '''
     message_id is not a valid message.
@@ -679,7 +723,8 @@ def message_id_valid(fn):
         message_id = kwargs['message_id']
 
         # Get message with the message id
-        message_with_id = data.get_data().get_message_with_message_id(message_id)
+        message_with_id = data.get_data().get_message_with_message_id(
+            message_id)
 
         # Check if the message id exists.
         if not message_with_id:
@@ -693,6 +738,7 @@ def message_id_valid(fn):
 
     return wrapper
 
+
 def message_already_pinned(fn):
     '''
     Message with ID message_id is already pinned
@@ -701,16 +747,19 @@ def message_already_pinned(fn):
         message_id = kwargs['message_id']
 
         # Get message with the message id.
-        message_with_id = data.get_data().get_message_with_message_id(message_id)
+        message_with_id = data.get_data().get_message_with_message_id(
+            message_id)
 
         # If message is already pinned. Raise an error.
         if message_with_id.get_is_pinned():
-            raise error.InputError(f'Message with ID {message_id} is already pinned')
+            raise error.InputError(
+                f'Message with ID {message_id} is already pinned')
 
         # Else return the function.
         return fn(*args, **kwargs)
 
     return wrapper
+
 
 def message_already_unpinned(fn):
     '''
@@ -720,11 +769,13 @@ def message_already_unpinned(fn):
         message_id = kwargs['message_id']
 
         # Get message with the message id.
-        message_with_id = data.get_data().get_message_with_message_id(message_id)
+        message_with_id = data.get_data().get_message_with_message_id(
+            message_id)
 
         # If message is not pinned. Raise an error.
         if not message_with_id.get_is_pinned():
-            raise error.InputError(f'Message with ID {message_id} is already unpinned')
+            raise error.InputError(
+                f'Message with ID {message_id} is already unpinned')
 
         # Else return the function.
         return fn(*args, **kwargs)
@@ -740,11 +791,13 @@ def handle_length(fn):
         handle_str = kwargs['handle_str']
 
         if not 2 <= len(handle_str) <= 20:
-            raise error.InputError('handle_str must be between 2 and 20 characters inclusive.')
+            raise error.InputError(
+                'handle_str must be between 2 and 20 characters inclusive.')
 
         return fn(*args, **kwargs)
 
     return wrapper
+
 
 def handle_already_used(fn):
     '''
@@ -765,6 +818,7 @@ def handle_already_used(fn):
 
     return wrapper
 
+
 def already_active_standup(fn):
     # TODO get help.
     '''
@@ -774,6 +828,7 @@ def already_active_standup(fn):
         return fn(*args, **kwargs)
 
     return wrapper
+
 
 def no_active_standup(fn):
     # TODO get help.
@@ -785,6 +840,7 @@ def no_active_standup(fn):
 
     return wrapper
 
+
 def permission_id(fn):
     # TODO get help.
     '''
@@ -794,7 +850,6 @@ def permission_id(fn):
         return fn(*args, **kwargs)
 
     return wrapper
-
 
 
 #### Extra Error checkers ####
@@ -811,13 +866,16 @@ def is_not_owner_of_slackr(fn):
 
         # If the u_id is 0, this user is the owner of slackr. Raise error.
         if u_id == 0:
-            raise error.InputError('Raise input error if uid is owner of slackr.')
+            raise error.InputError(
+                'Raise input error if uid is owner of slackr.')
 
         return fn(*args, **kwargs)
-return wrapper
+
+    return wrapper
 
 
 #### Authenticator function ####
+
 
 def authenticator(*decs):
     '''
@@ -841,5 +899,5 @@ def authenticator(*decs):
         for dec in reversed(decs):
             f = dec(f)
         return f
+
     return deco
-    
