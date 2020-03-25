@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 '''
 This module is concerned with the creation and documentation of channels.
 
@@ -8,8 +7,6 @@ channels_listall(.) provides the user with details of all the channels.
 
 channels_create(.) creates a new channel and puts the user who created it in it.
 '''
-=======
->>>>>>> it2_channel_ray_branch
 
 import data
 import authenticate as au
@@ -40,13 +37,8 @@ def channels_list(*, token):
     # Return the channels_dict as a list, not map object
     return {'channels' : list(channels_dict)}
 
-<<<<<<< HEAD
 @au.authenticator(au.is_token_valid)
 def channels_listall(*, token):
-=======
-
-def channels_listall(token):
->>>>>>> it2_channel_ray_branch
     """
     Provide a list of all channels (and their associated details)
 
@@ -69,7 +61,6 @@ def channels_listall(token):
     return {'channels' : list(channels_dict)}
 
 
-<<<<<<< HEAD
 @au.authenticator(au.is_token_valid, au.channel_name_length)
 def channels_create(*, token, name, is_public):
     '''
@@ -93,14 +84,6 @@ def channels_create(*, token, name, is_public):
     # Append this to the dataset.
     data.get_data().add_channel(new_channel)
 
-=======
-# Check token is valid
-# Check name is valid
-def channels_create(token, name, is_public):
-# Add channel to channel database and input details
-# Generate channel id and input into channel database
-    
->>>>>>> it2_channel_ray_branch
     return {
         'channel_id': new_channel_id,
     }
