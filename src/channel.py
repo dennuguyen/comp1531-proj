@@ -4,29 +4,25 @@ import authenticate as au
 
 
 
-# @check_token_isvalid
-# @check_channel_id_isvalid
-# @check_token_isauthorised
-# @check_u_id_isvalid
-# @check_u_id_isnotowner
-
+# Invite a user into channel as member
+@au.authenticator(au.is_token_valid, au.valid_channel_id, au.is_not_member, au.check_u_id_existence)
 def channel_invite(token=str, channel_id=int, u_id=int):
 
-# If all conditions are met add u_id to channel as member
-    # Edit relevant databases
+    # Add u_id into channel member list
+
     datapy = data.get_data()
     channel = datapy.get_channel_with_ch_id(channel_id)
     channel.add_new_member(u_id)
     return {
     }
 
-# @check_token_isvalid
-# @check_channel_id_isvalid
-# @check_token_isauthorised
+
+# Return details of channel that requester is member of
+@au.authenticator(au.is_token_valid, au.valid_channel_id, au.is_user_in_channel)
 def channel_details(token=str, channel_id=int):
 
-# If all conditions are met 
-    # Return {name, owner_members, all_members}
+    # Retrieve information from database
+
     datapy = data.get_data()
     channel = datapy.get_channel_with_ch_id(channel_id)
     channel_det = {}
@@ -41,21 +37,15 @@ def channel_details(token=str, channel_id=int):
         owner_info = datapy.get_user_with_u_id(u_id)
         channel_det['all_members'].append(owner_info)
 
+    # Return {name, owner_members, all_members}
     return channel_det
 
 
-
-# @check_token_isvalid
-# @check_channel_id_isvalid
-# @check_token_isauthorised
-# @check_start_issmaller
+# Return messages in a channel that requester is member of
+@au.authenticator(au.is_token_valid, au.valid_channel_id, au.is_user_in_channel, au.start_has_more_messages)
 def channel_messages(token=str, channel_id=int, start=int):
-    
-# If all conditions are met
-    # If end is less than total messages
-        # Return {messages, start, end}
-    # Else if end is greater than total messages
-        # Return {messages, start, -1}
+
+    # Retrieve messages from database
 
     datapy = data.get_data()
     channel = datapy.get_channel_with_ch_id(channel_id)
@@ -86,16 +76,15 @@ def channel_messages(token=str, channel_id=int, start=int):
     channel_msg['start'] = start
     channel_msg['end'] = end_view
 
+    # Return a dictionary of message info
     return channel_msg
 
 
-# @check_token_isvalid
-# @check_channel_id_isvalid
-# @check_token_isnotslackrking
-# @check_token_ismember
+# Leave a channel
+@au.authenticator(au.is_token_valid, au.valid_channel_id, au.is_user_in_channel, au_is_not_slackr_owner)
 def channel_leave(token=str, channel_id=int):
 
-# If all conditions are met
+
     # Remove user from channel member list
 
     datapy = data.get_data()
@@ -110,13 +99,12 @@ def channel_leave(token=str, channel_id=int):
     return {
     }
 
-# @check_token_isvalid
-# @check_channel_id_isvalid
-# @check_channel_isnotprivate
+
+# Join a public channel as member
+@au.authenticator(au.is_token_valid, au.valid_channel_id, au.is_private_not_admin)
 def channel_join(token=str, channel_id=int):
 
-# If all conditons are met
-    # Add token to channel member list
+    # Add u_id to channel member list
 
     datapy = data.get_data()
     channel = datapy.get_channel_with_ch_id(channel_id)
@@ -127,14 +115,11 @@ def channel_join(token=str, channel_id=int):
     return {
     }
 
-# @check_token_isvalid
-# @check_token_isowner
-# @check_channel_id_isvalid
-# @check_u_id_isnotowner
-# @check_u_id_is_member
+
+# Add a member as an owner of channel
+@au.authenticator(au.is_token_valid, au.valid_channel_id, au.is_admin_or_owner, au.not_ch_owner_or_owner, au.is_user_in_channel)
 def channel_addowner(token=str, channel_id=int, u_id=int):
 
-# If all conditons are met
     # Add u_id into channel owner list
 
     datapy = data.get_data()
@@ -146,14 +131,11 @@ def channel_addowner(token=str, channel_id=int, u_id=int):
     return {
     }
 
-# @check_token_isvalid
-# @check_token_isowner
-# @check_u_id_isvalid
-# @check_channel_id_isvalid
-# @check_u_id_isowner
+
+# Remove owner from owner list
+@au.authenticator(au.is_token_valid, au.valid_channel_id, au.is_admin_or_owner, au.is_user_in_channel)
 def channel_removeowner(token=str, channel_id=int, u_id=int):
 
-# If all conditons are met
     # Remove u_id from channel owner list
 
     datapy = data.get_data()

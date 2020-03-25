@@ -43,15 +43,8 @@ def is_token_valid(fn):
         # Get a list of all those who are logged in
         logged_in_list = data.get_data().get_login_list()
 
-<<<<<<< HEAD
-        # Check if user is member of channel
-        for member in data.getData():           ######## TO DO: get this from data.py
-            if token == member['token']:
-                return fn(*args, **kwargs)
-=======
         # Get a map variable of all valid tokens.
         valid_tokens = map(lambda logged_in_user: logged_in_user.get_token(), logged_in_list)
->>>>>>> dev2
 
         # If the token is not in the list (technically mapping) of valid tokens. Raise Error.
         if not token in valid_tokens:
@@ -108,12 +101,6 @@ def is_private_not_admin(fn):
         # Check if user is admin TODO: Complete this
         is_admin = False # False by default.
 
-<<<<<<< HEAD
-        # Check if user is an owner
-        for member in data.Channels.get_owners(ch_id):          ######## TO DO: get this from data.py
-            if token == member['token']:
-                return fn(*args, **kwargs)
-=======
         # If the user is not an admin. We check if the channel is private.
         # If private, raise an error
         if not is_admin:
@@ -123,7 +110,6 @@ def is_private_not_admin(fn):
                 channel_id refers to a channel that is private (when the authorised user is not an admin)
                 '''
                 raise error.AccessError(error_message)
->>>>>>> dev2
 
         return fn(*args, **kwargs)
 
@@ -144,23 +130,6 @@ def not_ch_owner_or_owner(fn):
         # Is user the owner of slakr?
         owner_of_slackr = (u_id == 0)
 
-<<<<<<< HEAD
-        # Search channels which have msg_id to edit/remove
-        for channel in data.channels:
-            if msg_id == channel.get_msg(msg_id):
-                # Get the channel id to search for channel owners
-                ch_id = channel['ch_id']
-                for member in data.Channels.get_owners(ch_id):     ######## TO DO: get this from data.py
-                    if token == member['token']:
-                        return fn(*args, **kwargs)
-                
-                break
-
-        # Check if user sent the message to edit/remove
-        for channel in data.channels.get_channel(ch_id):        ######## TO DO: get this from data.py
-            if token == channel.get_msg(msg_id)['token']:        ######## TO DO: get this from data.py
-                return fn(*args, **kwargs)
-=======
         # Is the user an owner of the channel?
         owner_of_channel = u_id in channel_with_id.get_owner_u_id_list()
 
@@ -168,7 +137,6 @@ def not_ch_owner_or_owner(fn):
         if not (owner_of_slackr or owner_of_channel):
             error_message = 'User is not an owner of the slackr, or an owner of this channel'
             raise error.AccessError(error_message)
->>>>>>> dev2
 
         # Else, return the function
         return fn(*args, **kwargs)
@@ -180,23 +148,6 @@ def user_not_member_using_message_id(fn):
     '''
     The authorised user is not a member of the channel that the message is within.
     '''
-<<<<<<< HEAD
-        def wrapper(*args, **kwargs):
-
-            # Get the token
-            token = kwargs['token']
-
-            # Check if token exists
-            is_token_valid(token)
-
-            # Check if user is an owner
-            u_id = data.Login.get_u_id_with_token(token):          ######## TO DO: get this from data.py
-            if  u_id == 0
-                return fn(*args, **kwargs)
-
-            # If cannot find a token, then raise AccessError
-            raise error.AccessError
-=======
     def wrapper(*args, **kwargs):
         token = kwargs['token']
         message_id = kwargs['message_id']
@@ -209,7 +160,6 @@ def user_not_member_using_message_id(fn):
 
         # Get the channel using message id.
         channel_with_id = data.get_data().get_channel_with_message_id(message_id)
->>>>>>> dev2
 
         # Check if user is in the channel. If not, return error.
         if not u_id in channel_with_id.get_u_id_list():
@@ -444,6 +394,7 @@ def is_user_in_channel(fn):
     return wrapper
 
 def check_u_id_existance(fn):
+    
     '''
     u_id does not refer to a valid user.
 
