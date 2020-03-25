@@ -7,7 +7,9 @@ search(.) - Searches for a specific string
 '''
 
 import data
-# TODO: Implemente authenticate and look for tokens
+import authenticate as au
+
+@au.authenticator(au.token)
 def users_all(*, token):
     '''
     Returns a list of all users and their associated details.
@@ -20,6 +22,7 @@ def users_all(*, token):
 
     return {'users' : user_list}
 
+@au.authenticator(au.token)
 def search(*, token, query_str):
     '''
     Given a query string, return a collection of messages in all of the channels
