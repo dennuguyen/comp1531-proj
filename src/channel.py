@@ -6,7 +6,7 @@ import authenticate as au
 
 # Invite a user into channel as member
 @au.authenticator(au.is_token_valid, au.valid_channel_id, au.is_not_member, au.check_u_id_existence)
-def channel_invite(token=str, channel_id=int, u_id=int):
+def channel_invite(*, token, channel_id, u_id):
 
     # Add u_id into channel member list
 
@@ -19,7 +19,7 @@ def channel_invite(token=str, channel_id=int, u_id=int):
 
 # Return details of channel that requester is member of
 @au.authenticator(au.is_token_valid, au.valid_channel_id, au.is_user_in_channel)
-def channel_details(token=str, channel_id=int):
+def channel_details(*, token, channel_id):
 
     # Retrieve information from database
 
@@ -43,7 +43,7 @@ def channel_details(token=str, channel_id=int):
 
 # Return messages in a channel that requester is member of
 @au.authenticator(au.is_token_valid, au.valid_channel_id, au.is_user_in_channel, au.start_has_more_messages)
-def channel_messages(token=str, channel_id=int, start=int):
+def channel_messages(*, token, channel_id, start):
 
     # Retrieve messages from database
 
@@ -82,7 +82,7 @@ def channel_messages(token=str, channel_id=int, start=int):
 
 # Leave a channel
 @au.authenticator(au.is_token_valid, au.valid_channel_id, au.is_user_in_channel, au_is_not_slackr_owner)
-def channel_leave(token=str, channel_id=int):
+def channel_leave(*, token, channel_id):
 
 
     # Remove user from channel member list
@@ -102,7 +102,7 @@ def channel_leave(token=str, channel_id=int):
 
 # Join a public channel as member
 @au.authenticator(au.is_token_valid, au.valid_channel_id, au.is_private_not_admin)
-def channel_join(token=str, channel_id=int):
+def channel_join(*, token, channel_id):
 
     # Add u_id to channel member list
 
@@ -118,7 +118,7 @@ def channel_join(token=str, channel_id=int):
 
 # Add a member as an owner of channel
 @au.authenticator(au.is_token_valid, au.valid_channel_id, au.is_admin_or_owner, au.not_ch_owner_or_owner, au.is_user_in_channel)
-def channel_addowner(token=str, channel_id=int, u_id=int):
+def channel_addowner(*, token, channel_id, u_id):
 
     # Add u_id into channel owner list
 
@@ -134,7 +134,7 @@ def channel_addowner(token=str, channel_id=int, u_id=int):
 
 # Remove owner from owner list
 @au.authenticator(au.is_token_valid, au.valid_channel_id, au.is_admin_or_owner, au.is_user_in_channel)
-def channel_removeowner(token=str, channel_id=int, u_id=int):
+def channel_removeowner(*, token, channel_id, u_id):
 
     # Remove u_id from channel owner list
 
