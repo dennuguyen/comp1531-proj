@@ -36,19 +36,29 @@ import auth_helper
 import time
 
 import data
-# TODO Figure out some way to access global dataframe.
 
-# Decorator function that checks if the token exists
-def is_token_valid(token):
-    #TODO Consolidate this with Sunny
 
-    # Compare the token to the token list
-    for check_token in token_list:                                  ######## TO DO: get this from data.py
-        if check_token == token:
-            return true
+def is_token_valid(fn):
+    '''
+    token passed in is not a valid token
+    '''
+    def wrapper(*args, **kwargs):
+        token = kwargs['token']
 
-    # If cannot find a token, then raise AccessError
-    raise error.AccessError
+        # Get a list of all those who are logged in
+        logged_in_list = data.get_data().get_login_list()
+
+        # Get a map variable of all valid tokens.
+        valid_tokens = map(lambda logged_in_user: logged_in_user.get_token(), logged_in_list)
+
+        # If the token is not in the list (technically mapping) of valid tokens. Raise Error.
+        if not token in valid_tokens:
+            raise error.AccessError('token passed in is not a valid token')
+    
+        # Else, return the function.
+        return fn(*args, **kwargs)
+    
+    return wrapper
 
 
 # Case where the user is not a member of the channel thus raising an AccessError
@@ -64,7 +74,24 @@ def is_token_valid(token):
 #   message_remove
 #   standup_send
 # Token and channel id are obtained from these functions
+
+
+#### ACCESS ERRORS ####
+
+def is_not_member(fn):
+    '''
+    Authorised user is not a member of channel with channel_id.
+    '''
+    def wrapper(*args, **kwargs):
+        token = kwargs['token']
+        channel_id = kwargs['channel_id']
+
+        
+
 def is_member(fn):
+    '''
+
+    '''
     def wrapper(*args, **kwargs):
 
         # Get the token
