@@ -102,7 +102,7 @@ def is_private_not_admin(fn):
         # If the user is not an admin. We check if the channel is private.
         # If private, raise an error
         if not is_admin:
-            if channel_with_id.get_is_private():
+            if not channel_with_id.get_is_public():
                 error_message = '''
                 channel_id refers to a channel that is private (when the authorised user is not an admin)
                 '''
@@ -272,14 +272,14 @@ def email_does_not_exist(fn):
 
     return wrapper
 
-
+'''
 
 def authenticate_password(fn):
-    '''
+    
     Password is not correct
 
     # TODO: Get Dan to figure this out. I have no clue about this salt
-    '''
+    
     def wrapper(*args, **kwargs):
 
         # Get the email and password
@@ -305,7 +305,7 @@ def authenticate_password(fn):
         return fn(*args, **kwargs)
 
     return wrapper
-
+'''
 
 def email_already_used(fn):
     '''
