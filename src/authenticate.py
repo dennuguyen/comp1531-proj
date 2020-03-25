@@ -26,9 +26,7 @@ import time
 
 # File imports
 import error
-import user # Is this needed?
 import data
-import auth_helper # Or this
 
 
 ######################## Access Errors ########################
