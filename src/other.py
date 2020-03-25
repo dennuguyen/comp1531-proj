@@ -1,10 +1,15 @@
 import data
-
+# TODO: Implemente authenticate and look for tokens
 def users_all(*, token):
     '''
     Returns a list of all users and their associated details.
     '''
-    user_list = [user.get_user_dict() for user in data.getData().user_list]
+    # Get a list of all User classes.
+    users = data.get_data().get_user_list()
+
+    # Convert this into a list of required dictionaries
+    user_list = [user.get_user_dict() for user in users]
+
     return {'users' : user_list}
 
 def search(*, token, query_str):
@@ -14,17 +19,21 @@ def search(*, token, query_str):
     recent message to least recent message
     '''
     # First get the user_id from the token
-    u_id = data.getData().get_u_id_with_token(token)
+    u_id = data.get_data().get_user_with_token(token)
 
-    # Now get the list of all the channels the user has joined.
-    channels_user_is_in = data.getData().get_channels_list_dict(u_id)
+    # Get a list of all the Channel classes.
+    channels = data.get_data().get_channel_list()
 
-    # Now get a list of all messages that the query string matches
+    # Now get an object which contains all the channels which the user has joined
+    channels_user_is_in = filter(lambda channel: u_id in channel.get_u_id_list(), channels)
+
+    # Now get a list of all Message classes if they match the query string.
+    # TODO: Get a second opiniion on this absolute garbage.
     matching_messages = []
     for channel in channels_user_is_in:
-        for message_id in channel.message_id_list:
-            current_message = data.getData().get_message(message_id)
-            if current_message.message == query_str:
+        for message_id in channel.get_msg_id_list():
+            current_message = data.get_data().get_message_with_message_id(message_id)
+            if query_str == current_message.get_message():
                 matching_messages.append(current_message.get_message_dict())
 
     sorted_matching_messages = sorted(matching_messages, key=lambda message: message['time_created'])
