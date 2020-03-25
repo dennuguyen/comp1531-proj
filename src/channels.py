@@ -12,7 +12,7 @@ import data
 import authenticate as au
 
 @au.authenticator(au.is_token_valid)
-def channels_list(token=str):
+def channels_list(*, token):
     '''
     Provide a list of all channels (and their associated details)
     that the authorised user is part of
@@ -38,7 +38,7 @@ def channels_list(token=str):
     return {'channels' : list(channels_dict)}
 
 @au.authenticator(au.is_token_valid)
-def channels_listall(token=str):
+def channels_listall(*, token):
     """
     Provide a list of all channels (and their associated details)
 
@@ -62,7 +62,7 @@ def channels_listall(token=str):
 
 
 @au.authenticator(au.is_token_valid, au.channel_name_length)
-def channels_create(token=str, name=str, is_public=bool):
+def channels_create(*, token, name, is_public):
     '''
     Creates a new channel with that name that is either a public or private channel
     '''
