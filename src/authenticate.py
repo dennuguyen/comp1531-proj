@@ -13,25 +13,11 @@ EXAMPLES ON USE:
 The use of this ultimate decorator is quite simple.
 I will show an example on how to check for all input errors in the first function: "auth/login"
 
-from authenticate import *
+import authenticate as au
 
-@authenticator(valid_email, email_does_not_exist, authenticate_password)
+@au.authenticator(au.token, au.valid_email, au.email_does_not_exist, au.authenticate_password)
 def login():
     pass
-
-If we don't want to use the * import method.
-I will show an example for the first function "auth/login"
-
-import authenticate
-
-@authenticate.authenticator(
-    authenticate.valid_email,
-    authenticate.email_does_not_exist,
-    authenticate.authenticate_password
-    )
-def login():
-    pass
-
 '''
 
 # Standard imports
