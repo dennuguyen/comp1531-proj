@@ -13,7 +13,7 @@ user_profile_sethandle(.) - allows updating of handles.
 import data
 import authenticate as au
 
-@au.authenticator(au.token, au.check_u_id_existance)
+@au.authenticator(au.is_token_valid, au.check_u_id_existance)
 def user_profile(*, token, u_id):
     '''
     For a valid user, returns information about their user id, email,
@@ -23,7 +23,7 @@ def user_profile(*, token, u_id):
     user = data.get_data().get_user_with_u_id(u_id)
     return {'user' : user.get_user_dict()}
 
-@au.authenticator(au.token, au.check_name_length)
+@au.authenticator(au.is_token_valid, au.check_name_length)
 def user_profile_setname(*, token, name_first, name_last):
     '''
     Update the authorised user's first and last name.
@@ -37,7 +37,7 @@ def user_profile_setname(*, token, name_first, name_last):
 
     return {}
 
-@au.authenticator(au.token, au.valid_email, au.email_already_used)
+@au.authenticator(au.is_token_valid, au.valid_email, au.email_already_used)
 def user_profile_setemail(*, token, email):
     '''
     Update the authorised user's email address.
