@@ -168,6 +168,61 @@ def is_message_permission(fn):
 
     return wrapper
 
+
+# Case where token is not owner of slackr raises access error
+def is_owner_of_slackr(fn):
+    # TODO check u_id allocations that slackr owner is u_id 0
+    '''
+    The authorised user is not an owner of slackr raise access error
+    '''
+        def wrapper(*args, **kwargs):
+
+        # Get the token
+        token = kwargs['token']
+
+        # Check if token exists
+        is_token_valid(token)
+
+        # Check if user is an owner
+        u_id = data.Login.get_u_id_with_token(token):          ######## TO DO: get this from data.py
+        if  u_id == 0
+            return fn(*args, **kwargs)
+
+        # If cannot find a token, then raise AccessError
+        raise error.AccessError
+
+    return wrapper
+
+    pass
+
+
+def is_sender(fn):
+    # TODO check unauthorised user
+    '''
+    Message operation was not by authorised user, raise access error
+    '''
+        def wrapper(*args, **kwargs):
+
+        # Get the token
+        token = kwargs['token']
+        message_id = kwargs['message_id']
+        u_id = kwargs['u_id']
+
+        # Check if token exists
+        is_token_valid(token)
+
+        # Check if user is an owner
+        for message in data.message_list:          ######## TO DO: get this from data.py
+            if message.get_message_dict(message_id)['message_id'] == message_id:
+                if message.get_message_dict(message_id)['u_id'] == u_id
+                    return fn(*args, **kwargs)
+
+        # If cannot find a token, then raise AccessError
+        raise error.AccessError
+
+    return wrapper
+    pass
+
 ######################## Input Errors #######################3
 
 
@@ -645,60 +700,6 @@ def permission_id(fn):
     '''
     permission_id does not refer to a value permission
     '''
-    pass
-
-# Case where token is not owner of slackr raises access error
-def is_owner_of_slackr(fn):
-    # TODO check u_id allocations that slackr owner is u_id 0
-    '''
-    The authorised user is not an owner of slackr raise access error
-    '''
-        def wrapper(*args, **kwargs):
-
-        # Get the token
-        token = kwargs['token']
-
-        # Check if token exists
-        is_token_valid(token)
-
-        # Check if user is an owner
-        u_id = data.Login.get_u_id_with_token(token):          ######## TO DO: get this from data.py
-        if  u_id == 0
-            return fn(*args, **kwargs)
-
-        # If cannot find a token, then raise AccessError
-        raise error.AccessError
-
-    return wrapper
-
-    pass
-
-
-def is_sender(fn):
-    # TODO check unauthorised user
-    '''
-    Message operation was not by authorised user, raise access error
-    '''
-        def wrapper(*args, **kwargs):
-
-        # Get the token
-        token = kwargs['token']
-        message_id = kwargs['message_id']
-        u_id = kwargs['u_id']
-
-        # Check if token exists
-        is_token_valid(token)
-
-        # Check if user is an owner
-        for message in data.message_list:          ######## TO DO: get this from data.py
-            if message.get_message_dict(message_id)['message_id'] == message_id:
-                if message.get_message_dict(message_id)['u_id'] == u_id
-                    return fn(*args, **kwargs)
-
-        # If cannot find a token, then raise AccessError
-        raise error.AccessError
-
-    return wrapper
     pass
 
 
