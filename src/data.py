@@ -225,7 +225,7 @@ class React():
     """
     React Class
     """
-    def __init__(self, react_id=-1, u_id_list=[], is_this_user_reacted=False):
+    def __init__(self, react_id=1, u_id_list=[], is_this_user_reacted=False):
         self._react_id = react_id
         self._u_id_list = u_id_list
         self._is_this_user_reacted = is_this_user_reacted
@@ -274,7 +274,7 @@ class Message():
         u_id,
         msg,
         time_created,
-        react_list=[React(-1, [], False)],
+        react_list=[React(1, [], False)],
         is_pinned=False,
     ):
         self._msg_id = msg_id
@@ -475,9 +475,8 @@ class Data():
         ]
 
     def get_login_with_token(self, token):
-        return [
-            login for login in self._login_list if login.get_token() == token
-        ]
+        login = filter(lambda login: login.get_token() == token, self._token_list)
+        return next(login, None)
 
     """
     React Object Getters
