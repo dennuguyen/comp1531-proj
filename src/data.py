@@ -56,9 +56,9 @@ The Data class has a reset method to conveniently reset server data in memory.
 #   file.                                                                      #
 #                                                                              #
 # - There may be functions that are bugged as they have not been properly      #
-#   tested.                                                                    #
+#   tested. Such as add_react, set_react                                       #
 #                                                                              #
-# - message_wait_list may require some getters in Data                         #                                                                    #
+# - message_wait_list may require some getters in Data                         #
 #                                                                              #
 # - Underscores before a variable name indicates that variable is private.     #
 #                                                                              #
@@ -314,11 +314,9 @@ class Message():
         return self._react_list
 
     def get_react_with_react_id(self, react_id):
-        for react in self._react_list:
-            if (react_id == react.get_react_id()):
-                return react.get_react_dict()
-
-        return None
+        react = filter(lambda react: react.get_react_id() == react_id,
+                       self._react_list)
+        return next(react, None)
 
     def get_is_pinned(self):
         return self._is_pinned
@@ -334,6 +332,9 @@ class Message():
         self._time_created = new_time_created
 
     # Need to make sure this works, cannot tell by looking
+    def add_react(self, react_id, u_id, flag):
+        pass
+
     def set_react(self, react_id, u_id, flag):
         for react in self._react_list:
             if (react.get_react_id() == react_id):
@@ -428,69 +429,41 @@ class Data():
     def get_password_list(self):
         return self._password_list
 
-    # def get_all_user_id(self):
-    #     return [user.get_u_id() for user in self._user_list]
-
-    # def get_all_message_id(self):
-    #     return [message.get_message_id() for message in self._message_list]
-
-    # def get_all_channel_id(self):
-    #     return [channel.get_channel_id() for channel in self._channel_list]
-
-    # def get_all_channel_names(self):
-    #     return [channel.get_channel_name() for channel in self._channel_list]
-
-    # def get_all_login_id(self):
-    #     return [login.get_u_id() for login in self._login_list]
     """
     User Object Getters
     """
 
     def get_user_with_u_id(self, u_id):
-        for user in self._user_list:
-            if (user.get_u_id() == u_id):
-                return user
-
-        return None
+        user = filter(lambda user: user.get_u_id() == u_id, self._user_list)
+        return next(user, None)
 
     def get_user_with_token(self, token):
-        for user in self._user_list:
-            if (user.get_token() == token):
-                return user
-
-        return None
+        user = filter(lambda user: user.get_token() == token, self._user_list)
+        return next(user, None)
 
     def get_user_with_email(self, email):
-        for user in self._user_list:
-            if (user.get_email() == email):
-                return user
-
-        return None
+        user = filter(lambda user: user.get_email() == email, self._user_list)
+        return next(user, None)
 
     def get_user_with_handle_str(self, handle_str):
-        for user in self._user_list:
-            if (user.get_handle_str() == handle_str):
-                return user
-
-        return None
+        user = filter(lambda user: user.get_handle_str() == handle_str,
+                      self._user_list)
+        return next(user, None)
 
     """
     Channel Object Getters
     """
 
     def get_channel_with_ch_id(self, ch_id):
-        for channel in self._channel_list:
-            if (channel.get_channel_id() == ch_id):
-                return channel
-
-        return None
+        channel = filter(lambda channel: channel.get_channel_id() == ch_id,
+                         self._channel_list)
+        return next(channel, None)
 
     def get_channel_with_message_id(self, msg_id):
-        for channel in self._channel_list:
-            if (channel.get_msg_id_list() == msg_id):
-                return channel
-
-        return None
+        channel = filter(
+            lambda channel: msg_id in channel.get_message_id_list(),
+            self._channel_list)
+        return next(channel, None)
 
     """
     Login Object Getters
@@ -501,37 +474,31 @@ class Data():
             login for login in self._login_list if login.get_u_id() == u_id
         ]
 
-    # def get_login_with_token(self, token):
-    #     for login in self._login_list:
-    #         filter
-    #         if (login.get_token() == token):
-    #             return login
+    def get_login_with_token(self, token):
+        return [
+            login for login in self._login_list if login.get_token() == token
+        ]
 
-    #     return None
     """
     React Object Getters
     """
 
     def get_react_with_react_id(self, react_id):
-        for react in self._react_list:
-            if (react.get_react_id() == react_id):
-                return react
-
-        return None
+        return [
+            react for react in self._react_list
+            if react.get_react_id() == react_id
+        ]
 
     """
     Message Object Getters
     """
 
     def get_message_with_message_id(self, msg_id):
-        for msg in self._message_list:
-            if (msg.get_message_id() == msg_id):
-                return msg
-
-        return None
+        msg = filter(lambda msg: msg.get_message_id() == msg_id,
+                     self._message_list)
+        return next(msg, None)
 
     def get_message_with_u_id(self, u_id):
-        # A user may send multiple messages
         return [msg for msg in self._message_list if msg.get_u_id() == u_id]
 
     def get_message_with_message(self, message):
@@ -544,25 +511,19 @@ class Data():
     """
 
     def get_password_with_u_id(self, u_id):
-        for pass_ in self._password_list:
-            if pass_.get_u_id() == u_id:
-                return pass_
-
-        return None
+        pass_ = filter(lambda pass_: pass_.get_u_id() == u_id,
+                       self._password_list)
+        return next(pass_, None)
 
     def get_password_with_salt(self, salt):
-        for pass_ in self._password_list:
-            if pass_.get_salt() == salt:
-                return pass_
-
-        return None
+        pass_ = filter(lambda pass_: pass_.get_salt() == salt,
+                       self._password_list)
+        return next(pass_, None)
 
     def get_password_with_hash(self, hash_):
-        for pass_ in self._password_list:
-            if pass_.get_hash() == hash_:
-                return pass_
-
-        return None
+        pass_ = filter(lambda pass_: pass_.get_hash() == hash_,
+                       self._password_list)
+        return next(pass_, None)
 
     """
     Adders
