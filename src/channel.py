@@ -1,6 +1,6 @@
 '''channel.py'''
 import data
-import authenticate
+import authenticate as au
 
 
 
@@ -9,6 +9,7 @@ import authenticate
 # @check_token_isauthorised
 # @check_u_id_isvalid
 # @check_u_id_isnotowner
+
 def channel_invite(token=str, channel_id=int, u_id=int):
 
 # If all conditions are met add u_id to channel as member
