@@ -1,3 +1,4 @@
+
 """
 Data.py defines the classes used to store the server data in memory and methods
 to get or manipulate that data. These classes are:
@@ -581,6 +582,7 @@ class Data():
             raise AssertionError("Error: Parameter is not 'class Channel'")
 
     def add_login(self, new_login):
+
         try:
             assert isinstance(new_login, Login)
             self._login_list(new_login)
@@ -605,7 +607,6 @@ class Data():
 
     Removes objects from their respective list of objects
     """
-
     def remove_user(self, user):
         try:
             assert isinstance(user, User)
@@ -708,7 +709,6 @@ class Data():
 Instantiate data from Data
 """
 data = Data()
-
 
 def get_data():
     """

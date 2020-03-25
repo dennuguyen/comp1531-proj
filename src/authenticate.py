@@ -425,6 +425,7 @@ def is_user_in_channel(fn):
 
 
 def check_u_id_existance(fn):
+    
     '''
     u_id does not refer to a valid user.
 
