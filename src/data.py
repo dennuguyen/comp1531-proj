@@ -37,7 +37,7 @@ signifies the creation and deletion of those objects.
 
          Accepts a User object, new_user, and appends this to the list of users.
          This is called upon registration of a new user.
-    
+
     e.g. remove_user(self, user)
 
          Removes a User object, user, from the list of users.
