@@ -25,4 +25,7 @@
 
 - In our team Dan is responsible for helper.py which contain function decorator functions although some files may be done with individual style and may require some integration towards finish.
 
+
+- Purpose of function decorators => authenticate, raise Exceptions. Changed the approach to function decorators from authenticating the entire function's parameters (e.g. @authenticate_login) to authenticating individual parameters for re-usability of function decorators (e.g. @authenticate_email, @authenticate_password).
+
 - Raymond is responsible for common data file such as data.py and data.json. These files are also developed as we go and responsible person may change depending on need.
