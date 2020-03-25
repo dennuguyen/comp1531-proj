@@ -26,9 +26,8 @@ import time
 
 # File imports
 import error
-import user  # Is this needed?
 import data
-import auth_helper  # Or this
+import auth_helper
 
 ######################## Access Errors ########################
 
@@ -49,7 +48,7 @@ def is_token_valid(fn):
 
         # If the token is not in the list (technically mapping) of valid tokens. Raise Error.
         if not token in valid_tokens:
-            raise error.AccessError('Token passed in is not a valid token')
+            raise error.AccessError('token passed in is not a valid token')
 
         # Else, return the function.
         return fn(*args, **kwargs)
@@ -78,7 +77,7 @@ def is_not_member(fn):
         # Check if user is in the channel. If not, raise an error.
         if not user_id in channel_with_id.get_u_id_list():
             raise error.AccessError(
-                f'User is not a member of channel with {channel_id}.')
+                f"Error: User is not a member of channel with {channel_id}")
 
         # Else, return the function
         return fn(*args, **kwargs)
@@ -108,9 +107,8 @@ def is_private_not_admin(fn):
         # If the user is not an admin. We check if the channel is private.
         # If private, raise an error
         if not is_admin:
-            if channel_with_id.get_is_private():
-                error_message = ''
-                '''
+            if not channel_with_id.get_is_public():
+                error_message = '''
                 channel_id refers to a channel that is private (when the authorised user is not an admin)
                 '''
                 raise error.AccessError(error_message)
@@ -120,13 +118,17 @@ def is_private_not_admin(fn):
     return wrapper
 
 
-def not_ch_owner_or_owner(fn):
+def is_owner_or_slackr_owner(fn):
     '''
     the authorised user is not an owner of the slackr, or an owner of this channel
     '''
     def wrapper(*args, **kwargs):
         channel_id = kwargs['channel_id']
-        u_id = kwargs['u_id']
+        token = kwargs['token']
+
+        # Get user_id from token
+        user = data.get_data().get_user_with_token(token)
+        u_id = user.get_user_id()
 
         # Get the corresponding channel with the id
         channel_with_id = data.get_data().get_channel_with_ch_id(channel_id)
@@ -654,7 +656,7 @@ def is_valid_react_id(fn):
             error_message = f'''
             {react_id} is not a valid React ID. The only valid react ID is 1.
             '''
-            raise error.InputError()
+            raise error.InputError(error_message)
 
         return fn(*args, **kwargs)
 
@@ -845,6 +847,28 @@ def permission_id(fn):
     permission_id does not refer to a value permission
     '''
     def wrapper(*args, **kwargs):
+        return fn(*args, **kwargs)
+
+    return wrapper
+
+
+#### Extra Error checkers ####
+def is_not_owner_of_slackr(fn):
+    '''
+    Raise input error if uid is owner of slackr.
+    '''
+    def wrapper(*args, **kwargs):
+        token = kwargs['token']
+
+        # Get u_id id with token
+        user = data.get_data().get_user_with_token(token)
+        u_id = user.get_u_id()
+
+        # If the u_id is 0, this user is the owner of slackr. Raise error.
+        if u_id == 0:
+            raise error.InputError(
+                'Raise input error if uid is owner of slackr.')
+
         return fn(*args, **kwargs)
 
     return wrapper

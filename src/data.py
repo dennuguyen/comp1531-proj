@@ -95,13 +95,14 @@ class Channel():
     Channel class
     """
     def __init__(self, ch_id, ch_name, msg_id_list, u_id_list, owner_u_id_list,
-                 is_public):
+                 is_public, is_active_standup):
         self._ch_id = ch_id
         self._ch_name = ch_name
         self._msg_id_list = msg_id_list
         self._u_id_list = u_id_list
         self._owner_u_id_list = owner_u_id_list
         self._is_public = is_public
+        self._is_active_standup = is_active_standup
 
     """
     Getters
@@ -135,6 +136,9 @@ class Channel():
     def get_is_public(self):
         return self._is_public
 
+    def get_is_active_standup(self):
+        return self._is_active_standup
+
     """
     Setters
     """
@@ -156,6 +160,9 @@ class Channel():
 
     def remove_message(self, msg_id):
         self._msg_id_list.remove(msg_id)
+
+    def set_standup_status(self, status):
+        self._is_active_standup = status
 
 
 class User():
