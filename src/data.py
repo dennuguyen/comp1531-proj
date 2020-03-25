@@ -95,13 +95,13 @@ class Channel():
     Channel class
     """
     def __init__(self, ch_id, ch_name, msg_id_list, u_id_list, owner_u_id_list,
-                 is_private):
+                 is_public):
         self._ch_id = ch_id
         self._ch_name = ch_name
         self._msg_id_list = msg_id_list
         self._u_id_list = u_id_list
         self._owner_u_id_list = owner_u_id_list
-        self._is_private = is_private
+        self._is_public = is_public
 
     """
     Getters
@@ -114,7 +114,7 @@ class Channel():
             'message_id_list': self._msg_id_list,
             'u_id_list': self._u_id_list,
             'owner_u_id_list': self._owner_u_id_list,
-            'is_private': self._is_private,
+            'is_public': self._is_public,
         }
 
     def get_channel_name(self):
@@ -132,8 +132,8 @@ class Channel():
     def get_owner_u_id_list(self):
         return self._owner_u_id_list
 
-    def get_is_private(self):
-        return self._is_private
+    def get_is_public(self):
+        return self._is_public
 
     """
     Setters

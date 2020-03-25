@@ -615,7 +615,7 @@ def is_valid_react_id(fn):
             error_message = f'''
             {react_id} is not a valid React ID. The only valid react ID is 1.
             '''
-            raise error.InputError()
+            raise error.InputError(error_message)
 
         return fn(*args, **kwargs)
 
