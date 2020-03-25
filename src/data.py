@@ -565,9 +565,12 @@ class Data():
         except AssertionError:
             raise AssertionError("Error: Parameter is not 'class Message'")
 
-    # def add_message_later(self, msg_id):
-    #     msg = self._get_message_with_message_id(msg_id)
-    #     self._message_wait_list.append(msg)
+    def add_password(self, new_password):
+        try:
+            assert isinstance(new_password, Password)
+            self._password_list.append(new_password)
+        except AssertionError:
+            raise AssertionError("Error: Parameter is not 'class Password'")
     """
     Removers
 
@@ -609,9 +612,12 @@ class Data():
         except AssertionError:
             raise AssertionError("Error: Parameter is not 'class Message'")
 
-    # def remove_message_later(self, msg_id):
-    #         msg = self._get_message_with_message_id(msg_id)
-    #         self._message_wait_list.remove(msg)
+    def remove_password(self, password):
+        try:
+            assert isinstance(password, Password)
+            self._password_list.remove(password)
+        except AssertionError:
+            raise AssertionError("Error: Parameter is not 'class Password'")
     """
     Incrementers
     """
@@ -658,9 +664,11 @@ class Data():
     def reset(self):
         self._user_list = []
         self._message_list = []
+        self._message_wait_list = []
         self._channel_list = []
         self._member_list = []
         self._login_list = []
+        self._password_list = []
 
         self._next_u_id = -1
         self._next_channel_id = -1
