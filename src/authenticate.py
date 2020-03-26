@@ -32,7 +32,7 @@ import auth_helper
 ######################## Access Errors ########################
 
 
-def is_token_valid(fn):
+def is_token_valid(func):
     '''
     token passed in is not a valid token
     '''
@@ -51,12 +51,12 @@ def is_token_valid(fn):
             raise error.AccessError('token passed in is not a valid token')
 
         # Else, return the function.
-        return fn(*args, **kwargs)
+        return func(*args, **kwargs)
 
     return wrapper
 
 
-def is_not_member(fn):
+def is_not_member(func):
     '''
     Authorised user is not a member of channel with channel_id.
 
@@ -80,12 +80,12 @@ def is_not_member(fn):
                 f"Error: User is not a member of channel with {channel_id}")
 
         # Else, return the function
-        return fn(*args, **kwargs)
+        return func(*args, **kwargs)
 
     return wrapper
 
 
-def is_private_not_admin(fn):
+def is_private_not_admin(func):
     '''
     channel_id refers to a channel that is private (when the authorised user is not an admin)
 
@@ -113,12 +113,12 @@ def is_private_not_admin(fn):
                 '''
                 raise error.AccessError(error_message)
 
-        return fn(*args, **kwargs)
+        return func(*args, **kwargs)
 
     return wrapper
 
 
-def is_owner_or_slackr_owner(fn):
+def is_owner_or_slackr_owner(func):
     '''
     the authorised user is not an owner of the slackr, or an owner of this channel
     '''
@@ -145,12 +145,12 @@ def is_owner_or_slackr_owner(fn):
             raise error.AccessError(error_message)
 
         # Else, return the function
-        return fn(*args, **kwargs)
+        return func(*args, **kwargs)
 
     return wrapper
 
 
-def user_not_member_using_message_id(fn):
+def user_not_member_using_message_id(func):
     '''
     The authorised user is not a member of the channel that the message is within.
     '''
@@ -176,12 +176,12 @@ def user_not_member_using_message_id(fn):
             raise error.AccessError(error_message)
 
         # If not, return the function
-        return fn(*args, **kwargs)
+        return func(*args, **kwargs)
 
     return wrapper
 
 
-def edit_permissions(fn):
+def edit_permissions(func):
     '''
     AccessError when none of the following are true:
 
@@ -220,12 +220,12 @@ def edit_permissions(fn):
             raise error.AccessError('User does not have edit permissions')
 
         # Else, return function
-        return fn(*args, **kwargs)
+        return func(*args, **kwargs)
 
     return wrapper
 
 
-def is_admin_or_owner(fn):
+def is_admin_or_owner(func):
     '''
     The authorised user is not an admin or owner
     '''
@@ -243,7 +243,7 @@ def is_admin_or_owner(fn):
             raise error.AccessError(
                 'The authorised user is not an admin or owner')
 
-        return fn(*args, **kwargs)
+        return func(*args, **kwargs)
 
     return wrapper
 
@@ -251,7 +251,7 @@ def is_admin_or_owner(fn):
 ######################## Input Errors ########################
 
 
-def valid_email(fn):
+def valid_email(func):
     '''
     Email entered is not a valid email.
     '''
@@ -265,12 +265,12 @@ def valid_email(fn):
         if not re.search(valid_email_regex, email):
             raise error.InputError('Email entered is not a valid email.')
 
-        return fn(*args, **kwargs)
+        return func(*args, **kwargs)
 
     return wrapper
 
 
-def email_does_not_exist(fn):
+def email_does_not_exist(func):
     '''
     Email entered does not belong to a user
     '''
@@ -283,12 +283,12 @@ def email_does_not_exist(fn):
         if not data.get_data().get_user_with_email(email):
             raise error.InputError('Email entered does not belong to a user.')
 
-        return fn(*args, **kwargs)
+        return func(*args, **kwargs)
 
     return wrapper
 
 
-def authenticate_password(fn):
+def authenticate_password(func):
     """
     Password is authenticated by retrieving the salt for the user, hashing the
     password with the salt, then comparing the hashed password with existing
@@ -330,12 +330,12 @@ def authenticate_password(fn):
         if try_hash != strd_hash:
             raise error.InputError("Incorrect password")
 
-        return fn(*args, **kwargs)
+        return func(*args, **kwargs)
 
     return wrapper
 
 
-def email_already_used(fn):
+def email_already_used(func):
     '''
     Email address is already being used by another user.
     '''
@@ -349,12 +349,12 @@ def email_already_used(fn):
             raise error.InputError(
                 'Email address is already being used by another user.')
 
-        return fn(*args, **kwargs)
+        return func(*args, **kwargs)
 
     return wrapper
 
 
-def check_password_length(fn):
+def check_password_length(func):
     '''
     Password entered is less than 6 characters long.
     '''
@@ -367,12 +367,12 @@ def check_password_length(fn):
             raise error.InputError(
                 'Password entered is less than 6 characters long.')
 
-        return fn(*args, **kwargs)
+        return func(*args, **kwargs)
 
     return wrapper
 
 
-def check_name_length(fn):
+def check_name_length(func):
     '''
     name_first is not between 1 and 50 characters inclusive in length
 
@@ -393,12 +393,12 @@ def check_name_length(fn):
             '''
             raise error.InputError(error_message)
 
-        return fn(*args, **kwargs)
+        return func(*args, **kwargs)
 
     return wrapper
 
 
-def is_user_in_channel(fn):
+def is_user_in_channel(func):
     '''
     channel_id does not refer to a valid channel that the authorised user is part of.
     '''
@@ -419,12 +419,12 @@ def is_user_in_channel(fn):
         if not u_id in channel_with_id.get_u_id_list():
             raise error.InputError('The user is not in this channel.')
 
-        return fn(*args, **kwargs)
+        return func(*args, **kwargs)
 
     return wrapper
 
 
-def check_u_id_existance(fn):
+def check_u_id_existance(func):
 
     '''
     u_id does not refer to a valid user.
@@ -440,12 +440,12 @@ def check_u_id_existance(fn):
             raise error.InputError(
                 f'u_id: {u_id} does not refer to a valid user.')
 
-        return fn(*args, **kwargs)
+        return func(*args, **kwargs)
 
     return wrapper
 
 
-def valid_channel_id(fn):
+def valid_channel_id(func):
     '''
     Channel ID is not a valid channel
     '''
@@ -459,12 +459,12 @@ def valid_channel_id(fn):
             raise error.InputError(
                 f'Channel ID: {channel_id} is not a valid channel.')
 
-        return fn(*args, **kwargs)
+        return func(*args, **kwargs)
 
     return wrapper
 
 
-def start_has_more_messages(fn):
+def start_has_more_messages(func):
     '''
     start is greater than or equal to the total number of messages in the channel
     '''
@@ -489,12 +489,12 @@ def start_has_more_messages(fn):
             '''
             raise error.InputError(error_message)
 
-        return fn(*args, **kwargs)
+        return func(*args, **kwargs)
 
     return wrapper
 
 
-def already_owner(fn):
+def already_owner(func):
     '''
     When user with user id u_id is already an owner of the channel.
     '''
@@ -516,12 +516,12 @@ def already_owner(fn):
             '''
             raise error.InputError(error_message)
 
-        return fn(*args, **kwargs)
+        return func(*args, **kwargs)
 
     return wrapper
 
 
-def not_owner(fn):
+def not_owner(func):
     '''
     When user with user id u_id is not an owner of the channel
     '''
@@ -540,12 +540,12 @@ def not_owner(fn):
             raise error.InputError(
                 f'The user with user id {u_id} is not an owner of the channel')
 
-        return fn(*args, **kwargs)
+        return func(*args, **kwargs)
 
     return wrapper
 
 
-def user_not_admin(fn):
+def user_not_admin(func):
     '''
     The authorised user is not an admin
 
@@ -561,12 +561,12 @@ def user_not_admin(fn):
         if not is_admin:
             raise error.InputError('The authorised user is not an admin')
 
-        return fn(*args, **kwargs)
+        return func(*args, **kwargs)
 
     return wrapper
 
 
-def channel_name_length(fn):
+def channel_name_length(func):
     '''
     Name is more than 20 characters long.
     '''
@@ -578,12 +578,12 @@ def channel_name_length(fn):
         if len(channel_name) > 20:
             raise error.InputError('Name is more than 20 characters long.')
 
-        return fn(*args, **kwargs)
+        return func(*args, **kwargs)
 
     return wrapper
 
 
-def message_length(fn):
+def message_length(func):
     '''
     Message is more than 1000 characters
     '''
@@ -595,12 +595,12 @@ def message_length(fn):
         if len(message) > 1000:
             raise error.InputError('Message is more than 1000 characters.')
 
-        return fn(*args, **kwargs)
+        return func(*args, **kwargs)
 
     return wrapper
 
 
-def send_message_in_future(fn):
+def send_message_in_future(func):
     '''
     Time sent is a time in the past
     '''
@@ -610,12 +610,12 @@ def send_message_in_future(fn):
         if time_sent < time.time():
             raise error.InputError('Time sent is a time in the past')
 
-        return fn(*args, **kwargs)
+        return func(*args, **kwargs)
 
     return wrapper
 
 
-def is_message_id_in_channel(fn):
+def is_message_id_in_channel(func):
     '''
     message_id is not a valid message within a channel that the authorised user has joined
     '''
@@ -640,12 +640,12 @@ def is_message_id_in_channel(fn):
             raise error.InputError(error_message)
 
         # If he is in the channel. Proceed.
-        return fn(*args, **kwargs)
+        return func(*args, **kwargs)
 
     return wrapper
 
 
-def is_valid_react_id(fn):
+def is_valid_react_id(func):
     '''
     react_id is not a valid React ID. The only valid react ID the frontend has is 1
     '''
@@ -659,12 +659,12 @@ def is_valid_react_id(fn):
             '''
             raise error.InputError(error_message)
 
-        return fn(*args, **kwargs)
+        return func(*args, **kwargs)
 
     return wrapper
 
 
-def already_contains_react(fn):
+def already_contains_react(func):
     '''
     Message with ID message_id already contains an active React with ID react_id
     '''
@@ -684,12 +684,12 @@ def already_contains_react(fn):
             raise error.InputError(error_message)
 
         # Else, return the function
-        return fn(*args, **kwargs)
+        return func(*args, **kwargs)
 
     return wrapper
 
 
-def does_not_contain_react(fn):
+def does_not_contain_react(func):
     '''
     Message with ID message_id does not contain an active React with ID react_id
     '''
@@ -709,12 +709,12 @@ def does_not_contain_react(fn):
             raise error.InputError(error_message)
 
         # Else, return the function
-        return fn(*args, **kwargs)
+        return func(*args, **kwargs)
 
     return wrapper
 
 
-def message_id_valid(fn):
+def message_id_valid(func):
     '''
     message_id is not a valid message.
 
@@ -735,12 +735,12 @@ def message_id_valid(fn):
             raise error.InputError(error_message)
 
         # Else, return the function
-        return fn(*args, **kwargs)
+        return func(*args, **kwargs)
 
     return wrapper
 
 
-def message_already_pinned(fn):
+def message_already_pinned(func):
     '''
     Message with ID message_id is already pinned
     '''
@@ -757,12 +757,12 @@ def message_already_pinned(fn):
                 f'Message with ID {message_id} is already pinned')
 
         # Else return the function.
-        return fn(*args, **kwargs)
+        return func(*args, **kwargs)
 
     return wrapper
 
 
-def message_already_unpinned(fn):
+def message_already_unpinned(func):
     '''
     Message with ID message_id is already unpinned
     '''
@@ -779,12 +779,12 @@ def message_already_unpinned(fn):
                 f'Message with ID {message_id} is already unpinned')
 
         # Else return the function.
-        return fn(*args, **kwargs)
+        return func(*args, **kwargs)
 
     return wrapper
 
 
-def handle_length(fn):
+def handle_length(func):
     '''
     handle_str must be between 2 and 20 characters inclusive.
     '''
@@ -795,12 +795,12 @@ def handle_length(fn):
             raise error.InputError(
                 'handle_str must be between 2 and 20 characters inclusive.')
 
-        return fn(*args, **kwargs)
+        return func(*args, **kwargs)
 
     return wrapper
 
 
-def handle_already_used(fn):
+def handle_already_used(func):
     '''
     handle is already used by another user.
     '''
@@ -815,12 +815,12 @@ def handle_already_used(fn):
             raise error.InputError('Handle is already used by another user.')
 
         # Else, return the function.
-        return fn(*args, **kwargs)
+        return func(*args, **kwargs)
 
     return wrapper
 
 
-def already_active_standup(fn):
+def already_active_standup(func):
     '''
     An active standup is currently running in this channel
     '''
@@ -836,12 +836,12 @@ def already_active_standup(fn):
                 'An active standup is currently running in this channel'
                 )
 
-        return fn(*args, **kwargs)
+        return func(*args, **kwargs)
 
     return wrapper
 
 
-def no_active_standup(fn):
+def no_active_standup(func):
     '''
     An active standup is not currently running in this channel
     '''
@@ -857,24 +857,24 @@ def no_active_standup(fn):
                 'An active standup is currently running in this channel'
                 )
 
-        return fn(*args, **kwargs)
+        return func(*args, **kwargs)
 
     return wrapper
 
 
-def permission_id(fn):
+def permission_id(func):
     # TODO get help.
     '''
     permission_id does not refer to a value permission
     '''
     def wrapper(*args, **kwargs):
-        return fn(*args, **kwargs)
+        return func(*args, **kwargs)
 
     return wrapper
 
 
 #### Extra Error checkers ####
-def is_not_owner_of_slackr(fn):
+def is_not_owner_of_slackr(func):
     '''
     Raise input error if uid is owner of slackr.
     '''
@@ -890,7 +890,7 @@ def is_not_owner_of_slackr(fn):
             raise error.InputError(
                 'Raise input error if uid is owner of slackr.')
 
-        return fn(*args, **kwargs)
+        return func(*args, **kwargs)
 
     return wrapper
 
@@ -916,9 +916,9 @@ def authenticator(*decs):
     def func():
         pass
     '''
-    def deco(f):
+    def deco(funcs):
         for dec in reversed(decs):
-            f = dec(f)
-        return f
+            funcs = dec(funcs)
+        return funcs
 
     return deco
