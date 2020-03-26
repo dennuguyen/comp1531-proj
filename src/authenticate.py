@@ -73,13 +73,14 @@ def is_not_member(func):
         channel_id = kwargs['channel_id']
 
         # Get the corresponding user with the token.
-        user_id = data.get_data().get_user_with_token(token)
+        user_id = data.get_data().get_user_with_token(token).get_u_id()
+        print(user_id)
 
         # Get corresponding channel with the channel_id
         channel_with_id = data.get_data().get_channel_with_ch_id(channel_id)
 
         # Check if user is in the channel. If not, raise an error.
-        if not user_id in channel_with_id.get_u_id_list():
+        if user_id not in channel_with_id.get_u_id_list():
             raise error.AccessError(
                 f"Error: User is not a member of channel with {channel_id}")
 
@@ -425,7 +426,7 @@ def is_user_in_channel(func):
             raise error.InputError('The channel does not exist.')
 
         # Now we are in a situation where we have an actual channel. Now to check if user is in it.
-        if not u_id in channel_with_id.get_u_id_list():
+        if u_id not in channel_with_id.get_u_id_list():
             raise error.InputError('The user is not in this channel.')
 
         return func(*args, **kwargs)

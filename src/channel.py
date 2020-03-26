@@ -44,18 +44,18 @@ def channel_details(*, token, channel_id):
 
     # Transform the list of user ids into User classes
     all_users = map(lambda id: data.get_data().get_user_with_u_id(id), all_member_ids)
-
+    
     # Transform the mapping of users into a mapping of member dicts
     all_members = map(lambda user: user.get_member_details_dict(), all_users)
 
-    # Now get a list of owner ids.
+    # Get a list of all owner member ids
     owner_ids = channel_with_id.get_owner_u_id_list()
 
-    # Take all the owners in all_members and filter them into a separate dict.
-    owner_members = filter(lambda user_dict: user_dict['u_id'] in owner_ids, all_members)
-
-    # Members is {u_id, name_first, name_last}
-
+    # Transform the list of user ids into User classes
+    owners = map(lambda id: data.get_data().get_user_with_u_id(id), owner_ids)
+    
+    # Transform the mapping of users into a mapping of member dicts
+    owner_members = map(lambda user: user.get_member_details_dict(), owners)
 
     # Return {name, owner_members, all_members}
     return {
@@ -167,7 +167,9 @@ def channel_join(*, token, channel_id):
 @au.authenticator(au.is_token_valid,
                   au.valid_channel_id,
                   au.already_owner,
-                  au.is_owner_or_slackr_owner)
+                  au.is_owner_or_slackr_owner,
+                  au.is_user_in_channel,
+                  au.check_u_id_existence)
 def channel_addowner(*, token, channel_id, u_id):
     '''
     Make user with user id u_id an owner of this channel.
