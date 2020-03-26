@@ -425,7 +425,7 @@ def is_user_in_channel(fn):
 
 
 def check_u_id_existance(fn):
-    
+
     '''
     u_id does not refer to a valid user.
 
@@ -821,22 +821,42 @@ def handle_already_used(fn):
 
 
 def already_active_standup(fn):
-    # TODO get help.
     '''
     An active standup is currently running in this channel
     '''
     def wrapper(*args, **kwargs):
+        channel_id = kwargs['channel_id']
+
+        # Get the corresponding channel with the id
+        channel_with_id = data.get_data().get_channel_with_ch_id(channel_id)
+
+        # Check if there is an active standup in this channel
+        if channel_with_id.get_is_active_standup():
+            raise error.AccessError(
+                'An active standup is currently running in this channel'
+                )
+
         return fn(*args, **kwargs)
 
     return wrapper
 
 
 def no_active_standup(fn):
-    # TODO get help.
     '''
     An active standup is not currently running in this channel
     '''
     def wrapper(*args, **kwargs):
+        channel_id = kwargs['channel_id']
+
+        # Get the corresponding channel with the id
+        channel_with_id = data.get_data().get_channel_with_ch_id(channel_id)
+
+        # Check if there is not an active standup in this channel
+        if not channel_with_id.get_is_active_standup():
+            raise error.AccessError(
+                'An active standup is currently running in this channel'
+                )
+
         return fn(*args, **kwargs)
 
     return wrapper
