@@ -6,6 +6,7 @@ import pytest
 import other
 import error
 import user
+import data
 
 
 # Basic case
@@ -13,10 +14,12 @@ def test_auth_register(get_new_user_detail_1):
 
     # Register and unpack u_id and token
     email, password, name_first, name_last = get_new_user_detail_1
-    u_id, token = auth.auth_register(email=email,
+    auth_retval = auth.auth_register(email=email,
                                      password=password,
                                      name_first=name_first,
                                      name_last=name_last)
+
+    u_id, token = auth_retval['u_id'], auth_retval['token']
 
     # Create user_dict
     user_dict = {
@@ -32,14 +35,17 @@ def test_auth_register(get_new_user_detail_1):
 
     # Check if user exists after register
     assert user.user_profile(token=token, u_id=u_id) == user_dict
-    assert user_dict in other.users_all(token=token)['users']
+    assert user_dict['user'] in other.users_all(token=token)['users']
 
 
 # Check email validity
 def test_auth_register_invalid_email(get_new_user_detail_1):
+
+    data.get_data().reset()
+
     email, password, name_first, name_last = get_new_user_detail_1
 
-    email.replace('@', '.')  # string is now "z1234567.unsw.edu.au"
+    email = email.replace('@', '.')  # string is now "z1234567.unsw.edu.au"
 
     with pytest.raises(error.InputError):
         auth.auth_register(email=email,
@@ -50,6 +56,8 @@ def test_auth_register_invalid_email(get_new_user_detail_1):
 
 # Email form must follow {64}@{255} chars
 def test_auth_login_long_email_form(get_new_user_detail_1):
+
+    data.get_data().reset()
 
     # Get user 1
     email1, password1, name_first1, name_last1 = get_new_user_detail_1
@@ -89,6 +97,8 @@ def test_auth_login_long_email_form(get_new_user_detail_1):
 def test_auth_register_repeated_email(get_new_user_detail_1,
                                       get_new_user_detail_2):
 
+    data.get_data().reset()
+
     # Get user 1 and register them
     email1, password1, name_first1, name_last1 = get_new_user_detail_1
     _, _ = auth.auth_register(email=email1,
@@ -110,6 +120,8 @@ def test_auth_register_repeated_email(get_new_user_detail_1,
 # Test case for password less than 6 char
 def test_auth_register_invalid_password(get_new_user_detail_1):
 
+    data.get_data().reset()
+
     # Get user 1
     email, password, name_first, name_last = get_new_user_detail_1
 
@@ -127,6 +139,8 @@ def test_auth_register_invalid_password(get_new_user_detail_1):
 # Ensure that name_first and name_last are both between 1 and 50 characters in length
 def test_auth_register_invalid_name(get_new_user_detail_1,
                                     get_invalid_user_name):
+
+    data.get_data().reset()
 
     # Get the user information
     email, password, name_first, name_last = get_new_user_detail_1
@@ -188,12 +202,15 @@ def test_auth_register_invalid_name(get_new_user_detail_1,
 def test_auth_register_handle(get_new_user_detail_1, get_new_user_detail_2,
                               get_new_user_detail_3):
 
+    data.get_data().reset()
+
     # register user 1
     email1, password1, name_first1, name_last1 = get_new_user_detail_1
-    u_id1, token1 = auth.auth_register(email=email1,
-                                       password=password1,
-                                       name_first=name_first1,
-                                       name_last=name_last1)
+    auth_retval1 = auth.auth_register(email=email1,
+                                      password=password1,
+                                      name_first=name_first1,
+                                      name_last=name_last1)
+    u_id1, token1 = auth_retval1['u_id'], auth_retval1['token']
 
     # check for correct handle for user 1
     assert user.user_profile(
@@ -203,26 +220,28 @@ def test_auth_register_handle(get_new_user_detail_1, get_new_user_detail_2,
 
     # register user 2 for same name as user 1
     email2, password2, _, _ = get_new_user_detail_2
-    u_id2, token2 = auth.auth_register(email=email2,
-                                       password=password2,
-                                       name_first=name_first1,
-                                       name_last=name_last1)
+    auth_retval2 = auth.auth_register(email=email2,
+                                      password=password2,
+                                      name_first=name_first1,
+                                      name_last=name_last1)
+    u_id2, token2 = auth_retval2['u_id'], auth_retval2['token']
 
     # check for correct handle for user 2
     assert user.user_profile(
         token=token2,
         u_id=u_id2)['user']['handle_str'] == (name_first1 +
-                                              name_last1).lower() + u_id2
+                                              name_last1).lower() + str(u_id2)
 
     # register user 3
     email3, password3, _, _ = get_new_user_detail_3
-    u_id3, token3 = auth.auth_register(email=email3,
-                                       password=password3,
-                                       name_first=name_first1,
-                                       name_last=name_last1)
+    auth_retval3 = auth.auth_register(email=email3,
+                                      password=password3,
+                                      name_first=name_first1,
+                                      name_last=name_last1)
+    u_id3, token3 = auth_retval3['u_id'], auth_retval3['token']
 
     # check for correct handle for user 3
     assert user.user_profile(
         token=token3,
-        u_id=u_id2)['user']['handle_str'] == (name_first1 +
-                                              name_last1).lower() + u_id3
+        u_id=u_id3)['user']['handle_str'] == (name_first1 +
+                                              name_last1).lower() + str(u_id3)
