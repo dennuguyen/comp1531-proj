@@ -1,13 +1,12 @@
 import pytest
+import sys
+sys.path.append('../')
 import message
 import channel
 import channels
 import error
-import datetime
+import time
 import other
-import sys
-sys.path.append('../')
-
 
 # User sends a message to a channel they are a member of
 def test_message_send_member(get_new_user_1):
@@ -21,9 +20,9 @@ def test_message_send_member(get_new_user_1):
 
     # Send message 1
     msg_send1 = 'The quick brown fox jumps over the lazy dog'
-    time_before1 = datetime.datetime.now()
+    time_before1 = int(time.time())
     msg_id1 = message.message_send(token1, ch_id, msg_send1)['message_id']
-    time_after1 = datetime.datetime.now()
+    time_after1 = int(time.time())
 
     # Check message 1
     retval1 = other.search(token1, msg_send1)['messages']
@@ -36,9 +35,9 @@ def test_message_send_member(get_new_user_1):
 
     # Send message 2
     msg_send2 = 'The quick brown dog jumps over the lazy fox'
-    time_before2 = datetime.datetime.now()
+    time_before2 = int(time.time())
     msg_id2 = message.message_send(token1, ch_id, msg_send2)['message_id']
-    time_after2 = datetime.datetime.now()
+    time_after2 = int(time.time())
 
     # Check message 2
     retval2 = other.search(token1, msg_send2)['messages']
