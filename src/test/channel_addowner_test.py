@@ -1,3 +1,4 @@
+import data
 import pytest
 import channel
 import error
@@ -22,12 +23,6 @@ def test_channel_addowner_promote_member(get_new_user_1, get_new_user_detail_1,
     # user 1 creates a channel
     ch_name = get_channel_name_1
     ch_id = channels.channels_create(token=token1, name=ch_name, is_public=True)['channel_id']
-
-    # user 2 joins channel
-    channel.channel_join(token=token2, channel_id=ch_id)
-
-    # owner adds an owner
-    assert channel.channel_addowner(token=token1, channel_id=ch_id, u_id=u_id2) == {}
 
     # user 2 joins channel
     channel.channel_join(token=token2, channel_id=ch_id)
@@ -76,7 +71,7 @@ def test_channel_addowner_promote_owner(get_new_user_1, get_new_user_2,
 
     # user 1 creates a channel
     ch_name = get_channel_name_1
-    ch_id = channels.channels_create(token=token1, channel_id=ch_name, is_public=True)['channel_id']
+    ch_id = channels.channels_create(token=token1, name=ch_name, is_public=True)['channel_id']
 
     # user 2 joins channel
     channel.channel_join(token=token2, channel_id=ch_id)
@@ -101,7 +96,7 @@ def test_channel_addowner_promote_stranger(get_new_user_1, get_new_user_2,
 
     # user 1 creates a channel
     ch_name = get_channel_name_1
-    ch_id = channels.channels_create(token=token1, channel_id=ch_name, is_public=True)['channel_id']
+    ch_id = channels.channels_create(token=token1, name=ch_name, is_public=True)['channel_id']
 
     # owner promotes a stranger
     with pytest.raises(error.InputError):
@@ -124,7 +119,7 @@ def test_channel_addowner_unauthorised_member(get_new_user_1, get_new_user_2,
 
     # user 1 creates a channel
     ch_name = get_channel_name_1
-    ch_id = channels.channels_create(token=token1, channel_id=ch_name, is_public=True)['channel_id']
+    ch_id = channels.channels_create(token=token1, name=ch_name, is_public=True)['channel_id']
 
     # user 2 and 3 joins channel
     channel.channel_join(token=token2, channel_id=ch_id)
@@ -155,7 +150,7 @@ def test_channel_addowner_unauthorised_stranger(get_new_user_1, get_new_user_2,
 
     # user 1 creates a channel
     ch_name = get_channel_name_1
-    ch_id = channels.channels_create(token=token1, channel_id=ch_name, is_public=True)['channel_id']
+    ch_id = channels.channels_create(token=token1, name=ch_name, is_public=True)['channel_id']
 
     # user 2 joins channel
     channel.channel_join(token=token2, channel_id=ch_id)
@@ -177,7 +172,7 @@ def test_channel_addowner_invalid_channel_id(get_new_user_1, get_new_user_2,
 
     # user 1 creates a channel
     ch_name = get_channel_name_1
-    ch_id = channels.channels_create(token=token1, channel_id=ch_name, is_public=True)['channel_id']
+    ch_id = channels.channels_create(token=token1, name=ch_name, is_public=True)['channel_id']
 
     # user 2 joins channel
     channel.channel_join(token=token2, channel_id=ch_id)
@@ -199,11 +194,11 @@ def test_channel_addowner_invalid_u_id(get_new_user_1, get_new_user_2,
 
     # user 1 creates a channel
     ch_name = get_channel_name_1
-    ch_id = channels.channels_create(token=token1, channel_id=ch_name, is_public=True)['channel_id']
+    ch_id = channels.channels_create(token=token1, name=ch_name, is_public=True)['channel_id']
 
     # user 2 joins channel
     channel.channel_join(token=token2, channel_id=ch_id)
 
     # invalid user id
     with pytest.raises(error.InputError):
-        channel.channel_addowner(token=token1, channel_id=ch_id, u_id=u_id1 + u_id2)
+        channel.channel_addowner(token=token1, channel_id=ch_id, u_id=u_id2+1000000)
