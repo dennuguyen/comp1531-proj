@@ -128,7 +128,7 @@ def is_owner_or_slackr_owner(func):
 
         # Get user_id from token
         user = data.get_data().get_user_with_token(token)
-        u_id = user.get_user_id()
+        u_id = user.get_u_id()
 
         # Get the corresponding channel with the id
         channel_with_id = data.get_data().get_channel_with_ch_id(channel_id)
