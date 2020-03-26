@@ -29,7 +29,11 @@ import error
 import data
 import auth_helper
 
-######################## Access Errors ########################
+################################################################################
+#                                                                              #
+#                                Access ERRORS                                 #
+#                                                                              #
+################################################################################
 
 
 def is_token_valid(func):
@@ -248,7 +252,11 @@ def is_admin_or_owner(func):
     return wrapper
 
 
-######################## Input Errors ########################
+################################################################################
+#                                                                              #
+#                               INPUT ERRORS                                   #
+#                                                                              #
+################################################################################
 
 
 def valid_email(func):
@@ -261,9 +269,10 @@ def valid_email(func):
         email = kwargs['email']
 
         # Check the email form
-        valid_email_regex = r'^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$'
-        if not re.search(valid_email_regex, email):
-            raise error.InputError('Email entered is not a valid email.')
+        valid_email_regex = r'[\w+g]{1,64}[@][\w+g+\.]{1,255}$'
+
+        if not re.match(valid_email_regex, email):
+            raise error.InputError('Error: invalid email.')
 
         return func(*args, **kwargs)
 
@@ -281,7 +290,26 @@ def email_does_not_exist(func):
 
         # If it doesn't exist, raise an error
         if not data.get_data().get_user_with_email(email):
-            raise error.InputError('Email entered does not belong to a user.')
+            raise error.InputError('Error: email does not exist.')
+
+        return func(*args, **kwargs)
+
+    return wrapper
+
+
+def email_already_used(func):
+    '''
+    Email address is already being used by another user.
+    '''
+    def wrapper(*args, **kwargs):
+
+        # Get the email
+        email = kwargs['email']
+
+        # If it email is already used, raise an error
+        if data.get_data().get_user_with_email(email):
+            raise error.InputError(
+                'Email address is already being used by another user.')
 
         return func(*args, **kwargs)
 
@@ -329,25 +357,6 @@ def authenticate_password(func):
         strd_hash = data.get_data().get_password_with_hash(try_hash).get_hash()
         if try_hash != strd_hash:
             raise error.InputError("Incorrect password")
-
-        return func(*args, **kwargs)
-
-    return wrapper
-
-
-def email_already_used(func):
-    '''
-    Email address is already being used by another user.
-    '''
-    def wrapper(*args, **kwargs):
-
-        # Get the email
-        email = kwargs['email']
-
-        # If it email is already used, raise an error
-        if data.get_data().get_user_with_email(email):
-            raise error.InputError(
-                'Email address is already being used by another user.')
 
         return func(*args, **kwargs)
 
@@ -425,7 +434,6 @@ def is_user_in_channel(func):
 
 
 def check_u_id_existence(func):
-
     '''
     u_id does not refer to a valid user.
 
@@ -833,8 +841,7 @@ def already_active_standup(func):
         # Check if there is an active standup in this channel
         if channel_with_id.get_is_active_standup():
             raise error.AccessError(
-                'An active standup is currently running in this channel'
-                )
+                'An active standup is currently running in this channel')
 
         return func(*args, **kwargs)
 
@@ -854,8 +861,7 @@ def no_active_standup(func):
         # Check if there is not an active standup in this channel
         if not channel_with_id.get_is_active_standup():
             raise error.AccessError(
-                'An active standup is currently running in this channel'
-                )
+                'An active standup is currently running in this channel')
 
         return func(*args, **kwargs)
 
