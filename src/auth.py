@@ -29,7 +29,6 @@ def auth_login(*, email, password):
     return data.get_data().get_login_with_token(token).get_login_dict()
 
 
-@au.authenticator(au.is_token_valid)
 def auth_logout(*, token):
     """
     Logs the user out with just the token.
@@ -38,19 +37,20 @@ def auth_logout(*, token):
     # Successful logout is false
     is_success = False
 
-    # Get the login object associated with the given token
-    login_remove = data.get_data().get_login_with_token(token)
-
-    # Remove the login object from the list of logins
-    data.get_data().remove_login(login_remove)
-
     # Generate list of valid tokens
     valid_tokens = map(lambda login: login.get_token(),
                        data.get_data().get_login_list())
 
-    # Successful logout is true
-    if not token in valid_tokens:
+    # Check if given token is in list of valid tokens
+    if token in valid_tokens:
+        # Successful logout is true
         is_success = True
+
+        # Get the login object associated with the given token
+        login_remove = data.get_data().get_login_with_token(token)
+
+        # Remove the login object from the list of logins
+        data.get_data().remove_login(login_remove)
 
     return {'is_success': is_success}
 

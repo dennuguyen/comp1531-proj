@@ -13,7 +13,7 @@ user_profile_sethandle(.) - allows updating of handles.
 import data
 import authenticate as au
 
-@au.authenticator(au.is_token_valid, au.check_u_id_existance)
+@au.authenticator(au.is_token_valid, au.check_u_id_existence)
 def user_profile(*, token, u_id):
     '''
     For a valid user, returns information about their user id, email,

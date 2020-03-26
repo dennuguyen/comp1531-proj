@@ -81,8 +81,13 @@ def channels_create(*, token, name, is_public):
                                owner_u_id_list=[u_id],
                                is_public=is_public)
 
+    
+
     # Append this to the dataset.
     data.get_data().add_channel(new_channel)
+
+    print("The channel length is: ")
+    print(len(data.get_data().get_channel_list()))
 
     return {
         'channel_id': new_channel_id,
