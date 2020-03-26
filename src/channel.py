@@ -6,9 +6,9 @@ import authenticate as au
 
 # Invite a user into channel as member
 @au.authenticator(au.is_token_valid,
-                  au.is_user_in_channel,
+                  au.is_token_in_channel,
                   au.check_u_id_existence,
-                  au.is_not_member)
+                  au.is_user_not_in_channel)
 def channel_invite(*, token, channel_id, u_id):
     '''
     Invites a user (with user id u_id) to join a channel with ID channel_id.
@@ -44,18 +44,18 @@ def channel_details(*, token, channel_id):
 
     # Transform the list of user ids into User classes
     all_users = map(lambda id: data.get_data().get_user_with_u_id(id), all_member_ids)
-
+    
     # Transform the mapping of users into a mapping of member dicts
     all_members = map(lambda user: user.get_member_details_dict(), all_users)
 
-    # Now get a list of owner ids.
+    # Get a list of all owner member ids
     owner_ids = channel_with_id.get_owner_u_id_list()
 
-    # Take all the owners in all_members and filter them into a separate dict.
-    owner_members = filter(lambda user_dict: user_dict['u_id'] in owner_ids, all_members)
-
-    # Members is {u_id, name_first, name_last}
-
+    # Transform the list of user ids into User classes
+    owners = map(lambda id: data.get_data().get_user_with_u_id(id), owner_ids)
+    
+    # Transform the mapping of users into a mapping of member dicts
+    owner_members = map(lambda user: user.get_member_details_dict(), owners)
 
     # Return {name, owner_members, all_members}
     return {
@@ -93,7 +93,11 @@ def channel_messages(*, token, channel_id, start):
         show = no_messages
         end_view = -1
 
+<<<<<<< HEAD
     channel_msg = {'messages' : []}
+=======
+    channel_msg = {'messages':[]}
+>>>>>>> dev2_debug_ray
     msg_info = {}
     msg_list = datapy.get_message_list()
 
@@ -119,7 +123,11 @@ def channel_messages(*, token, channel_id, start):
 @au.authenticator(au.is_token_valid,
                   au.valid_channel_id,
                   au.is_not_member,
+<<<<<<< HEAD
                   au.is_not_owner_of_slackr)
+=======
+                  au.is_not_slackr_owner)
+>>>>>>> dev2_debug_ray
 def channel_leave(*, token, channel_id):
     '''
     Given a channel ID, the user removed as a member of this channel.
@@ -143,8 +151,9 @@ def channel_leave(*, token, channel_id):
 
 # Join a public channel as member
 @au.authenticator(au.is_token_valid,
-                  au.valid_channel_id, 
-                  au.is_private_not_admin)
+                  au.valid_channel_id,
+                  au.is_private_not_admin,
+                  au.is_token_not_in_channel)
 def channel_join(*, token, channel_id):
     '''
     Given a channel_id of a channel that the authorised user can join, adds them to that channel
@@ -168,7 +177,9 @@ def channel_join(*, token, channel_id):
 @au.authenticator(au.is_token_valid,
                   au.valid_channel_id,
                   au.already_owner,
-                  au.is_owner_or_slackr_owner)
+                  au.is_owner_or_slackr_owner,
+                  au.is_user_in_channel,
+                  au.check_u_id_existence)
 def channel_addowner(*, token, channel_id, u_id):
     '''
     Make user with user id u_id an owner of this channel.
@@ -188,7 +199,10 @@ def channel_addowner(*, token, channel_id, u_id):
 @au.authenticator(au.is_token_valid,
                   au.valid_channel_id,
                   au.not_owner,
-                  au.is_owner_or_slackr_owner)
+                  au.is_owner_or_slackr_owner,
+                  au.is_not_owner_of_slackr,
+                  au.is_not_self,
+                  au.check_u_id_existence)
 def channel_removeowner(*, token, channel_id, u_id):
     '''
     Remove user with user id u_id an owner of this channel.

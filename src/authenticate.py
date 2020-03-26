@@ -431,13 +431,112 @@ def is_user_in_channel(func):
             raise error.InputError('The channel does not exist.')
 
         # Now we are in a situation where we have an actual channel. Now to check if user is in it.
-        if not u_id in channel_with_id.get_u_id_list():
+        if u_id not in channel_with_id.get_u_id_list():
             raise error.InputError('The user is not in this channel.')
 
         return func(*args, **kwargs)
 
     return wrapper
 
+def is_token_in_channel(func):
+    '''
+    channel_id does not refer to a valid channel that the authorised user is part of.
+    '''
+    def wrapper(*args, **kwargs):
+
+        # Get the channel id and user id in reference
+        channel_id, token = kwargs['channel_id'], kwargs['token']
+
+        u_id = data.get_data().get_user_with_token(token).get_u_id()
+
+        # Find the channel respective to the u_id
+        channel_with_id = data.get_data().get_channel_with_ch_id(channel_id)
+
+        # Now we either have a channel or not.
+        # If its empty, invalid. Else we need to check if user is in it
+        if not channel_with_id:
+            raise error.InputError('The channel does not exist.')
+
+        # Now we are in a situation where we have an actual channel. Now to check if user is in it.
+        if u_id not in channel_with_id.get_u_id_list():
+            raise error.AccessError('The user is not in this channel.')
+
+        return func(*args, **kwargs)
+
+    return wrapper
+
+def is_token_not_in_channel(func):
+    '''
+    channel_id does not refer to a valid channel that the authorised user is part of.
+    '''
+    def wrapper(*args, **kwargs):
+
+        # Get the channel id and user id in reference
+        channel_id, token = kwargs['channel_id'], kwargs['token']
+
+        u_id = data.get_data().get_user_with_token(token).get_u_id()
+
+        # Find the channel respective to the u_id
+        channel_with_id = data.get_data().get_channel_with_ch_id(channel_id)
+
+        # Now we either have a channel or not.
+        # If its empty, invalid. Else we need to check if user is in it
+        if not channel_with_id:
+            raise error.InputError('The channel does not exist.')
+
+        # Now we are in a situation where we have an actual channel. Now to check if user is in it.
+        if u_id in channel_with_id.get_u_id_list():
+            raise error.InputError('The user is in this channel.')
+
+        return func(*args, **kwargs)
+
+    return wrapper
+
+def is_user_not_in_channel(func):
+    '''
+    channel_id refer to a valid channel that the authorised user is part of.
+    '''
+    def wrapper(*args, **kwargs):
+
+        # Get the channel id and user id in reference
+        channel_id, u_id = kwargs['channel_id'], kwargs['u_id']
+
+        # Find the channel respective to the u_id
+        channel_with_id = data.get_data().get_channel_with_ch_id(channel_id)
+
+        # Now we either have a channel or not.
+        # If its empty, invalid. Else we need to check if user is in it
+        if not channel_with_id:
+            raise error.InputError('The channel does not exist.')
+
+        # Now we are in a situation where we have an actual channel. Now to check if user is in it.
+        if u_id in channel_with_id.get_u_id_list():
+            raise error.InputError('The user is in this channel.')
+
+        return func(*args, **kwargs)
+
+    return wrapper
+
+def is_not_slackr_owner(func):
+    '''
+    the authorised user is an owner of the slackr
+    '''
+    def wrapper(*args, **kwargs):
+        token = kwargs['token']
+
+        # Get user_id from token
+        user = data.get_data().get_user_with_token(token)
+
+
+        # If user the owner of slakr, raise an error.
+        if user.get_u_id() == 0:
+            error_message = 'User is an owner of the slackr'
+            raise error.InputError(error_message)
+
+        # Else, return the function
+        return func(*args, **kwargs)
+
+    return wrapper
 
 def check_u_id_existence(func):
     '''
@@ -497,7 +596,7 @@ def start_has_more_messages(func):
             raise error.InputError('The channel does not exist.')
 
         # Now inital condition.
-        if start >= len(channel_with_id.get_msg_id_list()):
+        if start > len(channel_with_id.get_msg_id_list()):
             error_message = '''
             Start is greater than or equal to the total number of messages in the channel.
             '''
@@ -891,11 +990,7 @@ def is_not_owner_of_slackr(func):
     Raise input error if uid is owner of slackr.
     '''
     def wrapper(*args, **kwargs):
-        token = kwargs['token']
-
-        # Get u_id id with token
-        user = data.get_data().get_user_with_token(token)
-        u_id = user.get_u_id()
+        u_id = kwargs['u_id']
 
         # If the u_id is 0, this user is the owner of slackr. Raise error.
         if u_id == 0:
@@ -906,6 +1001,23 @@ def is_not_owner_of_slackr(func):
 
     return wrapper
 
+def is_not_self(func):
+    '''
+    Raise input error if uid is owner of slackr.
+    '''
+    def wrapper(*args, **kwargs):
+        token = kwargs['token']
+        u_id = kwargs['u_id']
+        token_uid = data.get_data().get_user_with_token(token).get_u_id()
+
+        # If the u_id is 0, this user is the owner of slackr. Raise error.
+        if u_id == token_uid:
+            raise error.InputError(
+                'Raise input error if token is self')
+
+        return func(*args, **kwargs)
+
+    return wrapper
 
 #### Authenticator function ####
 

@@ -69,8 +69,13 @@ def test_channel_messages_invalid_channel_id(get_new_user_1):
 def test_channel_messages_start_is_greater(get_new_user_1):
 
     _, token1 = get_new_user_1
+<<<<<<< HEAD
     ch_id = channels.channels_create(token=token1, name='New Channel', is_public=True)
 
+=======
+    ch_id = channels.channels_create(token=token1, name='New Channel', is_public=True)['channel_id']
+    
+>>>>>>> dev2_debug_ray
     for i in range(5):
         msg = 'test message ' + str(i + 1)
         message.message_send(token=token1, channel_id=ch_id, message=msg)
@@ -87,8 +92,15 @@ def test_channel_messages_unauthorised_user(get_new_user_1, get_new_user_2):
     _, token2 = get_new_user_2
 
     ch_id = channels.channels_create(token=token1, name='New Channel', is_public=True)['channel_id']
+<<<<<<< HEAD
 
     with pytest.raises(error.AccessError):
         channel.channel_messages(token=token2, channel_id=ch_id, start=10)
+=======
+
+
+    with pytest.raises(error.AccessError):
+        channel.channel_messages(token=token2, channel_id=ch_id, start=0)
+>>>>>>> dev2_debug_ray
 
     data.get_data().reset()
