@@ -29,7 +29,11 @@ import error
 import data
 import auth_helper
 
-######################## Access Errors ########################
+################################################################################
+#                                                                              #
+#                                Access ERRORS                                 #
+#                                                                              #
+################################################################################
 
 
 def is_token_valid(func):
@@ -248,7 +252,11 @@ def is_admin_or_owner(func):
     return wrapper
 
 
-######################## Input Errors ########################
+################################################################################
+#                                                                              #
+#                               INPUT ERRORS                                   #
+#                                                                              #
+################################################################################
 
 
 def valid_email(func):
@@ -261,7 +269,7 @@ def valid_email(func):
         email = kwargs['email']
 
         # Check the email form
-        valid_email_regex = r'[\w+g]{0,64}[@][\w+g+\.]{0,255}$'
+        valid_email_regex = r'[\w+g]{1,64}[@][\w+g+\.]{1,255}$'
 
         if not re.match(valid_email_regex, email):
             raise error.InputError('Error: invalid email.')
@@ -282,7 +290,26 @@ def email_does_not_exist(func):
 
         # If it doesn't exist, raise an error
         if not data.get_data().get_user_with_email(email):
-            raise error.InputError('Email entered does not belong to a user.')
+            raise error.InputError('Error: email does not exist.')
+
+        return func(*args, **kwargs)
+
+    return wrapper
+
+
+def email_already_used(func):
+    '''
+    Email address is already being used by another user.
+    '''
+    def wrapper(*args, **kwargs):
+
+        # Get the email
+        email = kwargs['email']
+
+        # If it email is already used, raise an error
+        if data.get_data().get_user_with_email(email):
+            raise error.InputError(
+                'Email address is already being used by another user.')
 
         return func(*args, **kwargs)
 
@@ -330,25 +357,6 @@ def authenticate_password(func):
         strd_hash = data.get_data().get_password_with_hash(try_hash).get_hash()
         if try_hash != strd_hash:
             raise error.InputError("Incorrect password")
-
-        return func(*args, **kwargs)
-
-    return wrapper
-
-
-def email_already_used(func):
-    '''
-    Email address is already being used by another user.
-    '''
-    def wrapper(*args, **kwargs):
-
-        # Get the email
-        email = kwargs['email']
-
-        # If it email is already used, raise an error
-        if data.get_data().get_user_with_email(email):
-            raise error.InputError(
-                'Email address is already being used by another user.')
 
         return func(*args, **kwargs)
 
