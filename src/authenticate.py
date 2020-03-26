@@ -261,7 +261,7 @@ def valid_email(func):
         email = kwargs['email']
 
         # Check the email form
-        valid_email_regex = '^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$'
+        valid_email_regex = r'^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$'
         if not re.search(valid_email_regex, email):
             raise error.InputError('Email entered is not a valid email.')
 
