@@ -261,9 +261,10 @@ def valid_email(func):
         email = kwargs['email']
 
         # Check the email form
-        valid_email_regex = r'^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$'
-        if not re.search(valid_email_regex, email):
-            raise error.InputError('Email entered is not a valid email.')
+        valid_email_regex = r'[\w+g]{0,64}[@][\w+g+\.]{0,255}$'
+
+        if not re.match(valid_email_regex, email):
+            raise error.InputError('Error: invalid email.')
 
         return func(*args, **kwargs)
 
@@ -425,7 +426,6 @@ def is_user_in_channel(func):
 
 
 def check_u_id_existance(func):
-
     '''
     u_id does not refer to a valid user.
 
@@ -833,8 +833,7 @@ def already_active_standup(func):
         # Check if there is an active standup in this channel
         if channel_with_id.get_is_active_standup():
             raise error.AccessError(
-                'An active standup is currently running in this channel'
-                )
+                'An active standup is currently running in this channel')
 
         return func(*args, **kwargs)
 
@@ -854,8 +853,7 @@ def no_active_standup(func):
         # Check if there is not an active standup in this channel
         if not channel_with_id.get_is_active_standup():
             raise error.AccessError(
-                'An active standup is currently running in this channel'
-                )
+                'An active standup is currently running in this channel')
 
         return func(*args, **kwargs)
 
