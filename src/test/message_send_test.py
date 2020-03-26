@@ -20,9 +20,9 @@ def test_message_send_member(get_new_user_1):
                                      is_public=True)['channel_id']
     # Send message 1
     msg_send1 = 'The quick brown fox jumps over the lazy dog'
-    time_before1 = int(time.time())
+    time_before1 = int(time.time())-1
     msg_id1 = message.message_send(token=token1, channel_id=ch_id, message=msg_send1)['message_id']
-    time_after1 = int(time.time())
+    time_after1 = int(time.time())+1
 
     # Check message 1
     retval1 = other.search(token=token1, query_str=msg_send1)['messages']
@@ -35,9 +35,9 @@ def test_message_send_member(get_new_user_1):
 
     # Send message 2
     msg_send2 = 'The quick brown dog jumps over the lazy fox'
-    time_before2 = int(time.time())
+    time_before2 = int(time.time())-1
     msg_id2 = message.message_send(token=token1, channel_id=ch_id, message=msg_send2)['message_id']
-    time_after2 = int(time.time())
+    time_after2 = int(time.time())+1
 
     # Check message 2
     retval2 = other.search(token=token1, query_str=msg_send2)['messages']
@@ -65,31 +65,29 @@ def test_message_send_stranger(get_new_user_1, get_new_user_2):
     _, token2 = get_new_user_2
 
     # Create test channel
-    ch_id = channels.channels_create(token1, 'test_channel1',
-                                     True)['channel_id']
+    ch_id = channels.channels_create(token=token1, name='test_channel1',
+                                     is_public=True)['channel_id']
 
     # Actual test
     msg_send = 'The quick brown fox jumps over the lazy dog'
     with pytest.raises(error.AccessError):
-        message.message_send(token2, ch_id, msg_send)
+        message.message_send(token=token2, channel_id=ch_id, message=msg_send)
 
     get_data().reset()
 
 # Message is more than 1000 char
 def test_message_send_1000_char(get_new_user_1):
 
-    get_data().reset()
     # Register test user 1 (owner)
     _, token1 = get_new_user_1
 
     # Create test channel
-    ch_id = channels.channels_create(token1, 'test_channel1',
-                                     True)['channel_id']
+    ch_id = channels.channels_create(token=token1, name='test_channel1',
+                                     is_public=True)['channel_id']
 
     # Actual test
     msg_send = ('T' * 1001)
-    message.message_send(token1, ch_id, msg_send)
     with pytest.raises(error.InputError):
-        message.message_send(token1, ch_id, msg_send)
+        message.message_send(token=token1, channel_id=ch_id, message=msg_send)
 
     get_data().reset()
