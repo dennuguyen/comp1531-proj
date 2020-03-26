@@ -42,7 +42,7 @@ def test_user_profile_sethandle_handle_invalid(get_new_user_1):
 
     # Handle must be greater than 2 char
     with pytest.raises(error.InputError):
-        user.user_profile_sethandle(token=token,handle_str='aa')
+        user.user_profile_sethandle(token=token,handle_str='a')
 
     # Handle must be less than 21 char
     with pytest.raises(error.InputError):
