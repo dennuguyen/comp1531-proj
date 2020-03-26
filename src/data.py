@@ -703,9 +703,9 @@ class Data():
         self._login_list = []
         self._password_list = []
 
-        self._next_u_id = -1
-        self._next_channel_id = -1
-        self._next_message_id = -1
+        self._u_id = -1
+        self._ch_id = -1
+        self._msg_id = -1
 
 
 """
