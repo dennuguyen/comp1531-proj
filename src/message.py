@@ -83,7 +83,7 @@ def message_unreact(token, message_id, react_id):
 
 @au.authenticator(au.message_id_valid, au.is_token_valid, au.valid_channel_id,
                   au.is_user_in_channel, au.is_message_id_in_channel,
-                  au.not_ch_owner_or_owner, au.message_already_pinned)
+                  au.is_owner_or_slackr_owner, au.message_already_pinned)
 def message_pin(token, message_id):
     '''
     Given a message within a channel, mark it as "pinned" to be given
@@ -98,7 +98,7 @@ def message_pin(token, message_id):
 
 @au.authenticator(au.message_id_valid, au.is_token_valid, au.valid_channel_id,
                   au.is_user_in_channel, au.is_message_id_in_channel,
-                  au.not_ch_owner_or_owner, au.message_already_unpinned)
+                  au.is_owner_or_slackr_owner, au.message_already_unpinned)
 def message_unpin(token, message_id):
     '''
     Given a message within a channel, remove it's mark as unpinned
