@@ -119,7 +119,7 @@ class Channel():
             'owner_u_id_list': self._owner_u_id_list,
             'is_public': self._is_public,
             'is_active_standup' : self._is_active_standup,
-            'standup_queue' : self._standup_queue
+            'standup_queue' : self._standup_queue,
             'standup_time_finish' : self._standup_time_finish
         }
 
