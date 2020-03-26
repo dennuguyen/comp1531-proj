@@ -73,7 +73,7 @@ def is_not_member(func):
         channel_id = kwargs['channel_id']
 
         # Get the corresponding user with the token.
-        user_id = data.get_data().get_user_with_token(token)
+        user_id = data.get_data().get_user_with_token(token).get_u_id()
 
         # Get corresponding channel with the channel_id
         channel_with_id = data.get_data().get_channel_with_ch_id(channel_id)

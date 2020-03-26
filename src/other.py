@@ -30,7 +30,7 @@ def search(*, token, query_str):
     recent message to least recent message
     '''
     # First get the user_id from the token
-    u_id = data.get_data().get_user_with_token(token)
+    u_id = data.get_data().get_user_with_token(token).get_u_id()
 
     # Get a list of all the Channel classes.
     channels = data.get_data().get_channel_list()

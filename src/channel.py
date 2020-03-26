@@ -93,7 +93,7 @@ def channel_messages(*, token, channel_id, start):
         show = no_messages
         end_view = -1
 
-    channel_msg = {}
+    channel_msg = {'messages' : []}
     msg_info = {}
     msg_list = datapy.get_message_list()
 
@@ -102,10 +102,10 @@ def channel_messages(*, token, channel_id, start):
         for msg in msg_list:
             msg_dict = msg.get_message_dict()
             if msg_dict['message_id'] == msg_id_list[i]:
-                msg_info['message_id'] == msg_dict['message_id']
-                msg_info['u_id'] == msg_dict['u_id']
-                msg_info['message'] == msg_dict['message']
-                msg_info['time_created'] == msg_dict['time_created']
+                msg_info['message_id'] = msg_dict['message_id']
+                msg_info['u_id'] = msg_dict['u_id']
+                msg_info['message'] = msg_dict['message']
+                msg_info['time_created'] = msg_dict['time_created']
                 channel_msg['messages'].append(msg_info)
         i += 1
     channel_msg['start'] = start
