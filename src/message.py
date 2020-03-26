@@ -9,7 +9,7 @@ from data import get_data, Message
 @au.authenticator(au.is_token_valid,
                   au.message_length,
                   au.is_not_member)
-def message_send(token, channel_id, message):
+def message_send(*, token, channel_id, message):
     '''
     Send a message from authorised_user to the channel specified
     by channel_id
@@ -35,7 +35,7 @@ def message_send(token, channel_id, message):
                   au.message_length,
                   au.send_message_in_future,
                   au.is_not_member)
-def message_sendlater(token, channel_id, message, time_sent):
+def message_sendlater(*, token, channel_id, message, time_sent):
     '''
     Send a message from authorised_user to the channel specified
     by channel_id automatically at a specified time in the future
@@ -58,7 +58,7 @@ def message_sendlater(token, channel_id, message, time_sent):
                   au.is_message_id_in_channel,
                   au.is_valid_react_id,
                   au.already_contains_react)
-def message_react(token, message_id, react_id):
+def message_react(*, token, message_id, react_id):
     '''
     Given a message within a channel the authorised user is part of,
     add a "react" to that particular message
@@ -75,7 +75,7 @@ def message_react(token, message_id, react_id):
                   au.is_message_id_in_channel,
                   au.is_valid_react_id,
                   au.does_not_contain_react)
-def message_unreact(token, message_id, react_id):
+def message_unreact(*, token, message_id, react_id):
     '''
     Given a message within a channel the authorised user is part of,
     remove a "react" to that particular message
@@ -93,7 +93,7 @@ def message_unreact(token, message_id, react_id):
                   au.is_private_not_admin,
                   au.message_already_pinned,
                   au.user_not_member_using_message_id)
-def message_pin(token, message_id):
+def message_pin(*, token, message_id):
     '''
     Given a message within a channel, mark it as "pinned" to be given
     special display treatment by the frontend
@@ -110,7 +110,7 @@ def message_pin(token, message_id):
                   au.is_private_not_admin,
                   au.message_already_unpinned,
                   au.user_not_member_using_message_id)
-def message_unpin(token, message_id):
+def message_unpin(*, token, message_id):
     '''
     Given a message within a channel, remove it's mark as unpinned
     '''
@@ -124,7 +124,7 @@ def message_unpin(token, message_id):
 @au.authenticator(au.is_token_valid,
                   au.message_id_valid,
                   au.edit_permissions)
-def message_remove(token, message_id):
+def message_remove(*, token, message_id):
     '''
     Given a message_id for a message,
     this message is removed from the channel
@@ -142,17 +142,22 @@ def message_remove(token, message_id):
 
 @au.authenticator(au.is_token_valid,
                   au.edit_permissions)
-def message_edit(token, message_id, message):
+def message_edit(*, token, message_id, message):
     '''
     Given a message, update it's text with new text.
     If the new message is an empty string, the message is deleted.
     '''
     #  If the message is an empty string, delete it.
     if not message:
-        message_remove(token, message_id)
+        message_remove(token=token, message_id=message_id)
+        return{}
+
+    # Get uid from token
+    uid = get_data().get_user_with_token(token).get_u_id()
 
     # update the database
     message_object = get_data().get_message_with_message_id(message_id)
     message_object.set_message(message)
+    message_object.set_uid(uid)
 
     return {}

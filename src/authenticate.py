@@ -199,26 +199,24 @@ def edit_permissions(func):
     def wrapper(*args, **kwargs):
         message_id = kwargs['message_id']
         token = kwargs['token']
-
+        print(message_id)
         # Get the user class using the token
-        user_with_token = data.get_data().get_user_with_token(token)
+        token_uid = data.get_data().get_user_with_token(token).get_u_id()
 
         # Get the Message class using the message_id
-        message = data.get_data().get_message_with_message_id(message_id)
+        message_uid = data.get_data().get_message_with_message_id(message_id).get_u_id()
 
         # Check if the message was sent by the user by comparing u_ids
-        sent_by_user = user_with_token.get_u_id() == message.get_u_id()
+        sent_by_user = token_uid == message_uid
 
         # Check if user is an admin or owner of slakr
-        admin_or_owner = user_with_token.get_u_id(
-        ) == 0  # TODO: Add check for admin.
+        admin_or_owner = token_uid == 0  # TODO: Add check for admin.
 
         # Check if user is a owner of the channel. First get channel.
         channel = data.get_data().get_channel_with_message_id(message_id)
 
         # Check if his u_id is in the list of owners
-        owner_of_channel = user_with_token.get_u_id(
-        ) in channel.get_owner_u_id_list()
+        owner_of_channel = token_uid in channel.get_owner_u_id_list()
 
         # If none of these conditions are true. Raise access error
         if not (sent_by_user or admin_or_owner or owner_of_channel):

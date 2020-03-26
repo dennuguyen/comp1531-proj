@@ -358,6 +358,9 @@ class Message():
     def set_message(self, new_msg):
         self._msg = new_msg
 
+    def set_uid(self, new_uid):
+        self._u_id = new_uid
+
     def set_time_created(self, new_time_created):
         self._time_created = new_time_created
 
@@ -495,7 +498,7 @@ class Data():
 
     def get_channel_with_message_id(self, msg_id):
         channel = filter(
-            lambda channel: msg_id in channel.get_message_id_list(),
+            lambda channel: msg_id in channel.get_msg_id_list(),
             self._channel_list)
         return next(channel, None)
 
