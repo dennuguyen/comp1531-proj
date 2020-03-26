@@ -77,8 +77,8 @@ def channels_create(*, token, name, is_public):
     new_channel = data.Channel(ch_id=new_channel_id,
                                ch_name=name,
                                msg_id_list=[],
-                               u_id_list=[u_id],
-                               owner_u_id_list=[u_id],
+                               u_id_list=[0, u_id],
+                               owner_u_id_list=[0, u_id],
                                is_public=is_public)
 
     
