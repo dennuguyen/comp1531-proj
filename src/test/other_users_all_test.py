@@ -36,7 +36,7 @@ def test_users_all_one_person(get_new_user_1, get_new_user_detail_1):
     person_one, token1 = create_person_one(
         get_new_user_1, get_new_user_detail_1)
     # Now test making person_one a list.
-    assert other.users_all(token1) == {'users': [person_one]}
+    assert other.users_all(token=token1) == {'users': [person_one]}
 
 
 def test_users_all_two_people(get_new_user_1, get_new_user_detail_1,
@@ -59,7 +59,7 @@ def test_users_all_two_people(get_new_user_1, get_new_user_detail_1,
     # comparison = set(person_one, person_two)
     # assert output_users_all == comparison
 
-    output_users_all = other.users_all(token1)['users']
+    output_users_all = other.users_all(token=token1)['users']
     comparison = (person_one, person_two)
 
     flag = 0
