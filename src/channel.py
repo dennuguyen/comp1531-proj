@@ -5,7 +5,7 @@ import authenticate as au
 
 
 # Invite a user into channel as member
-@au.authenticator(au.is_token_valid, au.valid_channel_id, au.is_not_member, au.check_u_id_existance)
+@au.authenticator(au.is_token_valid, au.valid_channel_id, au.is_not_member, au.check_u_id_existence)
 def channel_invite(*, token, channel_id, u_id):
 
     # Add u_id into channel member list
