@@ -136,7 +136,7 @@ def test_single_user_channel_two_match(get_new_user_1, get_new_user_detail_1):
 
     sentence1 = 'The quick brown fox jumps over the lazy dog'
     # Send message
-    message.message_send(token1, channel_id, sentence1)
+    message.message_send(token=token1,channel_id=channel_id,message=sentence1)
 
     sentence2 = 'The quick brown fox jumps over the lazy dog'
     # Send message

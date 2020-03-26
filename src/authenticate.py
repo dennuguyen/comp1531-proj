@@ -354,8 +354,13 @@ def authenticate_password(func):
         try_hash = auth_helper.hash_it(salt, try_password)
 
         # Try hash comparison with the stored hash
-        strd_hash = data.get_data().get_password_with_hash(try_hash).get_hash()
-        if try_hash != strd_hash:
+        try:
+            strd_hash = data.get_data().get_password_with_hash(
+                try_hash).get_hash()
+
+            if try_hash != strd_hash:
+                raise error.InputError("Incorrect password")
+        except Exception:
             raise error.InputError("Incorrect password")
 
         return func(*args, **kwargs)
