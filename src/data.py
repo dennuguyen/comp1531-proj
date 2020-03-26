@@ -585,7 +585,7 @@ class Data():
 
         try:
             assert isinstance(new_login, Login)
-            self._login_list(new_login)
+            self._login_list.append(new_login)
         except AssertionError:
             raise AssertionError("Error: Parameter is not 'class Login'")
 
