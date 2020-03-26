@@ -14,7 +14,7 @@ def channel_invite(*, token, channel_id, u_id):
     channel_with_id = data.get_data().get_channel_with_ch_id(channel_id)
 
     # Add user to channel with corresponding id.
-    channel.add_new_member(u_id)
+    channel_with_id.add_new_member(u_id)
     return {
     }
 
@@ -37,7 +37,7 @@ def channel_details(*, token, channel_id):
     all_member_ids = channel_with_id.get_u_id_list()
 
     # Transform the list of user ids into User classes
-    all_users = map(lambda id: data.get_data().get_user_with_u_id(id), all_member_ids))
+    all_users = map(lambda id: data.get_data().get_user_with_u_id(id), all_member_ids)
 
     # Transform the mapping of users into a mapping of member dicts
     all_members = map(lambda user: user.get_member_details_dict(), all_users)
@@ -107,7 +107,7 @@ def channel_messages(*, token, channel_id, start):
 
 
 # Leave a channel
-@au.authenticator(au.is_token_valid, au.valid_channel_id, au.is_user_in_channel, au_is_not_slackr_owner)
+@au.authenticator(au.is_token_valid, au.valid_channel_id, au.is_user_in_channel, au.is_not_slackr_owner)
 def channel_leave(*, token, channel_id):
     '''
     Given a channel ID, the user removed as a member of this channel.
@@ -125,21 +125,26 @@ def channel_leave(*, token, channel_id):
     channel_with_id.remove_member(u_id)
 
     return {
-        
+
     }
 
 
 # Join a public channel as member
 @au.authenticator(au.is_token_valid, au.valid_channel_id, au.is_private_not_admin)
 def channel_join(*, token, channel_id):
+    '''
+    Given a channel_id of a channel that the authorised user can join, adds them to that channel
+    '''
 
-    # Add u_id to channel member list
+    # Get u_id using the token
+    user = data.get_data().get_user_with_token(token)
+    u_id = user.get_u_id()
 
-    datapy = data.get_data()
-    channel = datapy.get_channel_with_ch_id(channel_id)
-    login = datapy.get_login_with_token(token)
-    u_id = login.u_id
-    channel.add_new_member(u_id)
+    # Get the corresponding channel with channel_id
+    channel_with_id = data.get_data().get_channel_with_ch_id(channel_id)
+
+    # Add the u_id to the channel
+    channel_with_id.add_new_member(u_id)
 
     return {
     }
@@ -148,14 +153,15 @@ def channel_join(*, token, channel_id):
 # Add a member as an owner of channel
 @au.authenticator(au.is_token_valid, au.valid_channel_id, au.is_admin_or_owner, au.not_ch_owner_or_owner, au.is_user_in_channel)
 def channel_addowner(*, token, channel_id, u_id):
+    '''
+    Make user with user id u_id an owner of this channel.
+    '''
 
-    # Add u_id into channel owner list
+    # Get corresponding channel with channel id
+    channel_with_id = data.get_data().get_channel_with_ch_id(channel_id)
 
-    datapy = data.get_data()
-    channel = datapy.get_channel_with_ch_id(channel_id)
-    login = datapy.get_login_with_token(token)
-    u_id = login.u_id
-    channel.add_new_owner(u_id)
+    # Add user with u_id as an owner.
+    channel_with_id.add_new_owner(u_id)
 
     return {
     }
@@ -164,13 +170,14 @@ def channel_addowner(*, token, channel_id, u_id):
 # Remove owner from owner list
 @au.authenticator(au.is_token_valid, au.valid_channel_id, au.is_admin_or_owner, au.is_user_in_channel)
 def channel_removeowner(*, token, channel_id, u_id):
+    '''
+    Remove user with user id u_id an owner of this channel.
+    '''
 
-    # Remove u_id from channel owner list
+    # Get channel with channel_id
+    channel = data.get_data().get_channel_with_ch_id(channel_id)
 
-    datapy = data.get_data()
-    channel = datapy.get_channel_with_ch_id(channel_id)
-    login = datapy.get_login_with_token(token)
-    u_id = login.u_id
+    # Remove the owner with u_id.
     channel.remove_owner(u_id)
 
     return {
