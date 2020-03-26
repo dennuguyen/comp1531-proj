@@ -6,9 +6,8 @@ import auth_helper
 import data
 
 
-@au.valid_email
-@au.email_does_not_exist
-@au.authenticate_password
+@au.authenticator(au.valid_email, au.email_does_not_exist,
+                  au.authenticate_password, au.check_password_length)
 def auth_login(*, email, password):
     """
     Logs the user in with email and password.
@@ -30,7 +29,7 @@ def auth_login(*, email, password):
     return data.get_data().get_login_with_token(token).get_login_dict()
 
 
-@au.is_token_valid
+@au.authenticator(au.is_token_valid)
 def auth_logout(*, token):
     """
     Logs the user out with just the token.
@@ -56,9 +55,8 @@ def auth_logout(*, token):
     return {'is_success': is_success}
 
 
-@au.valid_email
-@au.email_already_used
-@au.check_name_length
+@au.authenticator(au.valid_email, au.email_already_used, au.check_name_length,
+                  au.check_password_length)
 def auth_register(*, email, password, name_first, name_last):
     """
     Registers the user. Several processes occur in this function: the user id,
