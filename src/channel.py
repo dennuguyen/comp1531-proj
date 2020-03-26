@@ -109,20 +109,23 @@ def channel_messages(*, token, channel_id, start):
 # Leave a channel
 @au.authenticator(au.is_token_valid, au.valid_channel_id, au.is_user_in_channel, au_is_not_slackr_owner)
 def channel_leave(*, token, channel_id):
+    '''
+    Given a channel ID, the user removed as a member of this channel.
+    '''
 
+    # Get Channel class with the channel_id
+    channel_with_id = data.get_data().get_channel_with_ch_id(channel_id)
 
-    # Remove user from channel member list
+    # Get the corresponding User id with the token
+    user_with_token = data.get_data().get_user_with_token(token)
+    u_id = user_with_token.get_u_id()
 
-    datapy = data.get_data()
-    channel = datapy.get_channel_with_ch_id(channel_id)
-    login = datapy.get_login_with_token(token)
-    u_id = login.u_id
-
-    if u_id in channel.get_owner_u_id_list():
-        channel.remove_owner(u_id)
-    channel.remove_member(u_id)
+    if u_id in channel_with_id.get_owner_u_id_list():
+        channel_with_id.remove_owner(u_id)
+    channel_with_id.remove_member(u_id)
 
     return {
+        
     }
 
 
