@@ -58,6 +58,7 @@ def test_channel_addowner_promote_member(get_new_user_1, get_new_user_detail_1,
         ],
     }
 
+    data.get_data().reset()
 
 # test case where owner promotes owner to owner
 def test_channel_addowner_promote_owner(get_new_user_1, get_new_user_2,
@@ -83,6 +84,7 @@ def test_channel_addowner_promote_owner(get_new_user_1, get_new_user_2,
     with pytest.raises(error.InputError):
         channel.channel_addowner(token=token1, channel_id=ch_id, u_id=u_id2)
 
+    data.get_data().reset()
 
 # test case where owner promotes stranger to owner
 def test_channel_addowner_promote_stranger(get_new_user_1, get_new_user_2,
@@ -102,6 +104,7 @@ def test_channel_addowner_promote_stranger(get_new_user_1, get_new_user_2,
     with pytest.raises(error.InputError):
         channel.channel_addowner(token=token1, channel_id=ch_id, u_id=u_id2)
 
+    data.get_data().reset()
 
 # test case where member promotes member to owner
 def test_channel_addowner_unauthorised_member(get_new_user_1, get_new_user_2,
@@ -133,6 +136,7 @@ def test_channel_addowner_unauthorised_member(get_new_user_1, get_new_user_2,
     with pytest.raises(error.AccessError):
         channel.channel_addowner(token=token3, channel_id=ch_id, u_id=u_id2)
 
+    data.get_data().reset()
 
 # test case where stranger promotes member to owner
 def test_channel_addowner_unauthorised_stranger(get_new_user_1, get_new_user_2,
@@ -159,6 +163,7 @@ def test_channel_addowner_unauthorised_stranger(get_new_user_1, get_new_user_2,
     with pytest.raises(error.AccessError):
         channel.channel_addowner(token=token3, channel_id=ch_id, u_id=u_id2)
 
+    data.get_data().reset()
 
 # channel id validity
 def test_channel_addowner_invalid_channel_id(get_new_user_1, get_new_user_2,
@@ -181,6 +186,7 @@ def test_channel_addowner_invalid_channel_id(get_new_user_1, get_new_user_2,
     with pytest.raises(error.InputError):
         channel.channel_addowner(token=token1, channel_id=ch_id + 1, u_id=u_id2)
 
+    data.get_data().reset()
 
 # u_id does not match any existing user
 def test_channel_addowner_invalid_u_id(get_new_user_1, get_new_user_2,
@@ -202,3 +208,5 @@ def test_channel_addowner_invalid_u_id(get_new_user_1, get_new_user_2,
     # invalid user id
     with pytest.raises(error.InputError):
         channel.channel_addowner(token=token1, channel_id=ch_id, u_id=u_id2+1000000)
+
+    data.get_data().reset()

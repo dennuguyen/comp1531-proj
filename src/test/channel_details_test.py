@@ -1,3 +1,4 @@
+import data
 import pytest
 import channel
 import error
@@ -50,6 +51,7 @@ def test_channel_details(get_new_user_1, get_new_user_detail_1, get_new_user_2,
         ],
     }
 
+    data.get_data().reset()
 
 # nonmember of channel tries to call its details
 def test_channel_details_invalid_user(get_new_user_1, get_new_user_2,
@@ -73,6 +75,7 @@ def test_channel_details_invalid_user(get_new_user_1, get_new_user_2,
     with pytest.raises(error.AccessError):
         channel.channel_details(token=token1 + token2, channel_id=ch_id)
 
+    data.get_data().reset()
 
 # invalid channel id
 def test_channel_details_invalid_channel_id(get_new_user_1, get_channel_name_1):
@@ -87,3 +90,5 @@ def test_channel_details_invalid_channel_id(get_new_user_1, get_channel_name_1):
     # invalid channel id
     with pytest.raises(error.InputError):
         channel.channel_details(token=token1, channel_id=ch_id + 1000000)
+
+    data.get_data().reset()
