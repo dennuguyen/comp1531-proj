@@ -93,11 +93,7 @@ def channel_messages(*, token, channel_id, start):
         show = no_messages
         end_view = -1
 
-<<<<<<< HEAD
-    channel_msg = {'messages' : []}
-=======
     channel_msg = {'messages':[]}
->>>>>>> dev2_debug_ray
     msg_info = {}
     msg_list = datapy.get_message_list()
 
@@ -123,11 +119,7 @@ def channel_messages(*, token, channel_id, start):
 @au.authenticator(au.is_token_valid,
                   au.valid_channel_id,
                   au.is_not_member,
-<<<<<<< HEAD
-                  au.is_not_owner_of_slackr)
-=======
                   au.is_not_slackr_owner)
->>>>>>> dev2_debug_ray
 def channel_leave(*, token, channel_id):
     '''
     Given a channel ID, the user removed as a member of this channel.
