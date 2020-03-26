@@ -93,7 +93,7 @@ def channel_messages(*, token, channel_id, start):
         show = no_messages
         end_view = -1
 
-    channel_msg = {}
+    channel_msg = {'messages':[]}
     msg_info = {}
     msg_list = datapy.get_message_list()
 
@@ -102,10 +102,10 @@ def channel_messages(*, token, channel_id, start):
         for msg in msg_list:
             msg_dict = msg.get_message_dict()
             if msg_dict['message_id'] == msg_id_list[i]:
-                msg_info['message_id'] == msg_dict['message_id']
-                msg_info['u_id'] == msg_dict['u_id']
-                msg_info['message'] == msg_dict['message']
-                msg_info['time_created'] == msg_dict['time_created']
+                msg_info['message_id'] = msg_dict['message_id']
+                msg_info['u_id'] = msg_dict['u_id']
+                msg_info['message'] = msg_dict['message']
+                msg_info['time_created'] = msg_dict['time_created']
                 channel_msg['messages'].append(msg_info)
         i += 1
     channel_msg['start'] = start
@@ -118,7 +118,8 @@ def channel_messages(*, token, channel_id, start):
 # Leave a channel
 @au.authenticator(au.is_token_valid,
                   au.valid_channel_id,
-                  au.is_not_member)
+                  au.is_not_member,
+                  au.is_not_slackr_owner)
 def channel_leave(*, token, channel_id):
     '''
     Given a channel ID, the user removed as a member of this channel.
@@ -190,7 +191,10 @@ def channel_addowner(*, token, channel_id, u_id):
 @au.authenticator(au.is_token_valid,
                   au.valid_channel_id,
                   au.not_owner,
-                  au.is_owner_or_slackr_owner,)
+                  au.is_owner_or_slackr_owner,
+                  au.is_not_owner_of_slackr,
+                  au.is_not_self,
+                  au.check_u_id_existence)
 def channel_removeowner(*, token, channel_id, u_id):
     '''
     Remove user with user id u_id an owner of this channel.
