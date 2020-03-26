@@ -50,8 +50,10 @@ def is_token_valid(func):
         valid_tokens = map(lambda logged_in_user: logged_in_user.get_token(),
                            logged_in_list)
 
+        #print(token)
+        #print(list(valid_tokens)) # The result is []
         # If the token is not in the list (technically mapping) of valid tokens. Raise Error.
-        if not token in valid_tokens:
+        if not token in list(valid_tokens):
             raise error.AccessError('token passed in is not a valid token')
 
         # Else, return the function.
@@ -73,15 +75,15 @@ def is_not_member(func):
         channel_id = kwargs['channel_id']
 
         # Get the corresponding user with the token.
-        user_id = data.get_data().get_user_with_token(token)
+        user = data.get_data().get_user_with_token(token)
 
         # Get corresponding channel with the channel_id
         channel_with_id = data.get_data().get_channel_with_ch_id(channel_id)
 
         # Check if user is in the channel. If not, raise an error.
-        if not user_id in channel_with_id.get_u_id_list():
+        if not user.get_u_id() in channel_with_id.get_u_id_list():
             raise error.AccessError(
-                f"Error: User is not a member of channel with {channel_id}")
+                f"Error: User {user.get_u_id()} is not a member of channel with {channel_id}")
 
         # Else, return the function
         return func(*args, **kwargs)
