@@ -6,7 +6,9 @@ import time
 import authenticate as au
 from data import get_data, Message
 
-@au.authenticator(au.is_token_valid, au.is_user_in_channel, au.valid_channel_id, au.message_length)
+@au.authenticator(au.is_token_valid,
+                  au.message_length,
+                  au.is_not_member)
 def message_send(token, channel_id, message):
     '''
     Send a message from authorised_user to the channel specified
@@ -28,8 +30,11 @@ def message_send(token, channel_id, message):
         'message_id': message_id
     }
 
-@au.authenticator(au.is_token_valid, au.is_user_in_channel, au.valid_channel_id,
-                    au.message_length, au.send_message_in_future)
+@au.authenticator(au.is_token_valid,
+                  au.valid_channel_id,
+                  au.message_length,
+                  au.send_message_in_future,
+                  au.is_not_member)
 def message_sendlater(token, channel_id, message, time_sent):
     '''
     Send a message from authorised_user to the channel specified
@@ -49,9 +54,10 @@ def message_sendlater(token, channel_id, message, time_sent):
         'message_id': message_id
     }
 
-@au.authenticator(au.message_id_valid, au.is_token_valid, au.valid_channel_id,
-                  au.is_user_in_channel, au.is_message_id_in_channel,
-                  au.is_valid_react_id, au.already_contains_react)
+@au.authenticator(au.is_token_valid,
+                  au.is_message_id_in_channel,
+                  au.is_valid_react_id,
+                  au.already_contains_react)
 def message_react(token, message_id, react_id):
     '''
     Given a message within a channel the authorised user is part of,
@@ -65,9 +71,10 @@ def message_react(token, message_id, react_id):
 
     return {}
 
-@au.authenticator(au.message_id_valid, au.is_token_valid, au.valid_channel_id,
-                  au.is_user_in_channel, au.is_message_id_in_channel,
-                  au.is_valid_react_id, au.does_not_contain_react)
+@au.authenticator(au.is_token_valid,
+                  au.is_message_id_in_channel,
+                  au.is_valid_react_id,
+                  au.does_not_contain_react)
 def message_unreact(token, message_id, react_id):
     '''
     Given a message within a channel the authorised user is part of,
@@ -81,9 +88,11 @@ def message_unreact(token, message_id, react_id):
 
     return {}
 
-@au.authenticator(au.message_id_valid, au.is_token_valid, au.valid_channel_id,
-                  au.is_user_in_channel, au.is_message_id_in_channel,
-                  au.is_owner_or_slackr_owner, au.message_already_pinned)
+@au.authenticator(au.is_token_valid,
+                  au.message_id_valid,
+                  au.is_private_not_admin,
+                  au.message_already_pinned,
+                  au.user_not_member_using_message_id)
 def message_pin(token, message_id):
     '''
     Given a message within a channel, mark it as "pinned" to be given
@@ -96,9 +105,11 @@ def message_pin(token, message_id):
 
     return {}
 
-@au.authenticator(au.message_id_valid, au.is_token_valid, au.valid_channel_id,
-                  au.is_user_in_channel, au.is_message_id_in_channel,
-                  au.is_owner_or_slackr_owner, au.message_already_unpinned)
+@au.authenticator(au.is_token_valid,
+                  au.message_id_valid,
+                  au.is_private_not_admin,
+                  au.message_already_unpinned,
+                  au.user_not_member_using_message_id)
 def message_unpin(token, message_id):
     '''
     Given a message within a channel, remove it's mark as unpinned
@@ -110,7 +121,9 @@ def message_unpin(token, message_id):
 
     return {}
 
-@au.authenticator(au.message_id_valid, au.is_token_valid, au.edit_permissions)
+@au.authenticator(au.is_token_valid,
+                  au.message_id_valid,
+                  au.edit_permissions)
 def message_remove(token, message_id):
     '''
     Given a message_id for a message,
@@ -127,7 +140,8 @@ def message_remove(token, message_id):
 
     return {}
 
-@au.authenticator(au.message_id_valid, au.is_token_valid, au.edit_permissions)
+@au.authenticator(au.is_token_valid,
+                  au.edit_permissions)
 def message_edit(token, message_id, message):
     '''
     Given a message, update it's text with new text.

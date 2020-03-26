@@ -424,7 +424,7 @@ def is_user_in_channel(func):
     return wrapper
 
 
-def check_u_id_existance(func):
+def check_u_id_existence(func):
 
     '''
     u_id does not refer to a valid user.

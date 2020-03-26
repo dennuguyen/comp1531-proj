@@ -468,6 +468,9 @@ class Data():
         return next(user, None)
 
     def get_user_with_token(self, token):
+        u_id = next(filter(lambda log: log.get_token() == token, self._login_list)).get_u_id()
+        return self.get_user_with_u_id(u_id)
+
         user = filter(lambda user: user.get_token() == token, self._user_list)
         return next(user, None)
 
@@ -505,7 +508,7 @@ class Data():
         ]
 
     def get_login_with_token(self, token):
-        login = filter(lambda login: login.get_token() == token, self._token_list)
+        login = filter(lambda login: login.get_token() == token, self._login_list)
         return next(login, None)
 
     """
