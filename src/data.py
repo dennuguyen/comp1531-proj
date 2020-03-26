@@ -505,7 +505,7 @@ class Data():
         ]
 
     def get_login_with_token(self, token):
-        login = filter(lambda login: login.get_token() == token, self._token_list)
+        login = filter(lambda login: login.get_token() == token, self._login_list)
         return next(login, None)
 
     """
