@@ -27,7 +27,7 @@ def auth_login(*, email, password):
     data.get_data().add_login(new_login)
 
     # Return user id and valid token
-    return data.get_data().get_login_with_u_id(u_id).get_login_dict()
+    return data.get_data().get_login_with_token(token).get_login_dict()
 
 
 @au.is_token_valid
