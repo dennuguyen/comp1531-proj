@@ -6,9 +6,9 @@ import authenticate as au
 
 # Invite a user into channel as member
 @au.authenticator(au.is_token_valid,
-                  au.is_user_in_channel,
+                  au.is_token_in_channel,
                   au.check_u_id_existence,
-                  au.is_not_member)
+                  au.is_user_not_in_channel)
 def channel_invite(*, token, channel_id, u_id):
     '''
     Invites a user (with user id u_id) to join a channel with ID channel_id.
@@ -142,8 +142,9 @@ def channel_leave(*, token, channel_id):
 
 # Join a public channel as member
 @au.authenticator(au.is_token_valid,
-                  au.valid_channel_id, 
-                  au.is_private_not_admin)
+                  au.valid_channel_id,
+                  au.is_private_not_admin,
+                  au.is_token_not_in_channel)
 def channel_join(*, token, channel_id):
     '''
     Given a channel_id of a channel that the authorised user can join, adds them to that channel
@@ -189,7 +190,7 @@ def channel_addowner(*, token, channel_id, u_id):
 @au.authenticator(au.is_token_valid,
                   au.valid_channel_id,
                   au.not_owner,
-                  au.is_owner_or_slackr_owner)
+                  au.is_owner_or_slackr_owner,)
 def channel_removeowner(*, token, channel_id, u_id):
     '''
     Remove user with user id u_id an owner of this channel.

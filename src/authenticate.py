@@ -51,7 +51,7 @@ def is_token_valid(func):
                            logged_in_list)
 
         # If the token is not in the list (technically mapping) of valid tokens. Raise Error.
-        if not token in valid_tokens:
+        if token not in valid_tokens:
             raise error.AccessError('token passed in is not a valid token')
 
         # Else, return the function.
@@ -438,6 +438,84 @@ def is_user_in_channel(func):
 
     return wrapper
 
+def is_token_in_channel(func):
+    '''
+    channel_id does not refer to a valid channel that the authorised user is part of.
+    '''
+    def wrapper(*args, **kwargs):
+
+        # Get the channel id and user id in reference
+        channel_id, token = kwargs['channel_id'], kwargs['token']
+
+        u_id = data.get_data().get_user_with_token(token).get_u_id()
+
+        # Find the channel respective to the u_id
+        channel_with_id = data.get_data().get_channel_with_ch_id(channel_id)
+
+        # Now we either have a channel or not.
+        # If its empty, invalid. Else we need to check if user is in it
+        if not channel_with_id:
+            raise error.InputError('The channel does not exist.')
+
+        # Now we are in a situation where we have an actual channel. Now to check if user is in it.
+        if u_id not in channel_with_id.get_u_id_list():
+            raise error.AccessError('The user is not in this channel.')
+
+        return func(*args, **kwargs)
+
+    return wrapper
+
+def is_token_not_in_channel(func):
+    '''
+    channel_id does not refer to a valid channel that the authorised user is part of.
+    '''
+    def wrapper(*args, **kwargs):
+
+        # Get the channel id and user id in reference
+        channel_id, token = kwargs['channel_id'], kwargs['token']
+
+        u_id = data.get_data().get_user_with_token(token).get_u_id()
+
+        # Find the channel respective to the u_id
+        channel_with_id = data.get_data().get_channel_with_ch_id(channel_id)
+
+        # Now we either have a channel or not.
+        # If its empty, invalid. Else we need to check if user is in it
+        if not channel_with_id:
+            raise error.InputError('The channel does not exist.')
+
+        # Now we are in a situation where we have an actual channel. Now to check if user is in it.
+        if u_id in channel_with_id.get_u_id_list():
+            raise error.InputError('The user is in this channel.')
+
+        return func(*args, **kwargs)
+
+    return wrapper
+
+def is_user_not_in_channel(func):
+    '''
+    channel_id refer to a valid channel that the authorised user is part of.
+    '''
+    def wrapper(*args, **kwargs):
+
+        # Get the channel id and user id in reference
+        channel_id, u_id = kwargs['channel_id'], kwargs['u_id']
+
+        # Find the channel respective to the u_id
+        channel_with_id = data.get_data().get_channel_with_ch_id(channel_id)
+
+        # Now we either have a channel or not.
+        # If its empty, invalid. Else we need to check if user is in it
+        if not channel_with_id:
+            raise error.InputError('The channel does not exist.')
+
+        # Now we are in a situation where we have an actual channel. Now to check if user is in it.
+        if u_id in channel_with_id.get_u_id_list():
+            raise error.InputError('The user is in this channel.')
+
+        return func(*args, **kwargs)
+
+    return wrapper
 
 def check_u_id_existence(func):
     '''
