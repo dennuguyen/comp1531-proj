@@ -1,3 +1,4 @@
+import data
 import pytest
 import channel
 import error
@@ -21,23 +22,24 @@ def test_channel_leave_user_leaves(get_new_user_1, get_new_user_2, get_new_user_
 
     # user 1 creates a channel
     ch_name = get_channel_name_1
-    ch_id = channels.channels_create(token1, ch_name, True)['channel_id']
+    ch_id = channels.channels_create(token=token1, name=ch_name, is_public=True)['channel_id']
 
     # user 2 joins channel and is promoted to owner permissions
-    channel.channel_join(token2, ch_id)
-    channel.channel_addowner(token1, ch_id, u_id2)
+    channel.channel_join(token=token2, channel_id=ch_id)
+    channel.channel_addowner(token=token1, channel_id=ch_id, u_id=u_id2)
 
     # user 2 joins channel
-    channel.channel_join(token3, ch_id)
+    channel.channel_join(token=token3, channel_id=ch_id)
 
     # user 2 (owner) leaves
-    assert channel.channel_leave(token2, ch_id) == {}
-    assert channels.channels_list(token2)['channels'] == []
+    assert channel.channel_leave(token=token2, channel_id=ch_id) == {}
+    assert channels.channels_list(token=token2)['channels'] == []
 
     # user 3 (member) leaves
-    assert channel.channel_leave(token3, ch_id) == {}
-    assert channels.channels_list(token3)['channels'] == []
+    assert channel.channel_leave(token=token3, channel_id=ch_id) == {}
+    assert channels.channels_list(token=token3)['channels'] == []
 
+    data.get_data().reset()
 
 # case where slackr owner tries to leave
 def test_channel_leave_slackr_owner(get_new_user_1, get_new_user_2, get_channel_name_1):
@@ -50,22 +52,23 @@ def test_channel_leave_slackr_owner(get_new_user_1, get_new_user_2, get_channel_
 
     # user 1 creates a channel
     ch_name = get_channel_name_1
-    ch_id = channels.channels_create(token1, ch_name, True)['channel_id']
+    ch_id = channels.channels_create(token=token1, name=ch_name, is_public=True)['channel_id']
 
     # slackr owner leaves
     with pytest.raises(error.InputError):
-        channel.channel_leave(token1, ch_id)
+        channel.channel_leave(token=token1, channel_id=ch_id)
 
     # user 2 joins channel
-    channel.channel_join(token2, ch_id)
+    channel.channel_join(token=token2, channel_id=ch_id)
 
     # give user 2 owner permissions
-    channel.channel_addowner(token1, ch_id, u_id2)
+    channel.channel_addowner(token=token1, channel_id=ch_id, u_id=u_id2)
 
     # slackr owner cannot leave regardless
     with pytest.raises(error.InputError):
-        channel.channel_leave(token1, ch_id)
+        channel.channel_leave(token=token1, channel_id=ch_id)
 
+    data.get_data().reset()
 
 # invalid channel id
 def test_channel_leave_invalid_channel_id(get_new_user_1, get_new_user_2, get_channel_name_1):
@@ -78,15 +81,16 @@ def test_channel_leave_invalid_channel_id(get_new_user_1, get_new_user_2, get_ch
 
     # user 1 creates a channel
     ch_name = get_channel_name_1
-    ch_id = channels.channels_create(token1, ch_name, True)['channel_id']
+    ch_id = channels.channels_create(token=token1, name=ch_name, is_public=True)['channel_id']
 
     # user 2 joins channel
-    channel.channel_join(token2, ch_id)
+    channel.channel_join(token=token2, channel_id=ch_id)
 
     # invalid channel id
     with pytest.raises(error.InputError):
-        channel.channel_leave(token2, (ch_id + 1))
+        channel.channel_leave(token=token2, channel_id=(ch_id + 1000000))
 
+    data.get_data().reset()
 
 # stranger leaving channel or invalid token
 def test_channel_leave_unauthorised_user(get_new_user_1, get_new_user_2, get_channel_name_1):
@@ -99,8 +103,10 @@ def test_channel_leave_unauthorised_user(get_new_user_1, get_new_user_2, get_cha
 
     # user 1 creates a channel
     ch_name = get_channel_name_1
-    ch_id = channels.channels_create(token1, ch_name, True)['channel_id']
+    ch_id = channels.channels_create(token=token1, name=ch_name, is_public=True)['channel_id']
 
     # user 2 tries to leave the channel
     with pytest.raises(error.AccessError):
-        channel.channel_leave(token2, ch_id)
+        channel.channel_leave(token=token2, channel_id=ch_id)
+
+    data.get_data().reset()
