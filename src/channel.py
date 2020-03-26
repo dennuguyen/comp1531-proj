@@ -5,7 +5,10 @@ import authenticate as au
 
 
 # Invite a user into channel as member
-@au.authenticator(au.is_token_valid, au.valid_channel_id, au.is_not_member, au.check_u_id_existence)
+@au.authenticator(au.is_token_valid,
+                  au.is_user_in_channel,
+                  au.check_u_id_existence,
+                  au.is_not_member)
 def channel_invite(*, token, channel_id, u_id):
     '''
     Invites a user (with user id u_id) to join a channel with ID channel_id.
@@ -21,7 +24,9 @@ def channel_invite(*, token, channel_id, u_id):
 
 
 # Return details of channel that requester is member of
-@au.authenticator(au.is_token_valid, au.valid_channel_id, au.is_user_in_channel)
+@au.authenticator(au.is_token_valid,
+                  au.valid_channel_id,
+                  au.is_not_member)
 def channel_details(*, token, channel_id):
     '''
     Given a Channel with ID channel_id that the authorised user is part of.
@@ -63,8 +68,8 @@ def channel_details(*, token, channel_id):
 # Return messages in a channel that requester is member of
 @au.authenticator(au.is_token_valid,
                   au.valid_channel_id,
-                  au.is_user_in_channel,
-                  au.start_has_more_messages)
+                  au.start_has_more_messages,
+                  au.is_not_member)
 def channel_messages(*, token, channel_id, start):
     '''
     Given a Channel with ID channel_id that the authorised user is part of,
@@ -113,8 +118,7 @@ def channel_messages(*, token, channel_id, start):
 # Leave a channel
 @au.authenticator(au.is_token_valid,
                   au.valid_channel_id,
-                  au.is_user_in_channel,
-                  au.is_not_slackr_owner)
+                  au.is_not_member)
 def channel_leave(*, token, channel_id):
     '''
     Given a channel ID, the user removed as a member of this channel.
@@ -137,7 +141,9 @@ def channel_leave(*, token, channel_id):
 
 
 # Join a public channel as member
-@au.authenticator(au.is_token_valid, au.valid_channel_id, au.is_private_not_admin)
+@au.authenticator(au.is_token_valid,
+                  au.valid_channel_id, 
+                  au.is_private_not_admin)
 def channel_join(*, token, channel_id):
     '''
     Given a channel_id of a channel that the authorised user can join, adds them to that channel
@@ -160,9 +166,8 @@ def channel_join(*, token, channel_id):
 # Add a member as an owner of channel
 @au.authenticator(au.is_token_valid,
                   au.valid_channel_id,
-                  au.is_admin_or_owner,
-                  au.not_ch_owner_or_owner,
-                  au.is_user_in_channel)
+                  au.already_owner,
+                  au.is_owner_or_slackr_owner)
 def channel_addowner(*, token, channel_id, u_id):
     '''
     Make user with user id u_id an owner of this channel.
@@ -181,8 +186,8 @@ def channel_addowner(*, token, channel_id, u_id):
 # Remove owner from owner list
 @au.authenticator(au.is_token_valid,
                   au.valid_channel_id,
-                  au.is_admin_or_owner,
-                  au.is_user_in_channel)
+                  au.not_owner,
+                  au.is_owner_or_slackr_owner)
 def channel_removeowner(*, token, channel_id, u_id):
     '''
     Remove user with user id u_id an owner of this channel.
