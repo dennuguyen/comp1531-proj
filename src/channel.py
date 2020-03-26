@@ -118,7 +118,8 @@ def channel_messages(*, token, channel_id, start):
 # Leave a channel
 @au.authenticator(au.is_token_valid,
                   au.valid_channel_id,
-                  au.is_not_member)
+                  au.is_not_member,
+                  au.is_not_owner_of_slackr)
 def channel_leave(*, token, channel_id):
     '''
     Given a channel ID, the user removed as a member of this channel.

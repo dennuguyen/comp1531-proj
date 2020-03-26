@@ -490,6 +490,7 @@ class Data():
     def get_channel_with_ch_id(self, ch_id):
         channel = filter(lambda channel: channel.get_channel_id() == ch_id,
                          self._channel_list)
+        
         return next(channel, None)
 
     def get_channel_with_message_id(self, msg_id):
