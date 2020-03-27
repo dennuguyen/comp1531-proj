@@ -371,8 +371,8 @@ class Message():
     def set_message(self, new_msg):
         self._msg = new_msg
 
-    def set_u_id(self, new_uid):
-        self._u_id = new_uid
+    def set_u_id(self, new_u_id):
+        self._u_id = new_u_id
 
     def set_time_created(self, new_time_created):
         self._time_created = new_time_created

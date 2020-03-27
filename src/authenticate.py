@@ -76,13 +76,14 @@ def is_not_member(func):
 
         # Get the corresponding user with the token.
         user = data.get_data().get_user_with_token(token)
-        
+
         # Get corresponding channel with the channel_id
         channel_with_id = data.get_data().get_channel_with_ch_id(channel_id)
         # Check if user is in the channel. If not, raise an error.
         if not user.get_u_id() in channel_with_id.get_u_id_list():
             raise error.AccessError(
-                f"Error: User {user.get_u_id()} is not a member of channel with {channel_id}")
+                f"Error: User {user.get_u_id()} is not a member of channel with {channel_id}"
+            )
 
         # Else, return the function
         return func(*args, **kwargs)
@@ -201,22 +202,23 @@ def edit_permissions(func):
         token = kwargs['token']
         print(message_id)
         # Get the user class using the token
-        token_uid = data.get_data().get_user_with_token(token).get_u_id()
+        token_u_id = data.get_data().get_user_with_token(token).get_u_id()
 
         # Get the Message class using the message_id
-        message_uid = data.get_data().get_message_with_message_id(message_id).get_u_id()
+        message_u_id = data.get_data().get_message_with_message_id(
+            message_id).get_u_id()
 
         # Check if the message was sent by the user by comparing u_ids
-        sent_by_user = token_uid == message_uid
+        sent_by_user = token_u_id == message_u_id
 
         # Check if user is an admin or owner of slakr
-        admin_or_owner = token_uid == 0  # TODO: Add check for admin.
+        admin_or_owner = token_u_id == 0  # TODO: Add check for admin.
 
         # Check if user is a owner of the channel. First get channel.
         channel = data.get_data().get_channel_with_message_id(message_id)
 
         # Check if his u_id is in the list of owners
-        owner_of_channel = token_uid in channel.get_owner_u_id_list()
+        owner_of_channel = token_u_id in channel.get_owner_u_id_list()
 
         # If none of these conditions are true. Raise access error
         if not (sent_by_user or admin_or_owner or owner_of_channel):
@@ -436,6 +438,7 @@ def is_user_in_channel(func):
 
     return wrapper
 
+
 def is_token_in_channel(func):
     '''
     channel_id does not refer to a valid channel that the authorised user is part of.
@@ -462,6 +465,7 @@ def is_token_in_channel(func):
         return func(*args, **kwargs)
 
     return wrapper
+
 
 def is_token_not_in_channel(func):
     '''
@@ -490,6 +494,7 @@ def is_token_not_in_channel(func):
 
     return wrapper
 
+
 def is_user_not_in_channel(func):
     '''
     channel_id refer to a valid channel that the authorised user is part of.
@@ -515,6 +520,7 @@ def is_user_not_in_channel(func):
 
     return wrapper
 
+
 def is_not_slackr_owner(func):
     '''
     the authorised user is an owner of the slackr
@@ -525,7 +531,6 @@ def is_not_slackr_owner(func):
         # Get user_id from token
         user = data.get_data().get_user_with_token(token)
 
-
         # If user the owner of slakr, raise an error.
         if user.get_u_id() == 0:
             error_message = 'User is an owner of the slackr'
@@ -535,6 +540,7 @@ def is_not_slackr_owner(func):
         return func(*args, **kwargs)
 
     return wrapper
+
 
 def check_u_id_existence(func):
     '''
@@ -686,12 +692,12 @@ def channel_name_length(func):
         # Get channel name
         channel_name = kwargs['name']
 
-
         flag = channel_name.isspace()
 
         if len(channel_name) > 20 or channel_name == '' or flag is True:
-            raise error.InputError('Name is not valid: Must be less 20 characters and not empty or made up of spaces.')
-
+            raise error.InputError(
+                'Name is not valid: Must be less 20 characters and not empty or made up of spaces.'
+            )
 
 
         return func(*args, **kwargs)
@@ -749,7 +755,8 @@ def is_message_id_in_channel(func):
         user_with_token = data.get_data().get_user_with_token(token)
 
         # Check if the user is in the channel. If not, raise an error
-        if not channel_with_id or not user_with_token.get_u_id() in channel_with_id.get_u_id_list():
+        if not channel_with_id or not user_with_token.get_u_id(
+        ) in channel_with_id.get_u_id_list():
             error_message = f'''
             {message_id} is not a valid message within a channel that the authorised user has joined.
             '''
@@ -789,11 +796,11 @@ def already_contains_react(func):
         react_id = kwargs['react_id']
 
         # Get message with message_id
-        message = data.get_data().get_message_with_message_id(
-            message_id)
+        message = data.get_data().get_message_with_message_id(message_id)
 
         # If the react is already active
-        if message.get_react_with_react_id(react_id).get_is_this_user_reacted():
+        if message.get_react_with_react_id(
+                react_id).get_is_this_user_reacted():
             error_message = f'''
             Message with ID {message_id} already contains an active React with ID {react_id}
             '''
@@ -817,8 +824,9 @@ def does_not_contain_react(func):
         message_with_id = data.get_data().get_message_with_message_id(
             message_id)
 
-         # If the react is not active
-        if not message.get_react_with_react_id(react_id).get_is_this_user_reacted():
+        # If the react is not active
+        if not message.get_react_with_react_id(
+                react_id).get_is_this_user_reacted():
             error_message = f'''
             Message with ID {message_id} does not contain an active React with ID {react_id}
             '''
@@ -990,7 +998,7 @@ def permission_id(func):
 #### Extra Error checkers ####
 def is_not_owner_of_slackr(func):
     '''
-    Raise input error if uid is owner of slackr.
+    Raise input error if u_id is owner of slackr.
     '''
     def wrapper(*args, **kwargs):
         u_id = kwargs['u_id']
@@ -998,29 +1006,30 @@ def is_not_owner_of_slackr(func):
         # If the u_id is 0, this user is the owner of slackr. Raise error.
         if u_id == 0:
             raise error.InputError(
-                'Raise input error if uid is owner of slackr.')
+                'Raise input error if u_id is owner of slackr.')
 
         return func(*args, **kwargs)
 
     return wrapper
 
+
 def is_not_self(func):
     '''
-    Raise input error if uid is owner of slackr.
+    Raise input error if u_id is owner of slackr.
     '''
     def wrapper(*args, **kwargs):
         token = kwargs['token']
         u_id = kwargs['u_id']
-        token_uid = data.get_data().get_user_with_token(token).get_u_id()
+        token_u_id = data.get_data().get_user_with_token(token).get_u_id()
 
         # If the u_id is 0, this user is the owner of slackr. Raise error.
-        if u_id == token_uid:
-            raise error.InputError(
-                'Raise input error if token is self')
+        if u_id == token_u_id:
+            raise error.InputError('Raise input error if token is self')
 
         return func(*args, **kwargs)
 
     return wrapper
+
 
 #### Authenticator function ####
 

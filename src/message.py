@@ -142,12 +142,12 @@ def message_edit(*, token, message_id, message):
         message_remove(token=token, message_id=message_id)
         return {}
 
-    # Get uid from token
-    uid = get_data().get_user_with_token(token).get_u_id()
+    # Get u_id from token
+    u_id = get_data().get_user_with_token(token).get_u_id()
 
     # update the database
     message_object = get_data().get_message_with_message_id(message_id)
     message_object.set_message(message)
-    message_object.set_u_id(uid)
+    message_object.set_u_id(u_id)
 
     return {}
