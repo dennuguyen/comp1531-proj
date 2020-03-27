@@ -7,6 +7,7 @@ import authenticate as au
 from data import get_data, Message
 
 @au.authenticator(au.is_token_valid,
+                  au.valid_channel_id,
                   au.message_length,
                   au.is_not_member)
 def message_send(*, token, channel_id, message):
@@ -48,8 +49,9 @@ def message_sendlater(*, token, channel_id, message, time_sent):
     message_object = Message(message_id, u_id, message, time_created)
 
     # update the database
+    print(message_object)
     get_data().add_message_later(message_object)
-
+    print('message_id : ' + str(message_id))
     return {
         'message_id': message_id
     }

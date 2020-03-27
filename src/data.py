@@ -452,6 +452,9 @@ class Data():
 
     def get_message_list(self):
         return self._message_list
+    
+    def get_message_wait_list(self):
+        return self._message_wait_list
 
     def get_channel_list(self):
         return self._channel_list
@@ -540,6 +543,19 @@ class Data():
     def get_message_with_message(self, message):
         return [
             msg for msg in self._message_list if msg.get_message() == message
+        ]
+    
+    def get_message_wl_with_message_id(self, msg_id):
+        msg = filter(lambda msg: msg.get_message_id() == msg_id,
+                     self._message_wait_list)
+        return next(msg, None)
+
+    def get_message_wl_with_u_id(self, u_id):
+        return [msg for msg in self._message_wait_list if msg.get_u_id() == u_id]
+
+    def get_message_wl_with_message(self, message):
+        return [
+            msg for msg in self._message_wait_list if msg.get_message() == message
         ]
 
     """
