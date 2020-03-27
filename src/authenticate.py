@@ -154,6 +154,33 @@ def is_owner_or_slackr_owner(func):
 
     return wrapper
 
+def is_owner_or_slackr_owner_1(func):
+    '''
+    the authorised user is not an owner of the slackr, or an owner of this channel
+    '''
+    def wrapper(*args, **kwargs):
+
+        msg_id = kwargs['message_id']
+        token = kwargs['token']
+
+        # Get user_id from token
+        user = data.get_data().get_user_with_token(token)
+        u_id = user.get_u_id()
+
+        # Check if the message and the user are in the same channel while the user is an owner
+        flag = False
+        for channel in data.get_data().get_channel_list():
+            if u_id in channel.get_owner_u_id_list() and msg_id in channel.get_msg_id_list():
+                flag = True
+        if not flag:
+            error_message = 'User is not an owner of the slackr, or an owner of this channel'
+            raise error.AccessError(error_message)
+        
+        # Else, return the function
+        return func(*args, **kwargs)
+
+    return wrapper
+
 
 def user_not_member_using_message_id(func):
     '''
