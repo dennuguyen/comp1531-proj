@@ -192,7 +192,13 @@ class User():
     """
     User class
     """
-    def __init__(self, u_id, email, name_first, name_last, handle_str, permission_id,):
+    def __init__(self,
+                 u_id,
+                 email,
+                 name_first,
+                 name_last,
+                 handle_str,
+                 permission_id=2,):
         self._u_id = u_id
         self._email = email
         self._name_first = name_first
