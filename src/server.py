@@ -41,71 +41,35 @@ def echo():
 # Register
 @APP.route('/register', methods=['POST'])
 def register():
-    while True:
-        try:
-            if request.method == 'POST':
-                # Get the user information
-                register_retval = request.get_json()
-                email = register_retval['email']
-                password = register_retval['password']
-                name_first = register_retval['name_first']
-                name_last = register_retval['name_last']
+    # Get the user information
+    register_retval = request.get_json()
+    email = register_retval['email']
+    password = register_retval['password']
+    name_first = register_retval['name_first']
+    name_last = register_retval['name_last']
 
-                # Perform the user registration
-                auth.auth_register(
-                    email=email,
-                    password=password,
-                    name_first=name_first,
-                    name_last=name_last,
-                )
-
-        except error.InputError:
-            pass
-
-        except Exception:
-            print("GOt an exception here")
-
-        else:
-            break
+    # Perform the user registration
+    auth.auth_register(
+        email=email,
+        password=password,
+        name_first=name_first,
+        name_last=name_last,
+    )
 
 
 # Login the user
 @APP.route('/login', methods=['POST'])
 def login():
-    while True:
-        try:
-            if request.method == 'POST':
-                # Get the login information
-                login_retval = request.get_json()
-                email = login_retval['email']
-                password = login_retval['password']
+    # Get the login information
+    login_retval = request.get_json()
+    email = login_retval['email']
+    password = login_retval['password']
 
-                # Perform the login
-                auth.auth_login(
-                    email=email,
-                    password=password,
-                )
-
-        except error.InputError:
-            pass
-
-        except Exception:
-            print("GOt an exception here")
-
-        else:
-            break
-
-
-@APP.route('/profile', methods=['GET'])
-# Get token and u_id from ___
-def get_profile():
-    # try:
-    # token = request.form['token']
-    # u_id = request.form['u_id']
-    # return user.user_profile(token, u_id)
-    #     pass
-    # except:
-    pass
+    # Perform the login
+    auth.auth_login(
+        email=email,
+        password=password,
+    )
 
 
 # This will run if server.py is run

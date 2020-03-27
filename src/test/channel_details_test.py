@@ -1,3 +1,4 @@
+import data
 import pytest
 import channel
 import error
@@ -20,13 +21,13 @@ def test_channel_details(get_new_user_1, get_new_user_detail_1, get_new_user_2,
 
     # user 1 creates a channel
     ch_name = get_channel_name_1
-    ch_id = channels.channels_create(token1, ch_name, True)['channel_id']
+    ch_id = channels.channels_create(token=token1, name=ch_name, is_public=True)['channel_id']
 
     # user 2 joins channel
-    channel.channel_join(token2, ch_id)
+    channel.channel_join(token=token2, channel_id=ch_id)
 
     # check channel details
-    assert channel.channel_details(token2, ch_id) == {
+    assert channel.channel_details(token=token2, channel_id=ch_id) == {
         'name':
         ch_name,
         'owner_members': [
@@ -50,6 +51,7 @@ def test_channel_details(get_new_user_1, get_new_user_detail_1, get_new_user_2,
         ],
     }
 
+    data.get_data().reset()
 
 # nonmember of channel tries to call its details
 def test_channel_details_invalid_user(get_new_user_1, get_new_user_2,
@@ -63,16 +65,17 @@ def test_channel_details_invalid_user(get_new_user_1, get_new_user_2,
 
     # user 1 creates a channel
     ch_name = get_channel_name_1
-    ch_id = channels.channels_create(token1, ch_name, True)['channel_id']
+    ch_id = channels.channels_create(token=token1, name=ch_name, is_public=True)['channel_id']
 
     # call detail() as non-authorised user 2 (stranger)
     with pytest.raises(error.AccessError):
-        channel.channel_details(token2, ch_id)
+        channel.channel_details(token=token2, channel_id=ch_id)
 
     # non-existent user's token
     with pytest.raises(error.AccessError):
-        channel.channel_details(token1 + token2, ch_id)
+        channel.channel_details(token=token1 + token2, channel_id=ch_id)
 
+    data.get_data().reset()
 
 # invalid channel id
 def test_channel_details_invalid_channel_id(get_new_user_1, get_channel_name_1):
@@ -82,8 +85,10 @@ def test_channel_details_invalid_channel_id(get_new_user_1, get_channel_name_1):
 
     # user 1 creates a channel
     ch_name = get_channel_name_1
-    ch_id = channels.channels_create(token1, ch_name, True)['channel_id']
+    ch_id = channels.channels_create(token=token1, name=ch_name, is_public=True)['channel_id']
 
     # invalid channel id
     with pytest.raises(error.InputError):
-        channel.channel_details(token1, ch_id + 1)
+        channel.channel_details(token=token1, channel_id=ch_id + 1000000)
+
+    data.get_data().reset()

@@ -1,3 +1,4 @@
+import data
 import pytest
 import channel
 import error
@@ -21,11 +22,11 @@ def test_channel_join_public(get_new_user_1, get_new_user_detail_1, get_new_user
 
     # user 1 creates a channel
     ch_name = get_channel_name_1
-    ch_id = channels.channels_create(token1, ch_name, True)['channel_id']
+    ch_id = channels.channels_create(token=token1, name=ch_name, is_public=True)['channel_id']
 
     # user 2 (stranger) joins public channel
-    assert channel.channel_join(token2, ch_id) == {}
-    assert channel.channel_details(token2, ch_id) == {
+    assert channel.channel_join(token=token2, channel_id=ch_id) == {}
+    assert channel.channel_details(token=token2, channel_id=ch_id) == {
         'name':
         ch_name,
         'owner_members': [
@@ -49,6 +50,7 @@ def test_channel_join_public(get_new_user_1, get_new_user_detail_1, get_new_user
         ],
     }
 
+    data.get_data().reset()
 
 # stranger joins a private channel
 def test_channel_join_private(get_new_user_1, get_new_user_2, get_channel_name_1):
@@ -61,11 +63,13 @@ def test_channel_join_private(get_new_user_1, get_new_user_2, get_channel_name_1
 
     # user 1 creates a channel
     ch_name = get_channel_name_1
-    ch_id = channels.channels_create(token1, ch_name, False)
+    ch_id = channels.channels_create(token=token1, name=ch_name, is_public=False)['channel_id']
 
     # stranger joins private channel
     with pytest.raises(error.AccessError):
-        channel.channel_join(token2, ch_id)
+        channel.channel_join(token=token2, channel_id=ch_id)
+
+    data.get_data().reset()
 
 
 # invalid channel id
@@ -79,12 +83,13 @@ def test_channel_join_invalid_channel(get_new_user_1, get_new_user_2, get_channe
 
     # user 1 creates a channel
     ch_name = get_channel_name_1
-    ch_id = channels.channels_create(token1, ch_name, False)
+    ch_id = channels.channels_create(token=token1, name=ch_name, is_public=False)['channel_id']
 
     # stranger joins private channel
     with pytest.raises(error.InputError):
-        channel.channel_join(token2, (ch_id + 1))
+        channel.channel_join(token=token2, channel_id=(ch_id + 1000000))
 
+    data.get_data().reset()
 
 # rejoining a channel will raise InputError
 def test_channel_join_rejoin(get_new_user_1, get_new_user_2, get_channel_name_1,
@@ -98,11 +103,13 @@ def test_channel_join_rejoin(get_new_user_1, get_new_user_2, get_channel_name_1,
 
     # user 1 creates a public channel
     ch_name = get_channel_name_1
-    ch_id = channels.channels_create(token1, ch_name, True)
+    ch_id = channels.channels_create(token=token1, name=ch_name, is_public=True)['channel_id']
 
     # user 2 joins the channel
-    channel.channel_join(token2, ch_id)
+    channel.channel_join(token=token2, channel_id=ch_id)
 
     # user 2 joins the channel again
     with pytest.raises(error.InputError):
-        channel.channel_join(token2, ch_id)
+        channel.channel_join(token=token2, channel_id=ch_id)
+
+    data.get_data().reset()
