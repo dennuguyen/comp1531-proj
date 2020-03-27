@@ -292,7 +292,10 @@ class React():
 
     def set_is_this_user_reacted(self, flag):
         self._is_this_user_reacted = flag
-
+    
+    def reset(self):
+        self._is_this_user_reacted = False
+        self._u_id_list = []
 
 class Message():
     """
@@ -714,7 +717,13 @@ class Data():
     Resets the data state
     """
 
+    def reset_react(self):
+        for message in self._message_list:
+            for react in message.get_react_list():
+                react.reset()
+
     def reset(self):
+        self.reset_react()
         self._user_list = []
         self._message_list = []
         self._message_wait_list = []
