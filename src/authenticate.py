@@ -784,11 +784,11 @@ def already_contains_react(func):
         react_id = kwargs['react_id']
 
         # Get message with message_id
-        message_with_id = data.get_data().get_message_with_message_id(
+        message = data.get_data().get_message_with_message_id(
             message_id)
 
-        # If the react is in the list. Raise an error.
-        if react_id in message_with_id.get_react_list():
+        # If the react is already active
+        if message.get_react_with_react_id(react_id).get_is_this_user_reacted():
             error_message = f'''
             Message with ID {message_id} already contains an active React with ID {react_id}
             '''
@@ -812,8 +812,8 @@ def does_not_contain_react(func):
         message_with_id = data.get_data().get_message_with_message_id(
             message_id)
 
-        # If the react is not in the list. Raise an error
-        if not react_id in message_with_id.get_react_list():
+         # If the react is not active
+        if not message.get_react_with_react_id(react_id).get_is_this_user_reacted():
             error_message = f'''
             Message with ID {message_id} does not contain an active React with ID {react_id}
             '''
