@@ -144,7 +144,16 @@ def channel_details():
 
 ################################################################################
 
-# @APP.route("/user/profile", methods=["GET"])
+@APP.route("/user/profile", methods=["GET"])
+def user_profile():
+    '''
+    Get the information of a user
+    '''
+    token = flask.request.args.get("token")
+    u_id = flask.request.args.get("u_id")
+
+    return json.dumps(user.user_profile(token, u_id))
+
 # @APP.route("/user/profile/setname", methods=["PUT"])
 # @APP.route("/user/profile/setemail", methods=["PUT"])
 # @APP.route("/user/profile/sethandle", methods=["PUT"])
