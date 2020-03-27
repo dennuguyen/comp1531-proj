@@ -7,7 +7,6 @@ import authenticate as au
 from data import get_data, Message
 
 @au.authenticator(au.is_token_valid,
-                  au.valid_channel_id,
                   au.message_length,
                   au.is_not_member)
 def message_send(*, token, channel_id, message):
@@ -21,7 +20,8 @@ def message_send(*, token, channel_id, message):
     message_id = get_data().global_msg_id()
     time_created = int(time.time())
     message_object = Message(message_id, u_id, message, time_created)
-
+    print('here_inside_message_send')
+    print(message_object.get_react_with_react_id(1).get_u_id_list())
     # update the database
     get_data().add_message(message_object)
     channel = get_data().get_channel_with_ch_id(channel_id)
@@ -69,7 +69,7 @@ def message_react(*, token, message_id, react_id):
     # update the database
     u_id = get_data().get_user_with_token(token).get_u_id()
     message_object = get_data().get_message_with_message_id(message_id)
-    message_object.set_react(react_id, u_id, True)
+    message_object.set_react(react_id, u_id)
 
     return {}
 
@@ -86,7 +86,7 @@ def message_unreact(*, token, message_id, react_id):
     # update the database
     u_id = get_data().get_user_with_token(token).get_u_id()
     message_object = get_data().get_message_with_message_id(message_id)
-    message_object.set_react(react_id, u_id, False)
+    message_object.reset_react(react_id, u_id)
 
     return {}
 
