@@ -744,7 +744,7 @@ def is_message_id_in_channel(func):
         user_with_token = data.get_data().get_user_with_token(token)
 
         # Check if the user is in the channel. If not, raise an error
-        if not user_with_token.get_u_id() in channel_with_id.get_u_id_list():
+        if not channel_with_id or not user_with_token.get_u_id() in channel_with_id.get_u_id_list():
             error_message = f'''
             {message_id} is not a valid message within a channel that the authorised user has joined.
             '''
