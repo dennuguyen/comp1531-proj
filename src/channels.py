@@ -74,11 +74,16 @@ def channels_create(*, token, name, is_public):
     new_channel_id = data.get_data().global_ch_id()
 
     # Create a new channel with the only member being the creator.
+    u_id_list = [0, u_id]
+    owner_u_id_list = [0, u_id]
+    if u_id == 0:
+        u_id_list = [u_id]
+        owner_u_id_list = [u_id]
     new_channel = data.Channel(ch_id=new_channel_id,
                                ch_name=name,
                                msg_id_list=[],
-                               u_id_list=[0, u_id],
-                               owner_u_id_list=[0, u_id],
+                               u_id_list=u_id_list,
+                               owner_u_id_list=owner_u_id_list,
                                is_public=is_public)
 
     
