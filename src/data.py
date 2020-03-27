@@ -192,12 +192,19 @@ class User():
     """
     User class
     """
-    def __init__(self, u_id, email, name_first, name_last, handle_str):
+    def __init__(self,
+                 u_id,
+                 email,
+                 name_first,
+                 name_last,
+                 handle_str,
+                 permission_id=2,):
         self._u_id = u_id
         self._email = email
         self._name_first = name_first
         self._name_last = name_last
         self._handle_str = handle_str
+        self._permission_id = permission_id
 
     """
     Getters
@@ -234,6 +241,9 @@ class User():
     def get_handle_str(self):
         return self._handle_str
 
+    def get_permission_id(self):
+        return self._permission_id
+
     """
     Setters
     """
@@ -249,6 +259,10 @@ class User():
 
     def set_handle_str(self, new_handle_str):
         self._handle_str = new_handle_str
+    
+    def set_permission_id(self, permission_id):
+        assert permission_id == 1 or permission_id == 2, "Error: invalid permission id"
+        self._permission_id = permission_id
 
 
 class React():
@@ -497,6 +511,11 @@ class Data():
         user = filter(lambda user: user.get_handle_str() == handle_str,
                       self._user_list)
         return next(user, None)
+
+    def get_user_with_permission_id(self, permission_id):
+        return [
+            user for user in self._user_list if user.get_permission_id() == permission_id
+        ]
 
     """
     Channel Object Getters

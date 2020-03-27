@@ -1,3 +1,4 @@
+import data
 import auth
 import other
 import pytest
@@ -16,6 +17,8 @@ def create_person_one(get_new_user_1, get_new_user_detail_1):
     person_one['name_last'] = name_last
     person_one['handle_str'] = name_first.lower() + name_last.lower()
     return person_one, token
+
+    
 
 
 def create_person_two(get_new_user_2, get_new_user_detail_2):
@@ -38,6 +41,7 @@ def test_users_all_one_person(get_new_user_1, get_new_user_detail_1):
     # Now test making person_one a list.
     assert other.users_all(token=token1) == {'users': [person_one]}
 
+    data.get_data().reset()
 
 def test_users_all_two_people(get_new_user_1, get_new_user_detail_1,
                               get_new_user_2, get_new_user_detail_2):
@@ -68,3 +72,5 @@ def test_users_all_two_people(get_new_user_1, get_new_user_detail_1,
             if (a == b):
                 flag += 1
     assert flag == len(output_users_all)
+
+    data.get_data().reset()

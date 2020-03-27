@@ -679,15 +679,20 @@ def user_not_admin(func):
 
 def channel_name_length(func):
     '''
-    Name is more than 20 characters long.
+    Name is more than 20 characters long or empty string.
     '''
     def wrapper(*args, **kwargs):
 
         # Get channel name
         channel_name = kwargs['name']
 
-        if len(channel_name) > 20:
-            raise error.InputError('Name is more than 20 characters long.')
+
+        flag = channel_name.isspace()
+
+        if len(channel_name) > 20 or channel_name == '' or flag is True:
+            raise error.InputError('Name is not valid: Must be less 20 characters and not empty or made up of spaces.')
+
+
 
         return func(*args, **kwargs)
 
