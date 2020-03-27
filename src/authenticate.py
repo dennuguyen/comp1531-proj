@@ -174,7 +174,7 @@ def is_owner_or_slackr_owner_1(func):
                 flag = True
         if not flag:
             error_message = 'User is not an owner of the slackr, or an owner of this channel'
-            raise error.AccessError(error_message)
+            raise error.InputError(error_message)
         
         # Else, return the function
         return func(*args, **kwargs)
