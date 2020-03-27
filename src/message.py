@@ -91,8 +91,8 @@ def message_unreact(*, token, message_id, react_id):
     return {}
 
 @au.authenticator(au.is_token_valid,
-                  au.message_id_valid,
-                  au.is_private_not_admin,
+                  au.is_message_id_in_channel,
+                  au.is_owner_or_slackr_owner_1,
                   au.message_already_pinned,
                   au.user_not_member_using_message_id)
 def message_pin(*, token, message_id):
@@ -109,7 +109,7 @@ def message_pin(*, token, message_id):
 
 @au.authenticator(au.is_token_valid,
                   au.message_id_valid,
-                  au.is_private_not_admin,
+                  au.is_owner_or_slackr_owner_1,
                   au.message_already_unpinned,
                   au.user_not_member_using_message_id)
 def message_unpin(*, token, message_id):
