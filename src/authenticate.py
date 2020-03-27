@@ -809,7 +809,7 @@ def does_not_contain_react(func):
         react_id = kwargs['react_id']
 
         # Get message with message_id
-        message_with_id = data.get_data().get_message_with_message_id(
+        message = data.get_data().get_message_with_message_id(
             message_id)
 
          # If the react is not active
