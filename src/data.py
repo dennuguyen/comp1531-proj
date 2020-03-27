@@ -56,11 +56,6 @@ The Data class has a reset method to conveniently reset server data in memory.
 # - Please read all of the functions below before you call one of them in your #
 #   file.                                                                      #
 #                                                                              #
-# - There may be functions that are bugged as they have not been properly      #
-#   tested. Such as add_react, set_react                                       #
-#                                                                              #
-# - message_wait_list may require some getters in Data                         #
-#                                                                              #
 # - Underscores before a variable name indicates that variable is private.     #
 #                                                                              #
 ################################################################################
