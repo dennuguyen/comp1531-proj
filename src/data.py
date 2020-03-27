@@ -187,6 +187,7 @@ class Channel():
     def set_clear_standup_queue(self):
         self._standup_queue = []
 
+
 class User():
     """
     User class
@@ -400,20 +401,6 @@ class Message():
     def set_is_pinned(self, flag):
         self._is_pinned = flag
 
-
-class Standup():
-    '''
-    Standup class
-    '''
-    def __init__(self, name_first, message):
-        self._name_first = name_first
-        self._message = message
-
-    def get_standup_name(self):
-        return self._name_first
-
-    def get_standup_message(self):
-        return self._message
 
 class Password():
     """
