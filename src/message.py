@@ -4,7 +4,7 @@ Message related operations are here.
 
 import time
 import authenticate as au
-from data import get_data, Message
+from data import get_data, Message, React
 
 @au.authenticator(au.is_token_valid,
                   au.message_length,
@@ -19,7 +19,7 @@ def message_send(*, token, channel_id, message):
     # setup the message
     message_id = get_data().global_msg_id()
     time_created = int(time.time())
-    message_object = Message(message_id, u_id, message, time_created)
+    message_object = Message(message_id, u_id, message, time_created, [React(1, [], False)], False)
     print('here_inside_message_send')
     print(message_object.get_react_with_react_id(1).get_u_id_list())
     # update the database
@@ -46,7 +46,7 @@ def message_sendlater(*, token, channel_id, message, time_sent):
     # setup the message
     message_id = get_data().global_msg_id()
     time_created = int(time.time())
-    message_object = Message(message_id, u_id, message, time_created)
+    message_object = Message(message_id, u_id, message, time_created, [React(1, [], False)], False)
 
     # update the database
     print(message_object)
