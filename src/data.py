@@ -192,7 +192,13 @@ class User():
     """
     User class
     """
-    def __init__(self, u_id, email, name_first, name_last, handle_str, permission_id,):
+    def __init__(self,
+                 u_id,
+                 email,
+                 name_first,
+                 name_last,
+                 handle_str,
+                 permission_id=2,):
         self._u_id = u_id
         self._email = email
         self._name_first = name_first
@@ -379,11 +385,17 @@ class Message():
     def add_react(self, react_id, u_id, flag):
         pass
 
-    def set_react(self, react_id, u_id, flag):
+    def set_react(self, react_id, u_id):
         for react in self._react_list:
             if (react.get_react_id() == react_id):
-                react.set_is_this_user_reacted(flag)
+                react.set_is_this_user_reacted(True)
                 react.add_u_id(u_id)
+                break
+    def reset_react(self, react_id, u_id):
+        for react in self._react_list:
+            if (react.get_react_id() == react_id):
+                react.set_is_this_user_reacted(False)
+                react.remove_u_id(u_id)
                 break
 
     def set_is_pinned(self, flag):
