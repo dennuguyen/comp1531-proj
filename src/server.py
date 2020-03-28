@@ -108,8 +108,8 @@ def channel_invite():
     channel_id = retval["channel_id"]
     u_id = retval["u_id"]
     return channel.channel_invite(token=token,
-                                  channel_id=channel_id,
-                                  u_id=u_id)
+                                  channel_id=int(channel_id),
+                                  u_id=int(u_id))
 
 
 @APP.route("/channel/details", methods=["GET"])
@@ -120,7 +120,7 @@ def channel_details():
     """
     token = flask.request.args.get("token")
     channel_id = flask.request.args.get("channel_id")
-    return channel.channel_details(token=token, channel_id=channel_id)
+    return channel.channel_details(token=token, channel_id=int(channel_id))
 
 
 @APP.route("/channel/messages", methods=["GET"])
@@ -133,8 +133,8 @@ def channel_messages():
     channel_id = flask.request.args.get("channel_id")
     start = flask.request.args.get("start")
     return channel.channel_messages(token=token,
-                                    channel_id=channel_id,
-                                    start=start)
+                                    channel_id=int(channel_id),
+                                    start=int(start))
 
 
 @APP.route("/channel/leave", methods=["POST"])
@@ -145,7 +145,7 @@ def channel_leave():
     retval = flask.request.get_json()
     token = retval["token"]
     channel_id = retval["channel_id"]
-    return channel.channel_leave(token=token, channel_id=channel_id)
+    return channel.channel_leave(token=token, channel_id=int(channel_id))
 
 
 @APP.route("/channel/join", methods=["POST"])
@@ -156,7 +156,7 @@ def channel_join():
     retval = flask.request.get_json()
     token = retval["token"]
     channel_id = retval["channel_id"]
-    return channel.channel_join(token=token, channel_id=channel_id)
+    return channel.channel_join(token=token, channel_id=int(channel_id))
 
 
 @APP.route("/channel/addowner", methods=["POST"])
@@ -170,8 +170,8 @@ def channel_addowner():
     channel_id = retval["channel_id"]
     u_id = retval["u_id"]
     return channel.channel_addowner(token=token,
-                                    channel_id=channel_id,
-                                    u_id=u_id)
+                                    channel_id=int(channel_id),
+                                    u_id=int(u_id))
 
 
 @APP.route("/channel/removeowner", methods=["POST"])
@@ -185,8 +185,8 @@ def channel_removeowner():
     channel_id = retval["channel_id"]
     u_id = retval["u_id"]
     return channel.channel_removeowner(token=token,
-                                       channel_id=channel_id,
-                                       u_id=u_id)
+                                       channel_id=int(channel_id),
+                                       u_id=int(u_id))
 
 
 @APP.route("/channels/list", methods=["GET"])
@@ -219,7 +219,7 @@ def channels_create():
     is_public = retval["is_public"]
     return channels.channels_create(token=token,
                                     name=name,
-                                    is_public=is_public)
+                                    is_public=bool(is_public))
 
 
 @APP.route("/message/send", methods=["POST"])
@@ -233,7 +233,7 @@ def message_send():
     channel_id = retval["channel_id"]
     message_ = retval["message"]
     return message.message_send(token=token,
-                                channel_id=channel_id,
+                                channel_id=int(channel_id),
                                 message=message_)
 
 
@@ -249,9 +249,9 @@ def message_sendlater():
     message_ = retval["message"]
     time_sent = retval["time_sent"]
     return message.message_sendlater(token=token,
-                                     channel_id=channel_id,
+                                     channel_id=int(channel_id),
                                      message=message_,
-                                     time_sent=time_sent)
+                                     time_sent=float(time_sent))
 
 
 @APP.route("/message/react", methods=["POST"])
@@ -265,8 +265,8 @@ def message_react():
     message_id = retval["message_id"]
     react_id = retval["react_id"]
     return message.message_react(token=token,
-                                 message_id=message_id,
-                                 react_id=react_id)
+                                 message_id=int(message_id),
+                                 react_id=int(react_id))
 
 
 @APP.route("/message/unreact", methods=["POST"])
@@ -280,8 +280,8 @@ def message_unreact():
     message_id = retval["message_id"]
     react_id = retval["react_id"]
     return message.message_unreact(token=token,
-                                   message_id=message_id,
-                                   react_id=react_id)
+                                   message_id=int(message_id),
+                                   react_id=int(react_id))
 
 
 @APP.route("/message/pin", methods=["POST"])
@@ -293,7 +293,7 @@ def message_pin():
     retval = flask.request.get_json()
     token = retval["token"]
     message_id = retval["message_id"]
-    return message.message_pin(token=token, message_id=message_id)
+    return message.message_pin(token=token, message_id=int(message_id))
 
 
 @APP.route("/message/unpin", methods=["POST"])
@@ -305,7 +305,7 @@ def message_unpin():
     retval = flask.request.get_json()
     token = retval["token"]
     message_id = retval["message_id"]
-    return message.message_unpin(token=token, message_id=message_id)
+    return message.message_unpin(token=token, message_id=int(message_id))
 
 
 @APP.route("/message/remove", methods=["DELETE"])
@@ -317,7 +317,7 @@ def message_remove():
     retval = flask.request.get_json()
     token = retval["token"]
     message_id = retval["message_id"]
-    return message.message_remove(token=token, message_id=message_id)
+    return message.message_remove(token=token, message_id=int(message_id))
 
 
 @APP.route("/message/edit", methods=["PUT"])
@@ -331,7 +331,7 @@ def message_edit():
     message_id = retval["message_id"]
     message_ = retval["message"]
     return message.message_edit(token=token,
-                                message_id=message_id,
+                                message_id=int(message_id),
                                 message=message_)
 
 
@@ -342,7 +342,7 @@ def user_profile():
     """
     token = flask.request.args.get("token")
     u_id = flask.request.args.get("u_id")
-    return user.user_profile(token=token, u_id=u_id)
+    return user.user_profile(token=token, u_id=int(u_id))
 
 
 @APP.route("/user/profile/setname", methods=["PUT"])
@@ -410,8 +410,8 @@ def standup_start():
     channel_id = retval["channel_id"]
     length = retval["length"]
     return standup.standup_start(token=token,
-                                 channel_id=channel_id,
-                                 length=length)
+                                 channel_id=int(channel_id),
+                                 length=float(length))
 
 
 @APP.route("/standup/active", methods=["GET"])
@@ -421,7 +421,7 @@ def standup_active():
     """
     token = flask.request.args.get("token")
     channel_id = flask.request.args.get("channel_id")
-    return standup.standup_active(token=token, channel_id=channel_id)
+    return standup.standup_active(token=token, channel_id=int(channel_id))
 
 
 @APP.route("/standup/send", methods=["POST"])
@@ -434,7 +434,7 @@ def standup_send():
     channel_id = retval["channel_id"]
     message_ = retval["message"]
     return standup.standup_send(token=token,
-                                channel_id=channel_id,
+                                channel_id=int(channel_id),
                                 message=message_)
 
 
