@@ -713,11 +713,9 @@ def channel_name_length(func):
     def wrapper(*args, **kwargs):
 
         # Get channel name
-        channel_name = kwargs['name']
+        ch_name = kwargs['name']
 
-        flag = channel_name.isspace()
-
-        if len(channel_name) > 20 or channel_name == '' or flag is True:
+        if len(ch_name) > 20 or not ch_name or ch_name.isspace():
             raise error.InputError(
                 'Name is not valid: Must be less 20 characters and not empty or made up of spaces.'
             )
@@ -1013,10 +1011,9 @@ def is_valid_permission_id(func):
     def wrapper(*args, **kwargs):
         p_id = kwargs['permission_id']
 
-        # Check if the permission id is valid 
+        # Check if the permission id is valid
         if p_id != 1 and p_id != 2:
-            raise error.InputError(
-                'The permission id is invalid.')
+            raise error.InputError('The permission id is invalid.')
 
         return func(*args, **kwargs)
 
