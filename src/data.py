@@ -56,11 +56,6 @@ The Data class has a reset method to conveniently reset server data in memory.
 # - Please read all of the functions below before you call one of them in your #
 #   file.                                                                      #
 #                                                                              #
-# - There may be functions that are bugged as they have not been properly      #
-#   tested. Such as add_react, set_react                                       #
-#                                                                              #
-# - message_wait_list may require some getters in Data                         #
-#                                                                              #
 # - Underscores before a variable name indicates that variable is private.     #
 #                                                                              #
 ################################################################################
@@ -306,10 +301,6 @@ class React():
 
     def set_is_this_user_reacted(self, flag):
         self._is_this_user_reacted = flag
-    
-    def reset(self):
-        self._is_this_user_reacted = False
-        self._u_id_list = []
 
 class Message():
     """
@@ -375,8 +366,8 @@ class Message():
     def set_message(self, new_msg):
         self._msg = new_msg
 
-    def set_uid(self, new_uid):
-        self._u_id = new_uid
+    def set_u_id(self, new_u_id):
+        self._u_id = new_u_id
 
     def set_time_created(self, new_time_created):
         self._time_created = new_time_created
@@ -499,9 +490,6 @@ class Data():
     def get_user_with_token(self, token):
         u_id = next(filter(lambda log: log.get_token() == token, self._login_list)).get_u_id()
         return self.get_user_with_u_id(u_id)
-
-        user = filter(lambda user: user.get_token() == token, self._user_list)
-        return next(user, None)
 
     def get_user_with_email(self, email):
         user = filter(lambda user: user.get_email() == email, self._user_list)
@@ -741,14 +729,7 @@ class Data():
     """
     Resets the data state
     """
-
-    def reset_react(self):
-        for message in self._message_list:
-            for react in message.get_react_list():
-                react.reset()
-
     def reset(self):
-        self.reset_react()
         self._user_list = []
         self._message_list = []
         self._message_wait_list = []

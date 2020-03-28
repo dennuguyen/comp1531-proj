@@ -12,6 +12,8 @@ import data
 # Basic case
 def test_auth_register(get_new_user_detail_1):
 
+    data.get_data().reset()
+
     # Register and unpack u_id and token
     email, password, name_first, name_last = get_new_user_detail_1
     auth_retval = auth.auth_register(email=email,

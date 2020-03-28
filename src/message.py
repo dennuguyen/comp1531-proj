@@ -6,8 +6,8 @@ import time
 import authenticate as au
 from data import get_data, Message, React
 
-@au.authenticator(au.is_token_valid,
-                  au.message_length,
+
+@au.authenticator(au.is_token_valid, au.valid_channel_id, au.message_length,
                   au.is_not_member)
 def message_send(*, token, channel_id, message):
     '''
@@ -19,23 +19,20 @@ def message_send(*, token, channel_id, message):
     # setup the message
     message_id = get_data().global_msg_id()
     time_created = int(time.time())
-    message_object = Message(message_id, u_id, message, time_created, [React(1, [], False)], False)
-    print('here_inside_message_send')
-    print(message_object.get_react_with_react_id(1).get_u_id_list())
+    message_object = Message(message_id, u_id, message, time_created,
+                             [React(1, [], False)], False)
+    # print('here_inside_message_send')
+    # print(message_object.get_react_with_react_id(1).get_u_id_list())
     # update the database
     get_data().add_message(message_object)
     channel = get_data().get_channel_with_ch_id(channel_id)
     channel.add_new_message(message_id)
 
-    return {
-        'message_id': message_id
-    }
+    return {'message_id': message_id}
 
-@au.authenticator(au.is_token_valid,
-                  au.valid_channel_id,
-                  au.message_length,
-                  au.send_message_in_future,
-                  au.is_not_member)
+
+@au.authenticator(au.is_token_valid, au.valid_channel_id, au.message_length,
+                  au.send_message_in_future, au.is_not_member)
 def message_sendlater(*, token, channel_id, message, time_sent):
     '''
     Send a message from authorised_user to the channel specified
@@ -46,20 +43,18 @@ def message_sendlater(*, token, channel_id, message, time_sent):
     # setup the message
     message_id = get_data().global_msg_id()
     time_created = int(time.time())
-    message_object = Message(message_id, u_id, message, time_created, [React(1, [], False)], False)
+    message_object = Message(message_id, u_id, message, time_created,
+                             [React(1, [], False)], False)
 
     # update the database
     print(message_object)
     get_data().add_message_later(message_object)
     print('message_id : ' + str(message_id))
-    return {
-        'message_id': message_id
-    }
+    return {'message_id': message_id}
 
-@au.authenticator(au.is_token_valid,
-                  au.is_message_id_in_channel,
-                  au.is_valid_react_id,
-                  au.already_contains_react)
+
+@au.authenticator(au.is_token_valid, au.is_message_id_in_channel,
+                  au.is_valid_react_id, au.already_contains_react)
 def message_react(*, token, message_id, react_id):
     '''
     Given a message within a channel the authorised user is part of,
@@ -73,10 +68,9 @@ def message_react(*, token, message_id, react_id):
 
     return {}
 
-@au.authenticator(au.is_token_valid,
-                  au.is_message_id_in_channel,
-                  au.is_valid_react_id,
-                  au.does_not_contain_react)
+
+@au.authenticator(au.is_token_valid, au.is_message_id_in_channel,
+                  au.is_valid_react_id, au.does_not_contain_react)
 def message_unreact(*, token, message_id, react_id):
     '''
     Given a message within a channel the authorised user is part of,
@@ -90,10 +84,9 @@ def message_unreact(*, token, message_id, react_id):
 
     return {}
 
-@au.authenticator(au.is_token_valid,
-                  au.is_message_id_in_channel,
-                  au.is_owner_or_slackr_owner_1,
-                  au.message_already_pinned,
+
+@au.authenticator(au.is_token_valid, au.is_message_id_in_channel,
+                  au.is_owner_or_slackr_owner_1, au.message_already_pinned,
                   au.user_not_member_using_message_id)
 def message_pin(*, token, message_id):
     '''
@@ -107,10 +100,9 @@ def message_pin(*, token, message_id):
 
     return {}
 
-@au.authenticator(au.is_token_valid,
-                  au.message_id_valid,
-                  au.is_owner_or_slackr_owner_1,
-                  au.message_already_unpinned,
+
+@au.authenticator(au.is_token_valid, au.message_id_valid,
+                  au.is_owner_or_slackr_owner_1, au.message_already_unpinned,
                   au.user_not_member_using_message_id)
 def message_unpin(*, token, message_id):
     '''
@@ -123,9 +115,8 @@ def message_unpin(*, token, message_id):
 
     return {}
 
-@au.authenticator(au.is_token_valid,
-                  au.message_id_valid,
-                  au.edit_permissions)
+
+@au.authenticator(au.is_token_valid, au.message_id_valid, au.edit_permissions)
 def message_remove(*, token, message_id):
     '''
     Given a message_id for a message,
@@ -142,8 +133,8 @@ def message_remove(*, token, message_id):
 
     return {}
 
-@au.authenticator(au.is_token_valid,
-                  au.edit_permissions)
+
+@au.authenticator(au.is_token_valid, au.edit_permissions)
 def message_edit(*, token, message_id, message):
     '''
     Given a message, update it's text with new text.
@@ -152,14 +143,14 @@ def message_edit(*, token, message_id, message):
     #  If the message is an empty string, delete it.
     if not message:
         message_remove(token=token, message_id=message_id)
-        return{}
+        return {}
 
-    # Get uid from token
-    uid = get_data().get_user_with_token(token).get_u_id()
+    # Get u_id from token
+    u_id = get_data().get_user_with_token(token).get_u_id()
 
     # update the database
     message_object = get_data().get_message_with_message_id(message_id)
     message_object.set_message(message)
-    message_object.set_uid(uid)
+    message_object.set_u_id(u_id)
 
     return {}
