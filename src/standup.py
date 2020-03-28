@@ -17,9 +17,8 @@ def standup_start(* ,token, channel_id, length):
     channel.set_standup_status(True)
     channel.set_standup_time_finish(int(time.time())+length)
     time_finish = channel.get_standup_time_finish()
-    t = threading.Timer(length+1.0, standup_delivery(token=token, channel_id=channel_id))
-    t.start()
-
+    time.sleep(length)
+    standup_delivery(token=token, channel_id=channel_id)
     return {'time_finish' : time_finish}
 
 
@@ -45,7 +44,6 @@ def standup_send(*, token, channel_id, message):
     # update the database
     New_standup = {'name' : users_name, 'message' : message}
     channel.add_message_to_standup_queue(New_standup)
-    print(channel.get_standup_queue())
     return {}
 
 def standup_packaging(*, channel_id):
