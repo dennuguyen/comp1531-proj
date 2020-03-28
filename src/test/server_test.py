@@ -1,13 +1,23 @@
-import json
-import urllib
+"""
+System testing module to assure general correctness of auth, channel, message,
+user, search, and standup application systems and http routes.
+
+Black box testing is used as the functionality of the application's systems are
+already covered with unit testing. Therefore it can be considered that these
+tests are more concerned about the end-user's experience.
+
+Requests Module Documentation:
+https://requests.readthedocs.io/en/latest/user/quickstart/#make-a-request
+"""
 import pytest
+import requests
 import sys
-sys.path.append('../')
+sys.path.append("../")
 import server
 import data
 
-BASE_URL = "http://127.0.0.1:8080/"
-HEADERS = {'Content-Type': 'application/json'}
+BASE_URL = "http://127.0.0.1:8080"
+HEADERS = {"Content-Type": "application/json"}
 
 
 @pytest.fixture(autouse=True)
@@ -15,228 +25,131 @@ def reset_state():
     """
     This pytest fixture automatically runs for every test function call
     """
-    req_obj = urllib.request.Request(f"{BASE_URL}/workspace/reset",
-                                     headers=HEADERS,
-                                     method="POST")
-    urllib.request.urlopen(req_obj)
+    r = requests.post(f"{BASE_URL}/workspace/reset")
+    assert r.status_code == requests.codes.ok
+    assert data.get_data().get_user_list() == []
+    assert data.get_data().get_message_list() == []
+    assert data.get_data().get_message_wait_list() == []
+    assert data.get_data().get_channel_list() == []
+    assert data.get_data().get_login_list() == []
+    assert data.get_data().get_password_list() == []
 
 
-def test_register(get_new_user_detail_1):
+def test_auth(get_new_user_detail_1):
     """
-    Test the register route
+    Test the auth register, login, logout routes
     """
-    # Register the user
-    #
     # Get the user's data
     email, password, name_first, name_last = get_new_user_detail_1
-    send_reg = json.dumps({
-        'email': email,
-        'password': password,
-        'name_first': name_first,
-        'name_last': name_last,
-    }).encode('utf-8')
+    reg1 = {
+        "email": email,
+        "password": password,
+        "name_first": name_first,
+        "name_last": name_last,
+    }
 
-    # Send data request
-    request_obj = urllib.request.Request(f"{BASE_URL}/auth/register",
-                                         data=send_reg,
-                                         headers=HEADERS,
-                                         method='POST')
+    # Register user 1
+    r1 = requests.post(f"{BASE_URL}/auth/register", headers=HEADERS,
+                       json=reg1)  # json= is equivalent to data=json.dumps()
+    assert r1.status_code == requests.codes.ok
 
-    # Assert the payload
-    payload = json.load(urllib.request.urlopen(request_obj))
-    print(payload)
+    u_id1 = r1.json()["u_id"]
+    token1 = {"token": r1.json()["token"]}
 
-    request_obj = urllib.request.Request(f"{BASE_URL}/auth/register",
-                                         data=send_reg,
-                                         headers=HEADERS,
-                                         method='POST')
-    payload = json.load(urllib.request.urlopen(request_obj))
-    print(payload)
-    # u_id = data.get_data().get_user_with_email(email).get_u_id()
-    # assert payload == data.get_data().get_login_with_u_id(
-    #     u_id)[0].get_login_dict()
+    # Logging in user 1 is successful
+    login1 = {"email": email, "password": password}
+    r2 = requests.post(f"{BASE_URL}/auth/login", headers=HEADERS, json=login1)
 
-    # # Logging in the user after register should be successful
-    # send_login = json.dumps({
-    #     'email': email,
-    #     'password': password,
-    # }).encode('utf-8')
+    u_id2 = r2.json()["u_id"]
+    token2 = {"token": r2.json()["token"]}
 
-    # request_obj = urllib.request.Request(f"{BASE_URL}/auth/login",
-    #                                      data=send_login,
-    #                                      headers=HEADERS,
-    #                                      method='POST')
-    # payload = json.load(urllib.request.urlopen(request_obj))
-    # assert payload == data.get_data().get_login_with_u_id(
-    #     u_id)[1].get_login_dict()
+    # Confirm u_id for r1 and r2 are the same
+    assert u_id1 == u_id2
+
+    # Logout the user from session 1
+    r3 = requests.post(f"{BASE_URL}/auth/logout", headers=HEADERS, json=token1)
+    assert r3.status_code == requests.codes.ok
+
+    # Logout the user from session 2
+    r4 = requests.post(f"{BASE_URL}/auth/logout", headers=HEADERS, json=token2)
+    assert r4.status_code == requests.codes.ok
 
 
-# def test_login(get_new_user_detail_1):
-#     """
-#     Test the user login without a registered email
-#     """
-#     # Get the user's data
-#     email, password, _, _ = get_new_user_detail_1
-#     deliver = json.dumps({
-#         'email': email,
-#         'password': password
-#     }).encode('utf-8')
+def test_auth_register_exception_handling(get_new_user_detail_1):
+    """
+    Test the auth register exception handling
+    """
+    # Get the user's data
+    email, password, name_first, name_last = get_new_user_detail_1
+    reg1 = {
+        "email": email,
+        "password": password,
+        "name_first": name_first,
+        "name_last": name_last,
+    }
 
-#     # Send data request
-#     req_obj = urllib.request.Request(f"{BASE_URL}/auth/login",
-#                                      data=deliver,
-#                                      headers=HEADERS,
-#                                      method='POST')
+    # Attempt a register with a too short password
+    with pytest.raises(requests.RequestException):
+        wrong_reg = {
+            "email": email,
+            "password": password[:5],
+            "name_first": name_first,
+            "name_last": name_last,
+        }
+        requests.post(f"{BASE_URL}/auth/register",
+                      headers=HEADERS,
+                      json=wrong_reg).raise_for_status()
 
-#     payload = json.load(urllib.request.urlopen(req_obj))
-#     assert payload == data.get_data().get_login_with_email(
-#         email).get_login_dict()
+    # Register user 1
+    r1 = requests.post(f"{BASE_URL}/auth/register", headers=HEADERS, json=reg1)
+    assert r1.status_code == requests.codes.ok
 
-# def test_logout():
-#     """
-#     Test the case of adding a single name and listing
-#     """
-#     # Add a John Doe via the /name/add route
-#     data = json.dumps({'name': 'John Doe'}).encode('utf-8')
-#     headers = {'Content-Type': 'application/json'}
-#     req_obj = urllib.request.Request(f"{BASE_URL}/name/add",
-#                                      data=data,
-#                                      headers=headers,
-#                                      method='POST')
+    # Attempting to register user 1 again will raise Exception due to already
+    # registered email
+    with pytest.raises(requests.RequestException):
+        requests.post(f"{BASE_URL}/auth/register", headers=HEADERS,
+                      json=reg1).raise_for_status()
 
-#     # Successful name add returns empty dictionary
-#     assert json.load(urllib.request.urlopen(req_obj)) == {}
 
-#     # Check the payload
-#     payload = json.load(urllib.request.urlopen(f"{BASE_URL}/name"))
-#     assert payload == {'name': ['John Doe']}
+def test_auth_login_exception_handling(get_new_user_detail_1):
+    """
+    Test the auth login and logout exception handling
+    """
+    # Get the user's data
+    email, password, name_first, name_last = get_new_user_detail_1
+    reg1 = {
+        "email": email,
+        "password": password,
+        "name_first": name_first,
+        "name_last": name_last,
+    }
 
-# def test_add_name_multiple():
-#     """
-#     Test the case of adding multiple names and listing it
-#     """
-#     # Add a John Doe via the /name/add route
-#     data1 = json.dumps({'name': 'John Doe'}).encode('utf-8')
-#     headers = {'Content-Type': 'application/json'}
-#     req_obj1 = urllib.request.Request(f"{BASE_URL}/name/add",
-#                                       data=data1,
-#                                       headers=headers,
-#                                       method='POST')
+    # Register user 1
+    r1 = requests.post(f"{BASE_URL}/auth/register", headers=HEADERS, json=reg1)
+    assert r1.status_code == requests.codes.ok
 
-#     # Successful name add returns empty dictionary
-#     assert json.load(urllib.request.urlopen(req_obj1)) == {}
+    token1 = {"token": r1.json()["token"]}
 
-#     # Add second person
-#     data2 = json.dumps({'name': 'Max Powers'}).encode('utf-8')
-#     req_obj2 = urllib.request.Request(f"{BASE_URL}/name/add",
-#                                       data=data2,
-#                                       headers=headers,
-#                                       method='POST')
+    # Attempt login with incorrect password
+    with pytest.raises(requests.RequestException):
+        attempt1 = {"email": email, "password": password + "1"}
+        requests.post(f"{BASE_URL}/auth/login", headers=HEADERS,
+                      json=attempt1).raise_for_status()
 
-#     # Successful name add returns empty dictionary
-#     assert json.load(urllib.request.urlopen(req_obj2)) == {}
+    # Attempt login with incorrect email
+    with pytest.raises(requests.RequestException):
+        attempt2 = {"email": "prefix" + email, "password": password}
+        requests.post(f"{BASE_URL}/auth/login", headers=HEADERS,
+                      json=attempt2).raise_for_status()
 
-#     # Check the payload
-#     payload = json.load(urllib.request.urlopen(f"{BASE_URL}/name"))
-#     assert payload == {'name': ['John Doe', 'Max Powers']}
+    # Log out after a register should be possible as register logs user in
+    r2 = requests.post(f"{BASE_URL}/auth/logout", headers=HEADERS, json=token1)
+    assert r2.status_code == requests.codes.ok
 
-# def test_add_name_repeated():
-#     """
-#     Test the case of adding the same name multiple times
-#     """
-#     # Add a John Doe via the /name/add route
-#     data1 = json.dumps({'name': 'John Doe'}).encode('utf-8')
-#     headers = {'Content-Type': 'application/json'}
-#     req_obj1 = urllib.request.Request(f"{BASE_URL}/name/add",
-#                                       data=data1,
-#                                       headers=headers,
-#                                       method='POST')
+    # Logout with same invalidated token returns False
+    r3 = requests.post(f"{BASE_URL}/auth/logout", headers=HEADERS, json=token1)
+    assert r3.json()["is_success"] == False
 
-#     # Successful name add returns empty dictionary
-#     assert json.load(urllib.request.urlopen(req_obj1)) == {}
 
-#     # Add second person
-#     data2 = json.dumps({'name': 'John Doe'}).encode('utf-8')
-#     req_obj2 = urllib.request.Request(f"{BASE_URL}/name/add",
-#                                       data=data2,
-#                                       headers=headers,
-#                                       method='POST')
-
-#     # Successful name add returns empty dictionary
-#     assert json.load(urllib.request.urlopen(req_obj2)) == {}
-
-#     # Check the payload
-#     payload = json.load(urllib.request.urlopen(f"{BASE_URL}/name"))
-#     assert payload == {'name': ['John Doe', 'John Doe']}
-
-# def test_remove_name_once():
-#     """
-#     Test the removal of the name once
-#     """
-#     # Add a John Doe via the /name/add route
-#     data1 = json.dumps({'name': 'John Doe'}).encode('utf-8')
-#     headers = {'Content-Type': 'application/json'}
-#     req_obj1 = urllib.request.Request(f"{BASE_URL}/name/add",
-#                                       data=data1,
-#                                       headers=headers,
-#                                       method='POST')
-
-#     # Open the URL to add the name
-#     json.load(urllib.request.urlopen(req_obj1))
-
-#     data2 = json.dumps({'name': 'John Doe'}).encode('utf-8')
-#     req_obj2 = urllib.request.Request(f"{BASE_URL}/name/remove",
-#                                       data=data2,
-#                                       headers=headers,
-#                                       method='DELETE')
-
-#     # Successful name removal returns empty dictionary
-#     assert json.load(urllib.request.urlopen(req_obj2)) == {}
-
-#     # Check the payload
-#     payload = json.load(urllib.request.urlopen(f"{BASE_URL}/name"))
-#     assert payload == {'name': []}
-
-# def test_remove_name_repeated():
-#     """
-#     Test removal of a name that was repeated which should only remove it once
-#     """
-#     # Add a John Doe via the /name/add route
-#     data1 = json.dumps({'name': 'John Doe'}).encode('utf-8')
-#     headers = {'Content-Type': 'application/json'}
-#     req_obj1 = urllib.request.Request(f"{BASE_URL}/name/add",
-#                                       data=data1,
-#                                       headers=headers,
-#                                       method='POST')
-
-#     # Open the URL twice to add the name twice
-#     json.load(urllib.request.urlopen(req_obj1))
-#     json.load(urllib.request.urlopen(req_obj1))
-
-#     data2 = json.dumps({'name': 'John Doe'}).encode('utf-8')
-#     req_obj2 = urllib.request.Request(f"{BASE_URL}/name/remove",
-#                                       data=data2,
-#                                       headers=headers,
-#                                       method='DELETE')
-
-#     # Successful name removal returns empty dictionary
-#     assert json.load(urllib.request.urlopen(req_obj2)) == {}
-
-#     # Check the payload
-#     payload = json.load(urllib.request.urlopen(f"{BASE_URL}/name"))
-#     assert payload == {'name': ['John Doe']}
-
-# def test_remove_empty():
-#     """
-#     Test removing an empty dictionary
-#     """
-#     data = json.dumps({'name': 'John Doe'}).encode('utf-8')
-#     headers = {'Content-Type': 'application/json'}
-#     req_obj = urllib.request.Request(f"{BASE_URL}/name/remove",
-#                                      data=data,
-#                                      headers=headers,
-#                                      method='DELETE')
-
-#     # Exception should raise on removal of empty list
-#     with pytest.raises(Exception):
-#         json.load(urllib.request.urlopen(req_obj))
+def test_channel(get_new_user_detail_1):
+    pass
