@@ -9,9 +9,6 @@ sys.path.append('../')
 import data
 
 
-@pytest.fixture(autouse=True)
-def auto_reset():
-    data.get_data().reset()
 
 @pytest.fixture(autouse=True)
 def auto_reset():

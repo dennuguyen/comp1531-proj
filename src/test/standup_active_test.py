@@ -1,7 +1,6 @@
 '''
-TODO: test file for standup_active.py
+Test for standup active
 '''
-
 import pytest
 import message
 import channel
@@ -42,11 +41,14 @@ def test_standup(get_new_user_1, get_new_user_detail_1, get_new_user_2, get_new_
 
     assert standup.standup_active(token=token1, channel_id=ch_id)['is_active'] == False
     message = data.get_data().get_message_with_message_id(0).get_message_dict()
+    print(message)
     assert_msg = f'{name1}: test1\n{name2}: test2\n{name3}: test3\n'
     assert message['u_id'] == u_id
     assert message['message'] == assert_msg
     
     data.get_data().reset
-    
+    print('Test finish')
+    assert data.get_data().get_channel_with_ch_id(ch_id).get_standup_queue() == []
+
 def start_standup(token, channel_id, length):
     standup.standup_start(token=token, channel_id=channel_id, length=length)
