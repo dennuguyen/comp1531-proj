@@ -226,7 +226,6 @@ def edit_permissions(func):
     def wrapper(*args, **kwargs):
         message_id = kwargs['message_id']
         token = kwargs['token']
-        print(message_id)
         # Get the user class using the token
         token_uid = data.get_data().get_user_with_token(token).get_u_id()
 
@@ -263,7 +262,6 @@ def is_admin(func):
         token = kwargs['token']
 
         u_id = data.get_data().get_user_with_token(token).get_u_id()
-        print(u_id)
         # Check if user is owner of slakr
         if u_id:
             raise error.AccessError(
@@ -1008,7 +1006,7 @@ def is_valid_permission_id(func):
         p_id = kwargs['permission_id']
 
         # Check if the permission id is valid 
-        if not p_id == 1 or not p_id == 2:
+        if p_id != 1 and p_id != 2:
             raise error.InputError(
                 'The permission id is invalid.')
 
