@@ -1,6 +1,6 @@
 """
-System testing module to assure general correctness of auth, channel, message,
-user, search, and standup application systems and http routes.
+System testing module to assure general correctness of auth application systems
+and http routes.
 
 Black box testing is used as the functionality of the application's systems are
 already covered with unit testing. Therefore it can be considered that these
