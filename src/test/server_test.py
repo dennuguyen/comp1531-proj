@@ -5,6 +5,7 @@ import sys
 sys.path.append('../')
 import server
 import data
+
 BASE_URL = "http://127.0.0.1:8080/"
 HEADERS = {'Content-Type': 'application/json'}
 
@@ -43,23 +44,31 @@ def test_register(get_new_user_detail_1):
 
     # Assert the payload
     payload = json.load(urllib.request.urlopen(request_obj))
-    u_id = data.get_data().get_user_with_email(email).get_u_id()
-    assert payload == data.get_data().get_login_with_u_id(
-        u_id)[0].get_login_dict()
+    print(payload)
 
-    # Logging in the user after register should be successful
-    send_login = json.dumps({
-        'email': email,
-        'password': password,
-    }).encode('utf-8')
-
-    request_obj = urllib.request.Request(f"{BASE_URL}/auth/login",
-                                         data=send_login,
+    request_obj = urllib.request.Request(f"{BASE_URL}/auth/register",
+                                         data=send_reg,
                                          headers=HEADERS,
                                          method='POST')
     payload = json.load(urllib.request.urlopen(request_obj))
-    assert payload == data.get_data().get_login_with_u_id(
-        u_id)[1].get_login_dict()
+    print(payload)
+    # u_id = data.get_data().get_user_with_email(email).get_u_id()
+    # assert payload == data.get_data().get_login_with_u_id(
+    #     u_id)[0].get_login_dict()
+
+    # # Logging in the user after register should be successful
+    # send_login = json.dumps({
+    #     'email': email,
+    #     'password': password,
+    # }).encode('utf-8')
+
+    # request_obj = urllib.request.Request(f"{BASE_URL}/auth/login",
+    #                                      data=send_login,
+    #                                      headers=HEADERS,
+    #                                      method='POST')
+    # payload = json.load(urllib.request.urlopen(request_obj))
+    # assert payload == data.get_data().get_login_with_u_id(
+    #     u_id)[1].get_login_dict()
 
 
 # def test_login(get_new_user_detail_1):
