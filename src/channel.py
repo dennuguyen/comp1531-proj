@@ -81,17 +81,18 @@ def channel_messages(*, token, channel_id, start):
     '''
 
     # Retrieve messages from database
-
+    
     datapy = data.get_data()
     channel = datapy.get_channel_with_ch_id(channel_id)
     msg_id_list = channel.get_msg_id_list()
 
-    no_messages = len(msg_id_list)
-    show = start + 50
-    end_view = start + 50
-    if no_messages < (start + 50):
-        show = no_messages
+    msg_nums = len(msg_id_list)
+    if msg_nums < (start + 50):
+        show = msg_nums
         end_view = -1
+    else:
+        show = start + 50
+        end_view = start + 50
 
     channel_msg = {'messages':[]}
     msg_info = {}
@@ -107,13 +108,15 @@ def channel_messages(*, token, channel_id, start):
                 msg_info['message'] = msg_dict['message']
                 msg_info['time_created'] = msg_dict['time_created']
                 channel_msg['messages'].append(msg_info)
+                break
         i += 1
     channel_msg['start'] = start
     channel_msg['end'] = end_view
+    
 
     # Return a dictionary of message info
     return channel_msg
-
+    
 
 # Leave a channel
 @au.authenticator(au.is_token_valid,
