@@ -1,6 +1,7 @@
 '''
-TODO: test file for standup_active.py
+TODO: test file for standup.py
 '''
+
 import pytest
 import message
 import channel
@@ -30,33 +31,20 @@ def test_standup(get_new_user_1, get_new_user_detail_1, get_new_user_2, get_new_
     channel.channel_join(token=token3, channel_id=ch_id)
 
     t1 = threading.Thread(target=start_standup, args=(token1, ch_id, length))
-    t2 = threading.Thread(target=check_is_active, args=(token1, ch_id))
-    t3 = threading.Thread(target=send_messages, args=(token1, token2, token3, ch_id))
-    t4 = threading.Thread(target=check_is_not_active, args=(token1, ch_id))
     t1.start()
-    t2.start()
-    t3.start()
-    t4.start()
+    assert standup.standup_active(token=token1, channel_id=ch_id)['is_active'] == True
+
+    standup.standup_send(token=token1, channel_id=ch_id, message='test1')
+    standup.standup_send(token=token2, channel_id=ch_id, message='test2')
+    standup.standup_send(token=token3, channel_id=ch_id, message='test3')
+
     time.sleep(length+1.0)
+
+    assert standup.standup_active(token=token1, channel_id=ch_id)['is_active'] == False
     message = data.get_data().get_message_with_message_id(0).get_message_dict()
     assert_msg = f'{name1}: test1\n{name2}: test2\n{name3}: test3\n'
     assert message['u_id'] == u_id
     assert message['message'] == assert_msg
     
-def check_is_active(token, channel_id):
-    time.sleep(2.0)
-    assert standup.standup_active(token=token, channel_id=channel_id)['is_active'] == True
-
-def check_is_not_active(token, channel_id):
-    time.sleep(6.0)
-    assert standup.standup_active(token=token, channel_id=channel_id)['is_active'] == False
-    assert data.get_data().get_channel_with_ch_id(channel_id).get_standup_queue() == []
-
 def start_standup(token, channel_id, length):
     standup.standup_start(token=token, channel_id=channel_id, length=length)
-
-def send_messages(token1, token2, token3, channel_id):
-    time.sleep(3.0)
-    standup.standup_send(token=token1, channel_id=channel_id, message='test1')
-    standup.standup_send(token=token2, channel_id=channel_id, message='test2')
-    standup.standup_send(token=token3, channel_id=channel_id, message='test3')
