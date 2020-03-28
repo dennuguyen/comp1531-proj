@@ -141,7 +141,7 @@ class Channel():
 
     def get_standup_queue(self):
         return self._standup_queue
-    
+
     def get_standup_time_finish(self):
         return self._standup_time_finish
 
@@ -175,10 +175,10 @@ class Channel():
 
     def remove_message_from_standup_queue(self, message_id):
         self._standup_queue.remove(message_id)
-    
+
     def set_standup_time_finish(self, time_finish):
         self._standup_time_finish = time_finish
-    
+
     def set_clear_standup_queue(self):
         self._standup_queue = []
 
@@ -254,7 +254,7 @@ class User():
 
     def set_handle_str(self, new_handle_str):
         self._handle_str = new_handle_str
-    
+
     def set_permission_id(self, permission_id):
         #assert permission_id == 1 or permission_id == 2, "Error: invalid permission id"
         self._permission_id = permission_id
@@ -306,15 +306,13 @@ class Message():
     """
     Message Class
     """
-    def __init__(
-        self,
-        msg_id,
-        u_id,
-        msg,
-        time_created,
-        react_list=[React(1, [], False)],
-        is_pinned=False,
-    ):
+    def __init__(self,
+                 msg_id,
+                 u_id,
+                 msg,
+                 time_created,
+                 react_list=[React(1, [], False)],
+                 is_pinned=False):
         self._msg_id = msg_id
         self._u_id = u_id
         self._msg = msg
@@ -378,13 +376,14 @@ class Message():
 
     def set_react(self, react_id, u_id):
         for react in self._react_list:
-            if (react.get_react_id() == react_id):
+            if react.get_react_id() == react_id:
                 react.set_is_this_user_reacted(True)
                 react.add_u_id(u_id)
                 break
+
     def reset_react(self, react_id, u_id):
         for react in self._react_list:
-            if (react.get_react_id() == react_id):
+            if react.get_react_id() == react_id:
                 react.set_is_this_user_reacted(False)
                 react.remove_u_id(u_id)
                 break
@@ -466,7 +465,7 @@ class Data():
 
     def get_message_list(self):
         return self._message_list
-    
+
     def get_message_wait_list(self):
         return self._message_wait_list
 
@@ -512,7 +511,6 @@ class Data():
     def get_channel_with_ch_id(self, ch_id):
         channel = filter(lambda channel: channel.get_channel_id() == ch_id,
                          self._channel_list)
-        
         return next(channel, None)
 
     def get_channel_with_message_id(self, msg_id):
@@ -560,7 +558,7 @@ class Data():
         return [
             msg for msg in self._message_list if msg.get_message() == message
         ]
-    
+
     def get_message_wl_with_message_id(self, msg_id):
         msg = filter(lambda msg: msg.get_message_id() == msg_id,
                      self._message_wait_list)
