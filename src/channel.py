@@ -79,19 +79,48 @@ def channel_messages(*, token, channel_id, start):
     or, if this function has returned the least recent messages in the channel,
     returns -1 in "end" to indicate there are no more messages to load after this return.
     '''
+    channel = data.get_data().get_channel_with_ch_id(channel_id)
+    msg_id_list = channel.get_msg_id_list()
+    
+    if len(msg_id_list) < start + 50:
+        end_view = -1
+        end = len(msg_id_list) -1
+    else:
+        end_view = start + 50
+        end = end_view -1
+        
+    
+    retval = {'message':[]}
+    retval['start'] = start
+    retval['end'] = end_view
+    
+    for i in range(start, end):
+        for message in data.get_data().get_message_list(): 
+            if(message.get_message_id() == msg_id_list[len(msg_id_list)-i-1]):
+                msg_info = {}
+                msg_info['message_id'] = message.get_message_id()
+                msg_info['u_id'] = message.get_u_id()
+                msg_info['message'] = message.get_message()
+                msg_info['time_created'] = message.get_time_created()
+                retval['message'].append(msg_info)
+                break
 
+    return retval
+
+    '''
     # Retrieve messages from database
-
+    
     datapy = data.get_data()
     channel = datapy.get_channel_with_ch_id(channel_id)
     msg_id_list = channel.get_msg_id_list()
 
-    no_messages = len(msg_id_list)
-    show = start + 50
-    end_view = start + 50
-    if no_messages < (start + 50):
-        show = no_messages
+    msg_nums = len(msg_id_list)
+    if msg_nums < (start + 50):
+        show = msg_nums
         end_view = -1
+    else:
+        show = start + 50
+        end_view = start + 50
 
     channel_msg = {'messages':[]}
     msg_info = {}
@@ -110,10 +139,11 @@ def channel_messages(*, token, channel_id, start):
         i += 1
     channel_msg['start'] = start
     channel_msg['end'] = end_view
+    
 
     # Return a dictionary of message info
     return channel_msg
-
+    '''
 
 # Leave a channel
 @au.authenticator(au.is_token_valid,
