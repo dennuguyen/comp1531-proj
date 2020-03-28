@@ -4,7 +4,6 @@ Standup related functions are here
 
 import time
 import message
-import threading
 import data
 import authenticate as au
 
@@ -13,12 +12,15 @@ def standup_start(* ,token, channel_id, length):
     ''' Add a message to the message queue at the end of the message queue in channel.'''
 
      # start a standup
+    print('Standup queue at start: ' f'{data.get_data().get_channel_with_ch_id(channel_id).get_standup_queue()}')
     channel = data.get_data().get_channel_with_ch_id(channel_id)
     channel.set_standup_status(True)
+    print(channel.get_is_active_standup())
     channel.set_standup_time_finish(int(time.time())+length)
     time_finish = channel.get_standup_time_finish()
     time.sleep(length)
     standup_delivery(token=token, channel_id=channel_id)
+    print(channel.get_is_active_standup())
     return {'time_finish' : time_finish}
 
 
@@ -48,10 +50,12 @@ def standup_send(*, token, channel_id, message):
 
 def standup_packaging(*, channel_id):
     standup_queue = data.get_data().get_channel_with_ch_id(channel_id).get_standup_queue()
+    print('Standup queue: ' f'{data.get_data().get_channel_with_ch_id(channel_id).get_standup_queue()}')
     standup_package = ''
     for standup_data in standup_queue:
         standup_package += standup_data['name'] + ': ' + standup_data['message'] + '\n'
     data.get_data().get_channel_with_ch_id(channel_id).set_clear_standup_queue()
+    print('Standup queue: ' f'{data.get_data().get_channel_with_ch_id(channel_id).get_standup_queue()}')
     return standup_package
 
 def standup_delivery(*, token, channel_id):

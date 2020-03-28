@@ -1,6 +1,7 @@
 # get_new_user_detail gets the root information used to register a user
 # get_new_user gets the u_id and token after registering a user
 
+import data
 import pytest
 import auth
 import sys
@@ -8,10 +9,10 @@ sys.path.append('../')
 import data
 
 
+
 @pytest.fixture(autouse=True)
 def auto_reset():
     data.get_data().reset()
-
 
 @pytest.fixture()
 def get_new_user_detail_0():
