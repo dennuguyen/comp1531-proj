@@ -108,7 +108,7 @@ def channel_messages(*, token, channel_id, start):
                 msg_info['message'] = msg_dict['message']
                 msg_info['time_created'] = msg_dict['time_created']
                 channel_msg['messages'].append(msg_info)
-                break
+                
         i -= 1
     channel_msg['start'] = start
     channel_msg['end'] = end_view
