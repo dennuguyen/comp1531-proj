@@ -263,9 +263,9 @@ def is_admin(func):
         token = kwargs['token']
 
         u_id = data.get_data().get_user_with_token(token).get_u_id()
-
+        print(u_id)
         # Check if user is owner of slakr
-        if not u_id:
+        if u_id:
             raise error.AccessError(
                 'The authorised user is not an admin or owner of slackr')
 
