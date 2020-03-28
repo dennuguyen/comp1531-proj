@@ -155,6 +155,7 @@ def is_owner_or_slackr_owner(func):
 
     return wrapper
 
+
 def is_owner_or_slackr_owner_1(func):
     '''
     the authorised user is not an owner of the slackr, or an owner of this channel
@@ -171,12 +172,13 @@ def is_owner_or_slackr_owner_1(func):
         # Check if the message and the user are in the same channel while the user is an owner
         flag = False
         for channel in data.get_data().get_channel_list():
-            if u_id in channel.get_owner_u_id_list() and msg_id in channel.get_msg_id_list():
+            if u_id in channel.get_owner_u_id_list(
+            ) and msg_id in channel.get_msg_id_list():
                 flag = True
         if not flag:
             error_message = 'User is not an owner of the slackr, or an owner of this channel'
             raise error.InputError(error_message)
-        
+
         # Else, return the function
         return func(*args, **kwargs)
 
@@ -726,7 +728,6 @@ def channel_name_length(func):
                 'Name is not valid: Must be less 20 characters and not empty or made up of spaces.'
             )
 
-
         return func(*args, **kwargs)
 
     return wrapper
@@ -848,8 +849,7 @@ def does_not_contain_react(func):
         react_id = kwargs['react_id']
 
         # Get message with message_id
-        message = data.get_data().get_message_with_message_id(
-            message_id)
+        message = data.get_data().get_message_with_message_id(message_id)
 
         # If the react is not active
         if not message.get_react_with_react_id(
