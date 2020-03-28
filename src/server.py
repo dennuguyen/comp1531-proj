@@ -15,7 +15,7 @@ import channel
 import channels
 import message
 import user
-import admin
+import data
 
 
 def defaultHandler(err):
@@ -337,107 +337,115 @@ def message_edit():
 
 ################################################################################
 
-@APP.route("/user/profile", methods=["GET"])
-def user_profile():
-    '''
-    Get the information of a user
-    '''
-    token = flask.request.args.get("token")
-    u_id = flask.request.args.get("u_id")
+# @APP.route("/user/profile", methods=["GET"])
+# def user_profile():
+#     '''
+#     Get the information of a user
+#     '''
+#     token = flask.request.args.get("token")
+#     u_id = flask.request.args.get("u_id")
 
-    return user.user_profile(token=token, u_id=u_id)
+#     return user.user_profile(token=token, u_id=u_id)
 
-@APP.route("/user/profile/setname", methods=["PUT"])
-def user_profile_setname():
-    '''
-    Set the name of a user
-    '''
-    token = flask.request.form.get('token')
-    name_first = flask.request.form.get('name_first')
-    name_last = flask.request.form.get('name_last')
+# @APP.route("/user/profile/setname", methods=["PUT"])
+# def user_profile_setname():
+#     '''
+#     Set the name of a user
+#     '''
+#     token = flask.request.form.get('token')
+#     name_first = flask.request.form.get('name_first')
+#     name_last = flask.request.form.get('name_last')
 
-    return user.user_profile(token=token, name_first=name_first, name_last=name_last)
+#     return user.user_profile(token=token,
+#                              name_first=name_first,
+#                              name_last=name_last)
 
-@APP.route("/user/profile/setemail", methods=["PUT"])
-def user_profile_setmail():
-    '''
-    Set the email of a user
-    '''
-    token = flask.request.form.get('token')
-    email = flask.request.form.get('email')
+# @APP.route("/user/profile/setemail", methods=["PUT"])
+# def user_profile_setmail():
+#     '''
+#     Set the email of a user
+#     '''
+#     token = flask.request.form.get('token')
+#     email = flask.request.form.get('email')
 
-    return user.user_profile_setemail(token=token, email=email)
+#     return user.user_profile_setemail(token=token, email=email)
 
-@APP.route("/user/profile/sethandle", methods=["PUT"])
-def user_profile_sethandle():
-    '''
-    Set the handle of a user
-    '''
-    token = flask.request.form.get('token')
-    handle = flask.request.handle.get('handle')
+# @APP.route("/user/profile/sethandle", methods=["PUT"])
+# def user_profile_sethandle():
+#     '''
+#     Set the handle of a user
+#     '''
+#     token = flask.request.form.get('token')
+#     handle = flask.request.handle.get('handle')
 
-    return user.user_profile_sethandle(token=token, handle=handle)
+#     return user.user_profile_sethandle(token=token, handle=handle)
 
-@APP.route("/users/all", methods=["GET"])
-def users_all():
-    '''
-    Get all the users
-    '''
-    token = flask.request.args.get('token')
+# @APP.route("/users/all", methods=["GET"])
+# def users_all():
+#     '''
+#     Get all the users
+#     '''
+#     token = flask.request.args.get('token')
 
-    return other.user_all(token=token)
+#     return other.user_all(token=token)
 
-@APP.route("/search", methods=["GET"])
-def search():
-    '''
-    Search for the exsiting messages
-    '''
-    query_str = flask.request.args.get('query_str')
+# @APP.route("/search", methods=["GET"])
+# def search():
+#     '''
+#     Search for the exsiting messages
+#     '''
+#     query_str = flask.request.args.get('query_str')
 
-    return other.search(query_str=query_str)
+#     return other.search(query_str=query_str)
 
-@APP.route("/standup/start", methods=["POST"])
-def standup_start():
-    '''
-    Start a standup
-    '''
-    token = flask.request.form.get('token')
-    channel_id = flask.request.form.get('channel_id')
-    length = flask.request.form.get('length')
+# @APP.route("/standup/start", methods=["POST"])
+# def standup_start():
+#     '''
+#     Start a standup
+#     '''
+#     token = flask.request.form.get('token')
+#     channel_id = flask.request.form.get('channel_id')
+#     length = flask.request.form.get('length')
 
-    return standup.stanup_start(token=token, channel_id=channel_id, length=length)
+#     return standup.stanup_start(token=token,
+#                                 channel_id=channel_id,
+#                                 length=length)
 
-@APP.route("/standup/active", methods=["GET"])
-def standup_active():
-    '''
-    Set the standup active
-    '''
-    token = flask.request.args.get('token')
-    channel_id = flask.request.args.get('channel_id')
+# @APP.route("/standup/active", methods=["GET"])
+# def standup_active():
+#     '''
+#     Set the standup active
+#     '''
+#     token = flask.request.args.get('token')
+#     channel_id = flask.request.args.get('channel_id')
 
-    return standup.standup_active(token=token, channel_id=channel_id)
+#     return standup.standup_active(token=token, channel_id=channel_id)
 
-@APP.route("/standup/send", methods=["POST"])
-def standup_send():
-    '''
-    Send the standup message
-    '''
-    token = flask.request.form.get('token')
-    channel_id = flask.request.form.get('channel_id')
-    message = flask.request.form.get('message')
+# @APP.route("/standup/send", methods=["POST"])
+# def standup_send():
+#     '''
+#     Send the standup message
+#     '''
+#     token = flask.request.form.get('token')
+#     channel_id = flask.request.form.get('channel_id')
+#     message = flask.request.form.get('message')
 
-    return standup.standup_send(token=token, channel_id=channel_id, message=message)
+#     return standup.standup_send(token=token,
+#                                 channel_id=channel_id,
+#                                 message=message)
 
-@APP.route("/admin/userpermission/change", methods=["POST"])
-def admin_userpermission_change():
-    '''
-    Change the permission of users by the admin
-    '''
-    token = flask.request.form.get('token')
-    u_id = flask.request.form.get('u_id')
-    permission_id = flask.request.form.get('permission_id')
+# @APP.route("/admin/userpermission/change", methods=["POST"])
+# def admin_userpermission_change():
+#     '''
+#     Change the permission of users by the admin
+#     '''
+#     token = flask.request.form.get('token')
+#     u_id = flask.request.form.get('u_id')
+#     permission_id = flask.request.form.get('permission_id')
 
-    return admin.admin_userpermission_change(token=token, u_id=u_id, permission_id=permission_id)
+#     return admin.admin_userpermission_change(token=token,
+#                                              u_id=u_id,
+#                                              permission_id=permission_id)
 
 
 @APP.route("/workspace/reset", methods=["POST"])
@@ -445,7 +453,8 @@ def reset():
     '''
     Reset the workspace
     '''
-    try:
+    return data.get_data().reset()
+
 
 #This will run if server.py is run
 if __name__ == "__main__":
