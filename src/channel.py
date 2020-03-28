@@ -94,7 +94,7 @@ def channel_messages(*, token, channel_id, start):
     retval['start'] = start
     retval['end'] = end_view
     
-    for i in range(start, end):
+    for i in range(start, end+1):
         for message in data.get_data().get_message_list(): 
             if(message.get_message_id() == msg_id_list[len(msg_id_list)-i-1]):
                 msg_info = {}
