@@ -98,7 +98,7 @@ def channel_messages(*, token, channel_id, start):
     msg_info = {}
     msg_list = datapy.get_message_list()
 
-    i = msg_nums - start
+    i = msg_nums - start - 1
     while  i > show:
         for msg in msg_list:
             msg_dict = msg.get_message_dict()
