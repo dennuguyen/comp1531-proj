@@ -261,7 +261,7 @@ class User():
         self._handle_str = new_handle_str
     
     def set_permission_id(self, permission_id):
-        assert permission_id == 1 or permission_id == 2, "Error: invalid permission id"
+        #assert permission_id == 1 or permission_id == 2, "Error: invalid permission id"
         self._permission_id = permission_id
 
 
