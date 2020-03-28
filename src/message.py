@@ -4,7 +4,7 @@ Message related operations are here.
 
 import time
 import authenticate as au
-from data import get_data, Message
+from data import get_data, Message, React
 
 
 @au.authenticator(au.is_token_valid, au.valid_channel_id, au.message_length,
@@ -19,8 +19,10 @@ def message_send(*, token, channel_id, message):
     # setup the message
     message_id = get_data().global_msg_id()
     time_created = int(time.time())
-    message_object = Message(message_id, u_id, message, time_created)
-
+    message_object = Message(message_id, u_id, message, time_created,
+                             [React(1, [], False)], False)
+    # print('here_inside_message_send')
+    # print(message_object.get_react_with_react_id(1).get_u_id_list())
     # update the database
     get_data().add_message(message_object)
     channel = get_data().get_channel_with_ch_id(channel_id)
@@ -41,7 +43,8 @@ def message_sendlater(*, token, channel_id, message, time_sent):
     # setup the message
     message_id = get_data().global_msg_id()
     time_created = int(time.time())
-    message_object = Message(message_id, u_id, message, time_created)
+    message_object = Message(message_id, u_id, message, time_created,
+                             [React(1, [], False)], False)
 
     # update the database
     print(message_object)
@@ -61,7 +64,7 @@ def message_react(*, token, message_id, react_id):
     # update the database
     u_id = get_data().get_user_with_token(token).get_u_id()
     message_object = get_data().get_message_with_message_id(message_id)
-    message_object.set_react(react_id, u_id, True)
+    message_object.set_react(react_id, u_id)
 
     return {}
 
@@ -77,13 +80,13 @@ def message_unreact(*, token, message_id, react_id):
     # update the database
     u_id = get_data().get_user_with_token(token).get_u_id()
     message_object = get_data().get_message_with_message_id(message_id)
-    message_object.set_react(react_id, u_id, False)
+    message_object.reset_react(react_id, u_id)
 
     return {}
 
 
-@au.authenticator(au.is_token_valid, au.message_id_valid,
-                  au.is_private_not_admin, au.message_already_pinned,
+@au.authenticator(au.is_token_valid, au.is_message_id_in_channel,
+                  au.is_owner_or_slackr_owner_1, au.message_already_pinned,
                   au.user_not_member_using_message_id)
 def message_pin(*, token, message_id):
     '''
@@ -99,7 +102,7 @@ def message_pin(*, token, message_id):
 
 
 @au.authenticator(au.is_token_valid, au.message_id_valid,
-                  au.is_private_not_admin, au.message_already_unpinned,
+                  au.is_owner_or_slackr_owner_1, au.message_already_unpinned,
                   au.user_not_member_using_message_id)
 def message_unpin(*, token, message_id):
     '''
