@@ -149,7 +149,3 @@ def test_auth_login_exception_handling(get_new_user_detail_1):
     # Logout with same invalidated token returns False
     r3 = requests.post(f"{BASE_URL}/auth/logout", headers=HEADERS, json=token1)
     assert r3.json()["is_success"] == False
-
-
-def test_channel(get_new_user_detail_1):
-    pass
