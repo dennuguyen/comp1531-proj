@@ -21,8 +21,7 @@ def message_send(*, token, channel_id, message):
     time_created = int(time.time())
     message_object = Message(message_id, u_id, message, time_created,
                              [React(1, [], False)], False)
-    # print('here_inside_message_send')
-    # print(message_object.get_react_with_react_id(1).get_u_id_list())
+
     # update the database
     get_data().add_message(message_object)
     channel = get_data().get_channel_with_ch_id(channel_id)
