@@ -78,8 +78,16 @@ def auth_register(*, email, password, name_first, name_last):
     # Generate the handle string
     handle_str = auth_helper.generate_handle(u_id, name_first, name_last)
 
+    # Assumption: first registered user has permission id 1
+    if data.get_data().get_user_list():
+        # User list is not empty therefore subsequent users have pid 2
+        permission_id = 2
+    else:
+        permission_id = 1
+
     # Instantiate User (object)
-    new_user = data.User(u_id, email, name_first, name_last, handle_str)
+    new_user = data.User(u_id, email, name_first, name_last, handle_str,
+                         permission_id)
 
     # Add this new user to the list of users
     data.get_data().add_user(new_user)
