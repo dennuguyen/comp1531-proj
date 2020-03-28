@@ -1,6 +1,7 @@
 '''
-TODO: test file for standup.py
+TODO: test file for standup_active.py
 '''
+
 import pytest
 import message
 import channel
@@ -45,6 +46,7 @@ def test_standup(get_new_user_1, get_new_user_detail_1, get_new_user_2, get_new_
     assert message['u_id'] == u_id
     assert message['message'] == assert_msg
     
+    data.get_data().reset
+    
 def start_standup(token, channel_id, length):
     standup.standup_start(token=token, channel_id=channel_id, length=length)
-

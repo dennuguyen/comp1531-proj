@@ -1,19 +1,6 @@
 '''
 TODO: test file for standup_active.py
 '''
-import pytest
-import message
-import channel
-import channels
-import error
-import time
-import threading
-import other
-import data
-import sys
-import standup
-sys.path.append('../')
-
 
 import pytest
 import message
@@ -58,6 +45,8 @@ def test_standup(get_new_user_1, get_new_user_detail_1, get_new_user_2, get_new_
     assert_msg = f'{name1}: test1\n{name2}: test2\n{name3}: test3\n'
     assert message['u_id'] == u_id
     assert message['message'] == assert_msg
+    
+    data.get_data().reset
     
 def start_standup(token, channel_id, length):
     standup.standup_start(token=token, channel_id=channel_id, length=length)
