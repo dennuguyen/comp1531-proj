@@ -255,23 +255,19 @@ def edit_permissions(func):
     return wrapper
 
 
-def is_admin_or_owner(func):
+def is_admin(func):
     '''
     The authorised user is not an admin or owner
     '''
     def wrapper(*args, **kwargs):
-        u_id = kwargs['u_id']
+        token = kwargs['token']
+
+        u_id = data.get_data().get_user_with_token(token).get_u_id()
 
         # Check if user is owner of slakr
-        owner_of_slackr = u_id == 0
-
-        # Check if user is an admin
-        # TODO: Figure this out and change it.
-        admin_of_slackr = False
-
-        if not (owner_of_slackr or admin_of_slackr):
+        if not u_id:
             raise error.AccessError(
-                'The authorised user is not an admin or owner')
+                'The authorised user is not an admin or owner of slackr')
 
         return func(*args, **kwargs)
 
@@ -1003,12 +999,19 @@ def no_active_standup(func):
     return wrapper
 
 
-def permission_id(func):
+def is_valid_permission_id(func):
     # TODO get help.
     '''
     permission_id does not refer to a value permission
     '''
     def wrapper(*args, **kwargs):
+        p_id = kwargs['permission_id']
+
+        # Check if the permission id is valid 
+        if not p_id == 1 or not p_id == 2:
+            raise error.InputError(
+                'The permission id is invalid.')
+
         return func(*args, **kwargs)
 
     return wrapper
