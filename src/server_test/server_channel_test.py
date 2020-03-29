@@ -9,12 +9,12 @@ tests are more concerned about the end-user's experience.
 Requests Module Documentation:
 https://requests.readthedocs.io/en/latest/user/quickstart/#make-a-request
 """
+import server
 import pytest
+import data
 import requests
 import sys
 sys.path.append("../")
-import server
-import data
 
 BASE_URL = "http://127.0.0.1:8080"
 HEADERS = {"Content-Type": "application/json"}
