@@ -76,8 +76,8 @@ class Login():
 
     def get_login_dict(self):
         return {
-            'u_id': self._u_id,
-            'token': self._token,
+            "u_id": self._u_id,
+            "token": self._token,
         }
 
     def get_u_id(self):
@@ -110,16 +110,16 @@ class Channel():
 
     def get_channel_dict(self):
         return {
-            'channel_id': self._ch_id,
-            'name': self._ch_name,
-            'message_id_list': self._msg_id_list,
-            'u_id_list': self._u_id_list,
-            'owner_u_id_list': self._owner_u_id_list,
-            'is_public': self._is_public,
-            'is_active_standup' : self._is_active_standup,
-            'standup_queue' : self._standup_queue,
-            'standup_time_finish' : self._standup_time_finish,
-            'message_id_wait_list' : self._msg_id_wait_list
+            "channel_id": self._ch_id,
+            "name": self._ch_name,
+            "message_id_list": self._msg_id_list,
+            "u_id_list": self._u_id_list,
+            "owner_u_id_list": self._owner_u_id_list,
+            "is_public": self._is_public,
+            "is_active_standup" : self._is_active_standup,
+            "standup_queue" : self._standup_queue,
+            "standup_time_finish" : self._standup_time_finish,
+            "message_id_wait_list" : self._msg_id_wait_list
         }
 
     def get_channel_name(self):
@@ -220,18 +220,18 @@ class User():
 
     def get_user_dict(self):
         return {
-            'u_id': self._u_id,
-            'email': self._email,
-            'name_first': self._name_first,
-            'name_last': self._name_last,
-            'handle_str': self._handle_str,
+            "u_id": self._u_id,
+            "email": self._email,
+            "name_first": self._name_first,
+            "name_last": self._name_last,
+            "handle_str": self._handle_str,
         }
 
     def get_member_details_dict(self):
         return {
-            'u_id': self._u_id,
-            'name_first': self._name_first,
-            'name_last': self._name_last,
+            "u_id": self._u_id,
+            "name_first": self._name_first,
+            "name_last": self._name_last,
         }
 
     def get_u_id(self):
@@ -288,9 +288,9 @@ class React():
 
     def get_react_dict(self):
         return {
-            'react_id': self._react_id,
-            'u_ids': self._u_id_list,
-            'is_this_user_reacted': self._is_this_user_reacted,
+            "react_id": self._react_id,
+            "u_ids": self._u_id_list,
+            "is_this_user_reacted": self._is_this_user_reacted,
         }
 
     def get_react_id(self):
@@ -339,23 +339,24 @@ class Message():
 
     def get_message_dict(self):
         return {
-            'message_id': self._msg_id,
-            'u_id': self._u_id,
-            'message': self._msg,
-            'time_created': self._time_created,
-            'reacts': self._react_list,
-            'is_pinned': self._is_pinned,
+            "message_id": self._msg_id,
+            "u_id": self._u_id,
+            "message": self._msg,
+            "time_created": self._time_created,
+            "reacts": self._react_list,
+            "is_pinned": self._is_pinned,
         }
 
     def get_message_json(self):
-        react_json = json.dumps([react.__dict__ for react in self._react_list])
+        react_str = json.dumps([react.__dict__ for react in self._react_list])
+        react_json = json.loads(react_str)
         return {
-            'message_id': self._msg_id,
-            'u_id': self._u_id,
-            'message': self._msg,
-            'time_created': self._time_created,
-            'reacts': react_json,
-            'is_pinned': self._is_pinned,
+            "message_id": self._msg_id,
+            "u_id": self._u_id,
+            "message": self._msg,
+            "time_created": self._time_created,
+            "reacts": react_json,
+            "is_pinned": self._is_pinned,
         }
 
     def get_message_id(self):
@@ -473,7 +474,7 @@ class Data():
         self._login_list = login_list
         self._password_list = password_list
         """
-        Global (but not really) variables to keep track of the id's of users,
+        Global (but not really) variables to keep track of the id"s of users,
         channels, messages.
         """
         self._u_id = u_id
@@ -626,21 +627,21 @@ class Data():
             assert isinstance(new_user, User)
             self._user_list.append(new_user)
         except AssertionError:
-            raise AssertionError("Error: Parameter is not 'class User'")
+            raise AssertionError("Error: Parameter is not \"class User\"")
 
     def add_message(self, new_message):
         try:
             assert isinstance(new_message, Message)
             self._message_list.append(new_message)
         except AssertionError:
-            raise AssertionError("Error: Parameter is not 'class Message'")
+            raise AssertionError("Error: Parameter is not \"class Message\"")
 
     def add_channel(self, new_channel):
         try:
             assert isinstance(new_channel, Channel)
             self._channel_list.append(new_channel)
         except AssertionError:
-            raise AssertionError("Error: Parameter is not 'class Channel'")
+            raise AssertionError("Error: Parameter is not \"class Channel\"")
 
     def add_login(self, new_login):
 
@@ -648,21 +649,21 @@ class Data():
             assert isinstance(new_login, Login)
             self._login_list.append(new_login)
         except AssertionError:
-            raise AssertionError("Error: Parameter is not 'class Login'")
+            raise AssertionError("Error: Parameter is not \"class Login\"")
 
     def add_message_later(self, new_message):
         try:
             assert isinstance(new_message, Message)
             self._message_wait_list.append(new_message)
         except AssertionError:
-            raise AssertionError("Error: Parameter is not 'class Message'")
+            raise AssertionError("Error: Parameter is not \"class Message\"")
 
     def add_password(self, new_password):
         try:
             assert isinstance(new_password, Password)
             self._password_list.append(new_password)
         except AssertionError:
-            raise AssertionError("Error: Parameter is not 'class Password'")
+            raise AssertionError("Error: Parameter is not \"class Password\"")
     """
     Removers
 
@@ -673,42 +674,42 @@ class Data():
             assert isinstance(user, User)
             self._user_list.remove(user)
         except AssertionError:
-            raise AssertionError("Error: Parameter is not 'class User'")
+            raise AssertionError("Error: Parameter is not \"class User\"")
 
     def remove_message(self, message):
         try:
             assert isinstance(message, Message)
             self._message_list.remove(message)
         except AssertionError:
-            raise AssertionError("Error: Parameter is not 'class Message'")
+            raise AssertionError("Error: Parameter is not \"class Message\"")
 
     def remove_channel(self, channel):
         try:
             assert isinstance(channel, Channel)
             self._channel_list.remove(channel)
         except AssertionError:
-            raise AssertionError("Error: Parameter is not 'class Channel'")
+            raise AssertionError("Error: Parameter is not \"class Channel\"")
 
     def remove_login(self, login):
         try:
             assert isinstance(login, Login)
             self._login_list.remove(login)
         except AssertionError:
-            raise AssertionError("Error: Parameter is not 'class Login'")
+            raise AssertionError("Error: Parameter is not \"class Login\"")
 
     def remove_message_later(self, message):
         try:
             assert isinstance(message, Message)
             self._message_wait_list.remove(message)
         except AssertionError:
-            raise AssertionError("Error: Parameter is not 'class Message'")
+            raise AssertionError("Error: Parameter is not \"class Message\"")
 
     def remove_password(self, password):
         try:
             assert isinstance(password, Password)
             self._password_list.remove(password)
         except AssertionError:
-            raise AssertionError("Error: Parameter is not 'class Password'")
+            raise AssertionError("Error: Parameter is not \"class Password\"")
     """
     Incrementers
     """
