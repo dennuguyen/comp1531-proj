@@ -47,7 +47,7 @@ def search(*, token, query_str):
         for message_id in channel.get_msg_id_list():
             current_message = data.get_data().get_message_with_message_id(
                 message_id)
-            if current_message.get_message().find(query_str):
+            if query_str in current_message.get_message():
                 matching_messages.append(current_message.get_message_json())
 
     sorted_messages = sorted(matching_messages,
