@@ -23,7 +23,7 @@ def test_message_send_member(get_new_user_1):
     # Send message 1
     msg_send1 = 'The quick brown fox jumps over the lazy dog'
     time_before1 = int(time.time())
-    msg_id1 = message.message_send(token1, ch_id, msg_send1)['message_id']
+    msg_id1 = message.message_send(token=token1, channel_id=ch_id, message=msg_send1)['message_id']
     time_after1 = int(time.time())
 
     # Check message 1
@@ -31,14 +31,14 @@ def test_message_send_member(get_new_user_1):
     assert retval1[0]['message_id'] == msg_id1
     assert retval1[0]['u_id'] == u_id1
     assert retval1[0]['message'] == msg_send1
-    assert retval1[0]['time_created'] > time_before1
-    assert retval1[0]['time_created'] < time_after1
+    assert retval1[0]['time_created'] >= time_before1
+    assert retval1[0]['time_created'] <= time_after1
     assert len(retval1) == 1
 
     # Send message 2
     msg_send2 = 'The quick brown dog jumps over the lazy fox'
     time_before2 = int(time.time())
-    msg_id2 = message.message_send(token1, ch_id, msg_send2)['message_id']
+    msg_id2 = message.message_send(token=token1, channel_id=ch_id, message=msg_send2)['message_id']
     time_after2 = int(time.time())
 
     # Check message 2
@@ -46,8 +46,8 @@ def test_message_send_member(get_new_user_1):
     assert retval2[0]['message_id'] == msg_id2
     assert retval2[0]['u_id'] == u_id1
     assert retval2[0]['message'] == msg_send2
-    assert retval2[0]['time_created'] > time_before2
-    assert retval2[0]['time_created'] < time_after2
+    assert retval2[0]['time_created'] >= time_before2
+    assert retval2[0]['time_created'] <= time_after2
     assert len(retval2) == 1
 
     # Check both messages are in channel
