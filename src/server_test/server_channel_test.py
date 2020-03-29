@@ -27,12 +27,6 @@ def reset_state():
     """
     r = requests.post(f"{BASE_URL}/workspace/reset")
     assert r.status_code == requests.codes.ok
-    assert data.get_data().get_user_list() == []
-    assert data.get_data().get_message_list() == []
-    assert data.get_data().get_message_wait_list() == []
-    assert data.get_data().get_channel_list() == []
-    assert data.get_data().get_login_list() == []
-    assert data.get_data().get_password_list() == []
 
 
 def test_channel_membership(get_new_user_detail_1, get_new_user_detail_2):
@@ -72,7 +66,7 @@ def test_channel_membership(get_new_user_detail_1, get_new_user_detail_2):
     r3 = requests.post(f"{BASE_URL}/channels/create",
                        headers=HEADERS,
                        json=ch1)
-    assert r3.status_code == requests.codes.ok  #TODO: 400 ERROR
+    assert r3.status_code == requests.codes.ok
 
     r4 = requests.post(f"{BASE_URL}/channels/create",
                        headers=HEADERS,
@@ -101,7 +95,7 @@ def test_channel_membership(get_new_user_detail_1, get_new_user_detail_2):
     r7 = requests.post(f"{BASE_URL}/channel/leave",
                        headers=HEADERS,
                        json=leave1)
-    assert r7.status_code == requests.codes.ok
+    assert r7.status_code == requests.codes.ok  # TODO: 500
 
     # User 2 leaves second channel
     leave2 = {**token2, **ch_id2}
