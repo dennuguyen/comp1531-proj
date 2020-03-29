@@ -1,5 +1,5 @@
-import data
 import pytest
+import data
 import channel
 import error
 import channels
@@ -25,7 +25,10 @@ def test_channel_join_public(get_new_user_1, get_new_user_detail_1, get_new_user
     ch_id = channels.channels_create(token=token1, name=ch_name, is_public=True)['channel_id']
 
     # user 2 (stranger) joins public channel
+
+    print(data.get_data().get_channel_with_ch_id(ch_id).get_channel_dict())
     assert channel.channel_join(token=token2, channel_id=ch_id) == {}
+    
     assert channel.channel_details(token=token2, channel_id=ch_id) == {
         'name':
         ch_name,

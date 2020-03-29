@@ -87,21 +87,22 @@ def channel_messages(*, token, channel_id, start):
     msg_id_list = channel.get_msg_id_list()
 
     msg_nums = len(msg_id_list)
-    if msg_nums < (start + 50):
-        show = -1
-        end_view = -1
+    counter = start
+
+    if msg_nums-start < 50:
+        end_view = msg_nums
+        end = -1
     else:
-        show = start - 50
-        end_view = start + 50
+        end_view = (start + 50)
+        end = start + 50
 
     channel_msg = {'messages':[]}
     msg_list = datapy.get_message_list()
 
-    i = msg_nums - start - 1
-    while  i > show:
+    while counter < end_view:
         for msg in msg_list:
             msg_dict = msg.get_message_dict()
-            if msg_dict['message_id'] == msg_id_list[i]:
+            if msg_dict['message_id'] == msg_id_list[counter]:
                 msg_info = {
                     'message_id' : msg_dict['message_id'],
                     'u_id' : msg_dict['u_id'],
@@ -109,9 +110,11 @@ def channel_messages(*, token, channel_id, start):
                     'time_created': msg_dict['time_created']
                 }
                 channel_msg['messages'].append(msg_info)
-        i -= 1
+        print(counter)
+        print(end_view)
+        counter += 1
     channel_msg['start'] = start
-    channel_msg['end'] = end_view
+    channel_msg['end'] = end
     
 
     # Return a dictionary of message info
@@ -162,7 +165,10 @@ def channel_join(*, token, channel_id):
     channel_with_id = data.get_data().get_channel_with_ch_id(channel_id)
 
     # Add the u_id to the channel
+    print(u_id)
+    print(data.get_data().get_channel_with_ch_id(channel_id).get_channel_dict())
     channel_with_id.add_new_member(u_id)
+    print(data.get_data().get_channel_with_ch_id(channel_id).get_channel_dict())
 
     return {
     }

@@ -6,6 +6,7 @@ GET requests: query string
 POST requests: JSON object
 """
 import sys
+import admin
 import json
 import flask
 import flask_cors
@@ -437,18 +438,18 @@ def standup_send():
                                 message=message_)
 
 
-# @APP.route("/admin/userpermission/change", methods=["POST"])
-# def admin_userpermission_change():
-#     """
-#     Change the permission of users by the admin
-#     """
-#     retval = flask.request.get_json()
-#     token = retval["token"]
-#     u_id = retval["u_id"]
-#     permission_id = retval["permission_id"]
-#     return admin.admin_userpermission_change(token=token,
-#                                              u_id=u_id,
-#                                              permission_id=permission_id)
+@APP.route("/admin/userpermission/change", methods=["POST"])
+def admin_userpermission_change():
+    """
+    Change the permission of users by the admin
+    """
+    retval = flask.request.get_json()
+    token = retval["token"]
+    u_id = retval["u_id"]
+    permission_id = retval["permission_id"]
+    return admin.admin_userpermission_change(token=token,
+                                             u_id=u_id,
+                                             permission_id=permission_id)
 
 
 @APP.route("/workspace/reset", methods=["POST"])

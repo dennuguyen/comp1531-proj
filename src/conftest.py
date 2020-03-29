@@ -6,7 +6,7 @@ import pytest
 import auth
 import sys
 sys.path.append('../')
-import data
+
 
 
 

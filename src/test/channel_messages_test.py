@@ -39,8 +39,9 @@ def test_channel_messages_greater_than_50(get_new_user_1):
         msg = 'test message ' + str(i+1)
         message.message_send(token=token1, channel_id=ch_id, message=msg)
         i += 1
-
+    
     retval = channel.channel_messages(token=token1, channel_id=ch_id, start=0)
+    
     assert len(retval['messages']) == 50
     assert retval['start'] == 0
     assert retval['end'] == 50
