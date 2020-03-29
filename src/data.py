@@ -91,7 +91,8 @@ class Channel():
     Channel class
     """
     def __init__(self, ch_id, ch_name, msg_id_list, u_id_list, owner_u_id_list,
-                 is_public, is_active_standup=False, standup_queue=[], standup_time_finish=None):
+                 is_public, is_active_standup=False, standup_queue=[], standup_time_finish=None,
+                 msg_id_wait_list=[]):
         self._ch_id = ch_id
         self._ch_name = ch_name
         self._msg_id_list = msg_id_list
@@ -101,6 +102,7 @@ class Channel():
         self._is_active_standup = is_active_standup
         self._standup_queue = standup_queue
         self._standup_time_finish = standup_time_finish
+        self._msg_id_wait_list = msg_id_wait_list
     """
     Getters
     """
@@ -115,7 +117,8 @@ class Channel():
             'is_public': self._is_public,
             'is_active_standup' : self._is_active_standup,
             'standup_queue' : self._standup_queue,
-            'standup_time_finish' : self._standup_time_finish
+            'standup_time_finish' : self._standup_time_finish,
+            'message_id_wait_list' : self._msg_id_wait_list
         }
 
     def get_channel_name(self):
@@ -144,6 +147,9 @@ class Channel():
 
     def get_standup_time_finish(self):
         return self._standup_time_finish
+    
+    def get_msg_id_wait_list(self):
+        return self._msg_id_wait_list
 
     """
     Setters
@@ -164,8 +170,14 @@ class Channel():
     def add_new_message(self, msg_id):
         self._msg_id_list.append(msg_id)
 
+    def add_new_waiting_message(self, msg_id):
+        self._msg_id_wait_list.append(msg_id)
+
     def remove_message(self, msg_id):
         self._msg_id_list.remove(msg_id)
+
+    def remove_waiting_message(self, msg_id):
+        self._msg_id_wait_list.remove(msg_id)
 
     def set_standup_status(self, status):
         self._is_active_standup = status
