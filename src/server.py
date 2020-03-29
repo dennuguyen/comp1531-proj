@@ -18,7 +18,9 @@ import user
 import other
 import standup
 import data
-
+import time
+from datetime import timedelta
+from timeloop import Timeloop
 
 def defaultHandler(err):
     response = err.get_response()
@@ -36,7 +38,7 @@ APP = flask.Flask(__name__)
 flask_cors.CORS(APP)
 APP.config["TRAP_HTTP_EXCEPTIONS"] = True
 APP.register_error_handler(Exception, defaultHandler)
-
+TL = Timeloop()
 
 @APP.route("/echo", methods=["GET"])
 def echo():
@@ -457,7 +459,30 @@ def reset():
     data.get_data().reset()
     return "ok"
 
+@TL.job(interval=timedelta(seconds=60))
+def send_later():
+    """
+    Check if currently there are messages to be sent
+    """
+    msg_wait_list = data.get_data().get_message_wait_list()
+    messages_to_be_sent = filter(lambda x: x.get_time_created() <= int(time.time()), msg_wait_list)
+        
+    if messages_to_be_sent:
+        for msg in messages_to_be_sent:
+            data.get_data().remove_message_later(msg)
+            token = data.get_data().get_login_with_u_id(msg.get_u_id())[0].get_token()
+            for channel_obj in data.get_data().get_channel_list():
+                if msg.get_message_id() in channel_obj.get_msg_id_wait_list():
+                    channel_obj.remove_waiting_message(msg.get_message_id())
+                    channel_id = channel_obj.get_channel_id()
+                    message_str = msg.get_message()
+                    message.message_send(token=token,
+                                 channel_id=channel_id,
+                                 message=message_str)
+                    break
+
 
 if __name__ == "__main__":
+    TL.start()
     APP.run(port=(int(sys.argv[1]) if len(sys.argv) == 2 else 8080),
             debug=True)
