@@ -41,14 +41,15 @@ def message_sendlater(*, token, channel_id, message, time_sent):
 
     # setup the message
     message_id = get_data().global_msg_id()
-    time_created = int(time.time())
-    message_object = Message(message_id, u_id, message, time_created,
+    message_object = Message(message_id, u_id, message, time_sent,
                              [React(1, [], False)], False)
 
     # update the database
     print(message_object)
     get_data().add_message_later(message_object)
-    print('message_id : ' + str(message_id))
+    channel = get_data().get_channel_with_ch_id(channel_id)
+    channel.add_new_waiting_message(message_id)
+
     return {'message_id': message_id}
 
 
@@ -84,10 +85,10 @@ def message_unreact(*, token, message_id, react_id):
     return {}
 
 
-@au.authenticator(au.is_token_valid, au.is_message_id_in_channel,
-                  au.is_owner_or_slackr_owner_1, au.message_already_pinned,
-                  au.user_not_member_using_message_id)
-def message_pin(*, token, message_id):
+@au.authenticator(au.message_id_valid, au.is_token_valid, au.valid_channel_id,
+                  au.is_user_in_channel, au.is_message_id_in_channel,
+                  au.is_owner_or_slackr_owner, au.message_already_pinned)
+def message_pin(token, message_id):
     '''
     Given a message within a channel, mark it as "pinned" to be given
     special display treatment by the frontend
@@ -100,10 +101,10 @@ def message_pin(*, token, message_id):
     return {}
 
 
-@au.authenticator(au.is_token_valid, au.message_id_valid,
-                  au.is_owner_or_slackr_owner_1, au.message_already_unpinned,
-                  au.user_not_member_using_message_id)
-def message_unpin(*, token, message_id):
+@au.authenticator(au.message_id_valid, au.is_token_valid, au.valid_channel_id,
+                  au.is_user_in_channel, au.is_message_id_in_channel,
+                  au.is_owner_or_slackr_owner, au.message_already_unpinned)
+def message_unpin(token, message_id):
     '''
     Given a message within a channel, remove it's mark as unpinned
     '''

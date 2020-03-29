@@ -52,7 +52,7 @@ def auth_logout(*, token):
         # Remove the login object from the list of logins
         data.get_data().remove_login(login_remove)
 
-    return {'is_success': is_success}
+    return {"is_success": is_success}
 
 
 @au.authenticator(au.valid_email, au.email_already_used, au.check_name_length,

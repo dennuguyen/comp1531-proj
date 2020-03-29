@@ -53,7 +53,7 @@ def generate_hash(password):
     """
     # Creating a salt
     alphabet = string.ascii_letters + string.digits
-    salt = ''.join(secrets.choice(alphabet) for i in range(16))
+    salt = "".join(secrets.choice(alphabet) for i in range(16))
 
     # Salt the password and hash it
     pepper = hashlib.sha512((salt + password).encode()).hexdigest()
