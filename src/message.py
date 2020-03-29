@@ -41,14 +41,15 @@ def message_sendlater(*, token, channel_id, message, time_sent):
 
     # setup the message
     message_id = get_data().global_msg_id()
-    time_created = int(time.time())
-    message_object = Message(message_id, u_id, message, time_created,
+    message_object = Message(message_id, u_id, message, time_sent,
                              [React(1, [], False)], False)
 
     # update the database
     print(message_object)
     get_data().add_message_later(message_object)
-    print('message_id : ' + str(message_id))
+    channel = get_data().get_channel_with_ch_id(channel_id)
+    channel.add_new_waiting_message(message_id)
+    
     return {'message_id': message_id}
 
 
