@@ -72,9 +72,6 @@ def auth_logout():
     token = flask.request.get_json()["token"]
     return auth.auth_logout(token=token)
 
-    # Redirect the user to the login page
-    # return flask.redirect(flask.url_for("login"))
-
 
 @APP.route("/auth/register", methods=["POST"])
 def auth_register():
@@ -458,7 +455,7 @@ def reset():
     Reset the workspace
     """
     data.get_data().reset()
-    return ("ok")
+    return "ok"
 
 
 #This will run if server.py is run
