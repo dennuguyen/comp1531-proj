@@ -1,6 +1,6 @@
 """
-System testing module to assure general correctness of auth, channel, message,
-user, search, and standup application systems and http routes.
+System testing module to assure general correctness of auth application systems
+and http routes.
 
 Black box testing is used as the functionality of the application's systems are
 already covered with unit testing. Therefore it can be considered that these
@@ -149,7 +149,3 @@ def test_auth_login_exception_handling(get_new_user_detail_1):
     # Logout with same invalidated token returns False
     r3 = requests.post(f"{BASE_URL}/auth/logout", headers=HEADERS, json=token1)
     assert r3.json()["is_success"] == False
-
-
-def test_channel(get_new_user_detail_1):
-    pass
