@@ -162,7 +162,10 @@ def channel_join(*, token, channel_id):
     channel_with_id = data.get_data().get_channel_with_ch_id(channel_id)
 
     # Add the u_id to the channel
+    print(u_id)
+    print(data.get_data().get_channel_with_ch_id(channel_id).get_channel_dict())
     channel_with_id.add_new_member(u_id)
+    print(data.get_data().get_channel_with_ch_id(channel_id).get_channel_dict())
 
     return {
     }

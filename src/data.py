@@ -90,8 +90,8 @@ class Channel():
     """
     Channel class
     """
-    def __init__(self, ch_id, ch_name, msg_id_list, u_id_list, owner_u_id_list,
-                 is_public, is_active_standup=False, standup_queue=[], standup_time_finish=None):
+    def __init__(self, ch_id, ch_name, msg_id_list=[], u_id_list=[], owner_u_id_list=[],
+                 is_public=True, is_active_standup=False, standup_queue=[], standup_time_finish=None):
         self._ch_id = ch_id
         self._ch_name = ch_name
         self._msg_id_list = msg_id_list
