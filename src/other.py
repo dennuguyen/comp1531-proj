@@ -5,7 +5,7 @@ users_all(.) - returns the details of everyone that's signed up to slackr.
 
 search(.) - Searches for a specific string
 '''
-
+import json
 import data
 import authenticate as au
 
@@ -42,17 +42,20 @@ def search(*, token, query_str):
         lambda channel: u_id in channel.get_u_id_list(), channels)
 
     # Now get a list of all Message classes if they match the query string.
-    # TODO: Get a second opiniion on this absolute garbage.
     matching_messages = []
     for channel in channels_user_is_in:
         for message_id in channel.get_msg_id_list():
             current_message = data.get_data().get_message_with_message_id(
                 message_id)
-            if query_str in current_message.get_message():
+            if current_message.get_message().find(query_str):
                 matching_messages.append(current_message.get_message_dict())
 
     sorted_messages = sorted(matching_messages,
                              key=lambda message: message['time_created'])
+
+    # JSONIFY the reacts object in the message
+    sorted_messages["reacts"] = json.dumps(
+        [react.__dict__ for react in self._react_list])
 
     # Return message list of dictionary sorted by time created
     # {message_id, u_id, message, time_created, reacts, is_pinned}
