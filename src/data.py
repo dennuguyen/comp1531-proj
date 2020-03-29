@@ -60,6 +60,7 @@ The Data class has a reset method to conveniently reset server data in memory.
 #                                                                              #
 ################################################################################
 
+import json
 
 class Login():
     """
@@ -343,6 +344,17 @@ class Message():
             'message': self._msg,
             'time_created': self._time_created,
             'reacts': self._react_list,
+            'is_pinned': self._is_pinned,
+        }
+
+    def get_message_json(self):
+        react_json = json.dumps([react.__dict__ for react in self._react_list])
+        return {
+            'message_id': self._msg_id,
+            'u_id': self._u_id,
+            'message': self._msg,
+            'time_created': self._time_created,
+            'reacts': react_json,
             'is_pinned': self._is_pinned,
         }
 

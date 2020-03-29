@@ -48,14 +48,10 @@ def search(*, token, query_str):
             current_message = data.get_data().get_message_with_message_id(
                 message_id)
             if current_message.get_message().find(query_str):
-                matching_messages.append(current_message.get_message_dict())
+                matching_messages.append(current_message.get_message_json())
 
     sorted_messages = sorted(matching_messages,
                              key=lambda message: message['time_created'])
-
-    # JSONIFY the reacts object in the message
-    sorted_messages["reacts"] = json.dumps(
-        [react.__dict__ for react in self._react_list])
 
     # Return message list of dictionary sorted by time created
     # {message_id, u_id, message, time_created, reacts, is_pinned}
