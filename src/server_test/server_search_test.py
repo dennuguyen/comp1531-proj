@@ -10,6 +10,7 @@ Requests Module Documentation:
 https://requests.readthedocs.io/en/latest/user/quickstart/#make-a-request
 """
 import pytest
+import json
 import requests
 import time
 import sys
@@ -75,6 +76,7 @@ def test_search(get_new_user_detail_1):
             },
         },
     )
+    
 
     # Search for a message
     srch = {
@@ -88,6 +90,10 @@ def test_search(get_new_user_detail_1):
         headers=HEADERS,
         params=srch,
     )
+    
     assert r4.status_code == requests.codes.ok
+
+    print(r4.text)
+    assert 1 == 2
 
     # TODO: MORE EXTENSIVE TESTS

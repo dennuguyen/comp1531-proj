@@ -101,7 +101,7 @@ def test_single_user_one_channel_message_match(get_new_user_1, get_new_user_deta
     message.message_send(token=token1,channel_id=channel_id,message=sentence)
 
     # Test there is a match
-    assert other.search(token=token1,query_str=sentence)['messages'][0]['message'] == sentence
+    assert other.search(token=token1,query_str='jumps')['messages'][0]['message'] == sentence
 
     data.get_data().reset()
 
