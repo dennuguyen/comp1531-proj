@@ -14,8 +14,6 @@ import requests
 import time
 import sys
 sys.path.append("../")
-import server
-import data
 
 BASE_URL = "http://127.0.0.1:8080"
 HEADERS = {"Content-Type": "application/json"}
@@ -113,12 +111,12 @@ def test_message_send_edit(get_new_user_detail_1, get_new_user_detail_2):
     r6 = requests.put(f"{BASE_URL}/message/edit", headers=HEADERS, json=edit)
     assert r6.status_code == requests.codes.ok
 
-    # User 2 removes their own message
-    rmv = {**token2, **msg_id2}
-    r7 = requests.delete(f"{BASE_URL}/message/remove",
-                         headers=HEADERS,
-                         json=rmv)
-    assert r7.status_code == requests.codes.ok
+    query = {"query_str" : "Yes it is"}
+    search = {**token1, **query}
+    r7 = requests.get(f"{BASE_URL}/search", search)
+    assert r7.json()['messages'][0]['message'] == 'Yes it is'
+
+    
 
 
 def test_message_send_edit_exception_handling(get_new_user_detail_1,
@@ -255,6 +253,11 @@ def test_message_send_later(get_new_user_detail_1):
     # Check if message sent for later has been sent
     # TODO: LOGIC FOR CHECKING IF MESSAGE SENT LATER HAS SENT
 
+    query = {"query_str" : "This channel is cool"}
+    search = {**token1, **query}
+    r5 = requests.get(f"{BASE_URL}/search", search)
+    assert r5.json()['messages'][0]['message'] == 'This channel is cool'
+
 
 def test_message_react(get_new_user_detail_1, get_new_user_detail_2):
     """
@@ -328,6 +331,13 @@ def test_message_react(get_new_user_detail_1, get_new_user_detail_2):
                        json=react1)
     assert r5.status_code == requests.codes.ok
 
+    # User 1 unreacts to the message
+    react3 = {**token1, **msg_id1, **{"react_id": 1}}
+    r7 = requests.post(f"{BASE_URL}/message/unreact",
+                       headers=HEADERS,
+                       json=react3)
+    assert r7.status_code == requests.codes.ok
+
     # User 2 reacts to the message
     react2 = {**token2, **msg_id1, **{"react_id": 1}}
     r6 = requests.post(f"{BASE_URL}/message/react",
@@ -335,15 +345,8 @@ def test_message_react(get_new_user_detail_1, get_new_user_detail_2):
                        json=react2)
     assert r6.status_code == requests.codes.ok
 
-    # User 1 unreacts to the message
-    react3 = {**token1, **msg_id1, **{"react_id": 0}}
-    r7 = requests.post(f"{BASE_URL}/message/unreact",
-                       headers=HEADERS,
-                       json=react3)
-    assert r7.status_code == requests.codes.ok
-
     # User 2 unreacts to the message
-    react4 = {**token1, **msg_id1, **{"react_id": 0}}
+    react4 = {**token2, **msg_id1, **{"react_id": 1}}
     r8 = requests.post(f"{BASE_URL}/message/unreact",
                        headers=HEADERS,
                        json=react4)
@@ -424,15 +427,6 @@ def test_message_pin(get_new_user_detail_1, get_new_user_detail_2):
                        })
     assert r5.status_code == requests.codes.ok
 
-    # User 2 pinning the message raises InputError as message is already pinned
-    with pytest.raises(requests.RequestException):
-        requests.post(f"{BASE_URL}/message/pin",
-                      headers=HEADERS,
-                      json={
-                          **token2,
-                          **msg_id1
-                      }).raise_for_status()
-
     # User 1 upins the message
     r7 = requests.post(f"{BASE_URL}/message/unpin",
                        headers=HEADERS,
@@ -443,10 +437,19 @@ def test_message_pin(get_new_user_detail_1, get_new_user_detail_2):
     assert r7.status_code == requests.codes.ok
 
     # User 2 pins the message
-    r8 = requests.post(f"{BASE_URL}/message/unpin",
+    r8 = requests.post(f"{BASE_URL}/message/pin",
                        headers=HEADERS,
                        json={
                            **token2,
                            **msg_id1
                        })
     assert r7.status_code == requests.codes.ok
+
+    # User 2 pinning the message raises InputError as message is already pinned
+    with pytest.raises(requests.RequestException):
+        requests.post(f"{BASE_URL}/message/pin",
+                      headers=HEADERS,
+                      json={
+                          **token2,
+                          **msg_id1
+                      }).raise_for_status()

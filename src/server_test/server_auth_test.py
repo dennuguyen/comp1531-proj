@@ -13,7 +13,6 @@ import pytest
 import requests
 import sys
 sys.path.append("../")
-import server
 import data
 
 BASE_URL = "http://127.0.0.1:8080"

@@ -14,8 +14,6 @@ import requests
 import time
 import sys
 sys.path.append("../")
-import server
-import data
 
 BASE_URL = "http://127.0.0.1:8080"
 HEADERS = {"Content-Type": "application/json"}
@@ -88,6 +86,25 @@ def test_search(get_new_user_detail_1):
         headers=HEADERS,
         params=srch,
     )
+
+    assert r4.json()['messages'][0]['message'] == 'This channel is cool'
     assert r4.status_code == requests.codes.ok
+
+        # Search for another message
+    srch = {
+        **token,
+        **{
+            "query_str": "This is Star Trek Enterprise",
+        },
+    }
+    r4 = requests.get(
+        f"{BASE_URL}/search",
+        headers=HEADERS,
+        params=srch,
+    )
+    
+    assert r4.json()['messages'] == []
+    assert r4.status_code == requests.codes.ok
+
 
     # TODO: MORE EXTENSIVE TESTS
