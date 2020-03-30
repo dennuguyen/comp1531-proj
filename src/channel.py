@@ -100,7 +100,7 @@ def channel_messages(*, token, channel_id, start):
     msg_list = datapy.get_message_list()
 
     while counter < end_view:
-        for msg in reverse(msg_list):
+        for msg in msg_list.reverse():
             msg_dict = msg.get_message_dict()
             if msg_dict['message_id'] == msg_id_list[counter]:
                 msg_info = {
