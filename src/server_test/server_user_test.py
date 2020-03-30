@@ -14,8 +14,6 @@ import requests
 import time
 import sys
 sys.path.append("../")
-import server
-import data
 
 BASE_URL = "http://127.0.0.1:8080"
 HEADERS = {"Content-Type": "application/json"}

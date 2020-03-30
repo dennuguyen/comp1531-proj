@@ -10,13 +10,10 @@ Requests Module Documentation:
 https://requests.readthedocs.io/en/latest/user/quickstart/#make-a-request
 """
 import pytest
-import json
 import requests
 import time
 import sys
 sys.path.append("../")
-import server
-import data
 
 BASE_URL = "http://127.0.0.1:8080"
 HEADERS = {"Content-Type": "application/json"}
@@ -76,7 +73,6 @@ def test_search(get_new_user_detail_1):
             },
         },
     )
-    
 
     # Search for a message
     srch = {
@@ -90,7 +86,7 @@ def test_search(get_new_user_detail_1):
         headers=HEADERS,
         params=srch,
     )
-    
+
     assert r4.status_code == requests.codes.ok
 
     # TODO: MORE EXTENSIVE TESTS

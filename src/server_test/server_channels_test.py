@@ -9,7 +9,6 @@ tests are more concerned about the end-user's experience.
 Requests Module Documentation:
 https://requests.readthedocs.io/en/latest/user/quickstart/#make-a-request
 """
-import server
 import pytest
 import data
 import requests
@@ -28,8 +27,9 @@ def reset_state():
     r = requests.post(f"{BASE_URL}/workspace/reset")
     assert r.status_code == requests.codes.ok
 
-def test_channels_create(get_new_user_detail_1, get_new_user_detail_2, get_new_user_detail_3):
 
+def test_channels_create(get_new_user_detail_1, get_new_user_detail_2,
+                         get_new_user_detail_3):
     """
     Test channel creation
     """
@@ -62,18 +62,17 @@ def test_channels_create(get_new_user_detail_1, get_new_user_detail_2, get_new_u
 
     # Register user 1
     r1 = requests.post(f"{BASE_URL}/auth/register", headers=HEADERS, json=reg1)
-    u_id1 = {"u_id": r1.json()["u_id"]}
     token1 = {"token": r1.json()["token"]}
 
     # Register user 2
     r2 = requests.post(f"{BASE_URL}/auth/register", headers=HEADERS, json=reg2)
-    u_id2 = {"u_id": r2.json()["u_id"]}
     token2 = {"token": r2.json()["token"]}
 
     # Register user 3
     r3 = requests.post(f"{BASE_URL}/auth/register", headers=HEADERS, json=reg3)
     u_id3 = {"u_id": r3.json()["u_id"]}
     token3 = {"token": r3.json()["token"]}
+    # TODO: UNUSED USER 3
 
     # User 1 creates a channels
     ch1 = {**token1, **{"name": "Cowabunga", "is_public": True}}
@@ -87,10 +86,11 @@ def test_channels_create(get_new_user_detail_1, get_new_user_detail_2, get_new_u
     r5 = requests.post(f"{BASE_URL}/channels/create",
                        headers=HEADERS,
                        json=ch2)
-    assert r5.status_code == requests.codes.ok    
+    assert r5.status_code == requests.codes.ok
 
-def test_channel_list(get_new_user_detail_1, get_new_user_detail_2, get_new_user_detail_3):
 
+def test_channel_list(get_new_user_detail_1, get_new_user_detail_2,
+                      get_new_user_detail_3):
     """
     Test channel list and listall
     """
@@ -148,7 +148,7 @@ def test_channel_list(get_new_user_detail_1, get_new_user_detail_2, get_new_user
     r5 = requests.post(f"{BASE_URL}/channels/create",
                        headers=HEADERS,
                        json=ch2)
-    assert r5.status_code == requests.codes.ok    
+    assert r5.status_code == requests.codes.ok
 
     # Get the channel ids
     ch_id1 = {"channel_id": r4.json()["channel_id"]}
@@ -157,40 +157,31 @@ def test_channel_list(get_new_user_detail_1, get_new_user_detail_2, get_new_user
 
     # User 2 joins first channel
     join1 = {**token2, **ch_id1}
-    r6 = requests.post(f"{BASE_URL}/channel/join",
-                       headers=HEADERS,
-                       json=join1)
+    r6 = requests.post(f"{BASE_URL}/channel/join", headers=HEADERS, json=join1)
     assert r6.status_code == requests.codes.ok
 
     # User 3 joins first channel
     join2 = {**token3, **ch_id2}
-    r7 = requests.post(f"{BASE_URL}/channel/join",
-                       headers=HEADERS,
-                       json=join2)
+    r7 = requests.post(f"{BASE_URL}/channel/join", headers=HEADERS, json=join2)
     assert r7.status_code == requests.codes.ok
 
     # User 2 calls channel list
     list1 = {**token2}
-    r8 = requests.get(f"{BASE_URL}/channels/list",
-                       list1)
-    assert r8.status_code == requests.codes.ok 
+    r8 = requests.get(f"{BASE_URL}/channels/list", list1)
+    assert r8.status_code == requests.codes.ok
 
-        # User 2 calls channel list all
+    # User 2 calls channel list all
     listall1 = {**token2}
-    r9 = requests.get(f"{BASE_URL}/channels/listall",
-                       listall1)
-    assert r9.status_code == requests.codes.ok 
+    r9 = requests.get(f"{BASE_URL}/channels/listall", listall1)
+    assert r9.status_code == requests.codes.ok
 
-        # User 3 calls channel list
+    # User 3 calls channel list
     list2 = {**token3}
-    r10 = requests.get(f"{BASE_URL}/channels/list",
-                       list2)
-    assert r10.status_code == requests.codes.ok 
+    r10 = requests.get(f"{BASE_URL}/channels/list", list2)
+    assert r10.status_code == requests.codes.ok
 
-        # User 3 calls channel list all
+    # User 3 calls channel list all
     listall2 = {**token3}
-    r11 = requests.get(f"{BASE_URL}/channels/listall",
-                       listall2)
-    assert r11.status_code == requests.codes.ok 
-
-
+    r11 = requests.get(f"{BASE_URL}/channels/listall", listall2)
+    assert r11.status_code == requests.codes.ok
+    # TODO: Redundant testing for user 2 and 3 to do the same actions

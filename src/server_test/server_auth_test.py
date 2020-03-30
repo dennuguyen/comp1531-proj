@@ -13,9 +13,7 @@ import pytest
 import requests
 import sys
 sys.path.append("../")
-import server
 import data
-import json
 
 BASE_URL = "http://127.0.0.1:8080"
 HEADERS = {"Content-Type": "application/json"}
@@ -104,8 +102,6 @@ def test_auth_register_exception_handling(get_new_user_detail_1):
     # Register user 1
     r1 = requests.post(f"{BASE_URL}/auth/register", headers=HEADERS, json=reg1)
     assert r1.status_code == requests.codes.ok
-    print(json.load(r1))
-    assert 1 == 2
 
     # Attempting to register user 1 again will raise Exception due to already
     # registered email
