@@ -113,6 +113,13 @@ def test_message_send_edit(get_new_user_detail_1, get_new_user_detail_2):
     r6 = requests.put(f"{BASE_URL}/message/edit", headers=HEADERS, json=edit)
     assert r6.status_code == requests.codes.ok
 
+    query = {"query_str" : "Yes it is"}
+    search = {**token1, **query}
+    r7 = requests.get(f"{BASE_URL}/search", search)
+    assert r7.json()['messages'][0]['message'] == 'Yes it is'
+
+    
+
 
 def test_message_send_edit_exception_handling(get_new_user_detail_1,
                                               get_new_user_detail_2):
@@ -247,6 +254,11 @@ def test_message_send_later(get_new_user_detail_1):
 
     # Check if message sent for later has been sent
     # TODO: LOGIC FOR CHECKING IF MESSAGE SENT LATER HAS SENT
+
+    query = {"query_str" : "This channel is cool"}
+    search = {**token1, **query}
+    r5 = requests.get(f"{BASE_URL}/search", search)
+    assert r5.json()['messages'][0]['message'] == 'This channel is cool'
 
 
 def test_message_react(get_new_user_detail_1, get_new_user_detail_2):
