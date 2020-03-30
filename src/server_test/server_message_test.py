@@ -14,8 +14,6 @@ import requests
 import time
 import sys
 sys.path.append("../")
-import server
-import data
 
 BASE_URL = "http://127.0.0.1:8080"
 HEADERS = {"Content-Type": "application/json"}
@@ -333,7 +331,6 @@ def test_message_react(get_new_user_detail_1, get_new_user_detail_2):
                        json=react1)
     assert r5.status_code == requests.codes.ok
 
-
     # User 1 unreacts to the message
     react3 = {**token1, **msg_id1, **{"react_id": 1}}
     r7 = requests.post(f"{BASE_URL}/message/unreact",
@@ -456,5 +453,3 @@ def test_message_pin(get_new_user_detail_1, get_new_user_detail_2):
                           **token2,
                           **msg_id1
                       }).raise_for_status()
-
-
