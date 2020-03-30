@@ -98,9 +98,10 @@ def channel_messages(*, token, channel_id, start):
 
     channel_msg = {'messages':[]}
     msg_list = datapy.get_message_list()
+    
 
     while counter < end_view:
-        for msg in msg_list.reverse():
+        for msg in msg_list:
             msg_dict = msg.get_message_dict()
             if msg_dict['message_id'] == msg_id_list[counter]:
                 msg_info = {
@@ -111,6 +112,7 @@ def channel_messages(*, token, channel_id, start):
                 }
                 channel_msg['messages'].append(msg_info)
         counter += 1
+    channel_msg['messages'].reverse()
     channel_msg['start'] = start
     channel_msg['end'] = end
     
