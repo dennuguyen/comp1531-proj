@@ -219,6 +219,7 @@ def test_channel_ownership(get_new_user_detail_1, get_new_user_detail_2,
 
     # Register user 2
     r2 = requests.post(f"{BASE_URL}/auth/register", headers=HEADERS, json=reg2)
+    u_id2 = {"u_id": r2.json()["u_id"]}
     token2 = {"token": r2.json()["token"]}
 
     # Register user 3
