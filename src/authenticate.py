@@ -185,37 +185,6 @@ def is_owner_or_slackr_owner_1(func):
     return wrapper
 
 
-def user_not_member_using_message_id(func):
-    '''
-    The authorised user is not a member of the channel that the message is within.
-    '''
-    def wrapper(*args, **kwargs):
-        token = kwargs['token']
-        message_id = kwargs['message_id']
-
-        # Get user using token.
-        user_with_token = data.get_data().get_user_with_token(token)
-
-        # Get the user id using the User Class
-        u_id = user_with_token.get_u_id()
-
-        # Get the channel using message id.
-        channel_with_id = data.get_data().get_channel_with_message_id(
-            message_id)
-
-        # Check if user is in the channel. If not, return error.
-        if not u_id in channel_with_id.get_u_id_list():
-            error_message = '''
-            The user is not a member of the channel that the message is within.
-            '''
-            raise error.AccessError(error_message)
-
-        # If not, return the function
-        return func(*args, **kwargs)
-
-    return wrapper
-
-
 def edit_permissions(func):
     '''
     AccessError when none of the following are true:
@@ -685,27 +654,6 @@ def not_owner(func):
     return wrapper
 
 
-def user_not_admin(func):
-    '''
-    The authorised user is not an admin
-
-    TODO: How to check if user is an admin?
-    TODO: Check on piazza. This seems more like an access error than input error.
-    '''
-    def wrapper(*args, **kwargs):
-
-        # TODO Do check if user is an admin.
-        is_admin = False
-
-        # If not admin, raise input error? TODO: check that. should be access
-        if not is_admin:
-            raise error.InputError('The authorised user is not an admin')
-
-        return func(*args, **kwargs)
-
-    return wrapper
-
-
 def channel_name_length(func):
     '''
     Name is more than 20 characters long or empty string.
@@ -975,26 +923,6 @@ def already_active_standup(func):
 
         # Check if there is an active standup in this channel
         if channel_with_id.get_is_active_standup():
-            raise error.AccessError(
-                'An active standup is currently running in this channel')
-
-        return func(*args, **kwargs)
-
-    return wrapper
-
-
-def no_active_standup(func):
-    '''
-    An active standup is not currently running in this channel
-    '''
-    def wrapper(*args, **kwargs):
-        channel_id = kwargs['channel_id']
-
-        # Get the corresponding channel with the id
-        channel_with_id = data.get_data().get_channel_with_ch_id(channel_id)
-
-        # Check if there is not an active standup in this channel
-        if not channel_with_id.get_is_active_standup():
             raise error.AccessError(
                 'An active standup is currently running in this channel')
 

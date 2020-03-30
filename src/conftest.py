@@ -14,15 +14,6 @@ sys.path.append('../')
 def auto_reset():
     data.get_data().reset()
 
-@pytest.fixture()
-def get_new_user_detail_0():
-    email = "john_doe@unsw.com"
-    password = "password1234"
-    name_first = "John"
-    name_last = "Doe"
-
-    return email, password, name_first, name_last
-
 
 @pytest.fixture()
 def get_new_user_detail_1():
@@ -62,17 +53,6 @@ def get_new_user_detail_4():
     name_last = "Kyle"
 
     return email, password, name_first, name_last
-
-
-@pytest.fixture()
-def get_new_user_0(get_new_user_detail_0):
-    email, password, name_first, name_last = get_new_user_detail_0
-    retval = auth.auth_register(email=email,
-                                password=password,
-                                name_first=name_first,
-                                name_last=name_last)
-
-    return retval['u_id'], retval['token']
 
 
 @pytest.fixture()
