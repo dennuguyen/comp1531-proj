@@ -86,8 +86,7 @@ def test_search(get_new_user_detail_1):
         headers=HEADERS,
         params=srch,
     )
-<<<<<<< HEAD
-    
+
     assert r4.json()['messages'][0]['message'] == 'This channel is cool'
     assert r4.status_code == requests.codes.ok
 
@@ -109,9 +108,3 @@ def test_search(get_new_user_detail_1):
 
 
     # TODO: MORE EXTENSIVE TESTS
-=======
-
-    assert r4.status_code == requests.codes.ok
-
-    # TODO: MORE EXTENSIVE TESTS
->>>>>>> f84b8e7e6a1b1c9ddada5e0b4adc63c3ebcea276
