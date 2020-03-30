@@ -15,6 +15,7 @@ import data
 import requests
 import sys
 sys.path.append("../")
+import json
 
 BASE_URL = "http://127.0.0.1:8080"
 HEADERS = {"Content-Type": "application/json"}
@@ -104,6 +105,14 @@ def test_channel_membership(get_new_user_detail_1, get_new_user_detail_2):
                        json=leave2)
     assert r8.status_code == requests.codes.ok
 
+    # User 1 check channel details
+    cdet1 = {**token1, **ch_id1}
+    r9 = requests.get(f"{BASE_URL}/channel/details",
+                        cdet1)
+    assert len(r9.json()['all_members']) == 1
+    assert r9.status_code == requests.codes.ok
+
+
 def test_channel_membership_exception_handling(get_new_user_detail_1, get_new_user_detail_2, get_new_user_detail_3):
     """
     Test channel creation, joining, invitation and leaving
@@ -163,6 +172,12 @@ def test_channel_membership_exception_handling(get_new_user_detail_1, get_new_us
     with pytest.raises(requests.RequestException):
         requests.post(f"{BASE_URL}/channel/join", headers=HEADERS, json=join2).raise_for_status()
 
+    # User 1 check channel details
+    cdet1 = {**token1, **ch_id1}
+    r6 = requests.get(f"{BASE_URL}/channel/details",
+                        cdet1)
+    assert len(r6.json()['all_members']) == 1
+    assert r6.status_code == requests.codes.ok
 
 
 def test_channel_ownership(get_new_user_detail_1, get_new_user_detail_2, get_new_user_detail_3):
@@ -242,6 +257,12 @@ def test_channel_ownership(get_new_user_detail_1, get_new_user_detail_2, get_new
                        json=add1)
     assert r6.status_code == requests.codes.ok
 
+    # User 1 check channel details
+    cdet1 = {**token1, **ch_id1}
+    r7 = requests.get(f"{BASE_URL}/channel/details",
+                        cdet1)
+    assert len(r7.json()['owner_members']) == 2
+
     # User 3 remove user2 as owner
     rem1 = {**token3, **ch_id1, **u_id2}
     r8 = requests.post(f"{BASE_URL}/channel/removeowner",
@@ -256,12 +277,24 @@ def test_channel_ownership(get_new_user_detail_1, get_new_user_detail_2, get_new
                        json=add2)
     assert r9.status_code == requests.codes.ok
 
+    # User 1 check channel details
+    cdet1 = {**token1, **ch_id1}
+    r9 = requests.get(f"{BASE_URL}/channel/details",
+                        cdet1)
+    assert len(r9.json()['owner_members']) == 3
+
     # User 3 remove user2 as owner
     rem2 = {**token3, **ch_id1, **u_id2}
     r10 = requests.post(f"{BASE_URL}/channel/removeowner",
                        headers=HEADERS,
                        json=rem2)
     assert r10.status_code == requests.codes.ok
+
+    # User 1 check channel details
+    cdet1 = {**token1, **ch_id1}
+    r10 = requests.get(f"{BASE_URL}/channel/details",
+                        cdet1)
+    assert len(r10.json()['owner_members']) == 2
 
 
 def test_channel_messages(get_new_user_detail_1, get_new_user_detail_2, get_new_user_detail_3):
@@ -310,7 +343,7 @@ def test_channel_messages(get_new_user_detail_1, get_new_user_detail_2, get_new_
     u_id3 = {"u_id": r3.json()["u_id"]}
     token3 = {"token": r3.json()["token"]}
 
-    # User 1 creates a channels
+        # User 1 creates a channels
     ch1 = {**token1, **{"name": "Cowabunga", "is_public": True}}
     r4 = requests.post(f"{BASE_URL}/channels/create",
                        headers=HEADERS,
@@ -334,6 +367,7 @@ def test_channel_messages(get_new_user_detail_1, get_new_user_detail_2, get_new_
         r7 = requests.post(f"{BASE_URL}/message/send",
                         headers=HEADERS,
                         json=msg1)
+        assert r7.json()['message_id'] == i
         assert r7.status_code == requests.codes.ok
 
 
@@ -341,6 +375,7 @@ def test_channel_messages(get_new_user_detail_1, get_new_user_detail_2, get_new_
     cmsg1 = {**token1, **ch_id1, **{'start': '25'}}
     r8 = requests.get(f"{BASE_URL}/channel/messages",
                     cmsg1)
+    assert len(r8.json()['messages']) == 50 
     assert r8.status_code == requests.codes.ok
 
     # Check messages start greater than number of messages
@@ -353,6 +388,8 @@ def test_channel_messages(get_new_user_detail_1, get_new_user_detail_2, get_new_
     cmsg3 = {**token2, **ch_id1, **{'start': '25'}}
     r9 = requests.get(f"{BASE_URL}/channel/messages",
                     cmsg3)
+
+    assert len(r8.json()['messages']) == 50
     assert r9.status_code == requests.codes.ok
 
     # Check messages start greater than number of messages
@@ -360,6 +397,8 @@ def test_channel_messages(get_new_user_detail_1, get_new_user_detail_2, get_new_
     with pytest.raises(requests.RequestException):
         requests.get(f"{BASE_URL}/channel/messages",
                     cmsg4).raise_for_status()
+
+
 
     
 
