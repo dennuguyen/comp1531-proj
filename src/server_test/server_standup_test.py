@@ -87,6 +87,7 @@ def test_standups(get_new_user_detail_1, get_new_user_detail_2):
     search = {**token1, **query}
     r6 = requests.get(f"{BASE_URL}/search", search)
     assert len(r6.json()['messages']) == 1
+    
 
     
 def start_a_standup(token1, ch_id1):
