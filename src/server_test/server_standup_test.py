@@ -18,7 +18,7 @@ import server
 import data
 import threading
 
-BASE_URL = "http://127.0.0.1:8080"
+BASE_URL = "http://127.0.0.1:20000"
 HEADERS = {"Content-Type": "application/json"}
 
 
